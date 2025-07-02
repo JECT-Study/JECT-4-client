@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import Router from './routes/index.tsx';
+import Router from './routes.tsx';
 import './styles/index.css';
 import './styles/globals.css';
 
