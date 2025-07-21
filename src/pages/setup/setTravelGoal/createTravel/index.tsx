@@ -16,6 +16,7 @@ const CreateTravelPage = () => {
                 }
             />
             {/* 여행 이름 설정 (선형, 코스형) */}
+            {/* 테스트를 위한 주석 추가*/}
             <CreateTravelLinearForm />
         </div>
     );
