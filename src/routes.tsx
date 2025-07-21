@@ -3,14 +3,12 @@ import LoginPage from './pages/auth/LoginPage/KakaoLoginPage';
 import LoginAccessPage from './pages/auth/LoginPage/KakaoLoginAccessPage';
 import SetNamePage from './pages/setup/setProfile/SetNamePage';
 import SetJobPage from './pages/setup/setProfile/SetJobPage';
-
+import SetTravelTypePage from './pages/setup/setTravelGoal/setTravelType/index';
+import CreateTravelPage from './pages/setup/setTravelGoal/createTravel/index';
+import SetMileStonePage from './pages/setup/setTravelGoal/setMileStone/index';
 import MainPage from './pages/dashboard/MainPage';
 import MainLayout from './components/MainLayout';
 import StyleGuide from './pages/style-guide/StyleGuide';
-
-import SetTravelTypePage from './pages/setup/setTravelGoal/setTravelType/index';
-import CreateTravelPage from './pages/setup/setTravelGoal/createTravel';
-import CreateStampPage from './pages/setup/setTravelGoal/createStamp';
 
 const Router = () => {
     return (
@@ -20,14 +18,9 @@ const Router = () => {
             <Route path="/oauth/callback/kakao" element={<LoginAccessPage />} />
             <Route path="/set-name" element={<SetNamePage />} />
             <Route path="/set-job" element={<SetJobPage />} />
-
-            {/* 여행 생성 도메인 */}
-            <Route
-                path="/create-travel-linear"
-                element={<CreateTravelPage />}
-            />
+            <Route path="/create-travel" element={<CreateTravelPage />} />
             <Route path="/set-travel-type" element={<SetTravelTypePage />} />
-            <Route path="/create-stamp" element={<CreateStampPage />} />
+            <Route path="/set-milestone" element={<SetMileStonePage />} />
 
             {/* 메인 페이지 */}
             <Route path="/main" element={<MainPage />} />

@@ -4,7 +4,6 @@ declare module 'swiper/css/navigation';
 declare module 'swiper/css/pagination';
 declare module 'swiper/css/scrollbar';
 declare module '*.png';
-declare module '*.svg';
 
 // Vite 환경변수 타입 추가
 /// <reference types="vite/client" />
