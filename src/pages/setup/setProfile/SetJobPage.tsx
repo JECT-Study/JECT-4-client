@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import SelectButton from '../../../components/common/button/SelectButton';
-import NextButton from '../../../components/common/button/NextButton';
+import MainButton from '../../../components/common/button/MainButton';
 
 function SetJobPage() {
     const [selected, setSelected] = useState<string>('');
@@ -12,7 +12,7 @@ function SetJobPage() {
     };
     return (
         <div className="flex min-h-screen flex-col justify-between py-14">
-            <section className="mb-12 rounded-lg bg-gradient-to-r py-5">
+            <section className="mb-12 rounded-lg py-5">
                 <h1 className="text-display text-secondary">
                     직업을 설정해 주세요.
                 </h1>
@@ -43,14 +43,14 @@ function SetJobPage() {
                 </div>
             </section>
             <section className="py-5">
-                <NextButton
+                <MainButton
                     disabled={isNextDisabled}
                     onClick={() => {
                         if (!isNextDisabled) {
                             navigate('/main');
                         }
                     }}
-                ></NextButton>
+                ></MainButton>
             </section>
         </div>
     );

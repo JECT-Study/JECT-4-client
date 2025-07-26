@@ -6,7 +6,11 @@ interface ClearableInputProps {
     placeholder?: string;
 }
 
-const ClearableInput: React.FC<ClearableInputProps> = ({ value, onValueChange, placeholder }) => {
+const ClearableInput: React.FC<ClearableInputProps> = ({
+    value,
+    onValueChange,
+    placeholder,
+}) => {
     return (
         <div className="relative w-full">
             <input
@@ -14,7 +18,7 @@ const ClearableInput: React.FC<ClearableInputProps> = ({ value, onValueChange, p
                 value={value}
                 onChange={(e) => onValueChange(e.target.value)}
                 placeholder={placeholder}
-                className="text-subtitle text-text-sub border-text-sub focus:bg-input-focus w-full rounded border bg-white px-4 py-2 pr-10 transition focus:outline-none"
+                className="text-subtitle text-text-sub focus:bg-input-focus w-full rounded border border-[#895A3F] bg-white px-4 py-2 pr-10 transition focus:outline-none"
             />
             {value && (
                 <button

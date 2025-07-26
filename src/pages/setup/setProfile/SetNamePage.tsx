@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Input from '../../../components/common/input/ClearableInput';
-import NextButton from '../../../components/common/button/NextButton';
+import MainButton from '../../../components/common/button/MainButton';
 
 // const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,10}$/;
 
@@ -43,11 +43,11 @@ function SetNamePage() {
                 </p>
             </section>
             <section className="py-5">
-                <NextButton
+                <MainButton
                     onClick={() => {
                         navigate('/set-job');
                     }}
-                ></NextButton>
+                ></MainButton>
             </section>
         </div>
     );

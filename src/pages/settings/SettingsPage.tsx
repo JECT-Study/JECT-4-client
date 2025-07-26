@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import ArrowIcon from '../../assets/icons/arrow.svg?react';
 import StatCard from './StatCard';
 import SettingList from './SettingList';
@@ -9,6 +10,7 @@ const stats = [
 ];
 
 const SettingsPage = () => {
+    const navigate = useNavigate();
     return (
         <div>
             <div className="bg-secondary absolute inset-x-0 h-72 w-full"></div>
@@ -19,7 +21,10 @@ const SettingsPage = () => {
                         <br />
                         안녕하세요.
                     </div>
-                    <button className="text-small flex cursor-pointer items-center gap-2 opacity-50">
+                    <button
+                        onClick={() => navigate('/settings/user')}
+                        className="text-small flex cursor-pointer items-center gap-2 opacity-50"
+                    >
                         회원정보 수정
                         <ArrowIcon className="text-white" />
                     </button>

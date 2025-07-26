@@ -12,11 +12,7 @@ const SettingList = () => {
     return (
         <div>
             {settings.map((item, index) => (
-                <SettingItem
-                    key={index}
-                    label={item.label}
-                    onClick={item.onClick}
-                />
+                <SettingItem label={item.label} onClick={item.onClick} />
             ))}
         </div>
     );
