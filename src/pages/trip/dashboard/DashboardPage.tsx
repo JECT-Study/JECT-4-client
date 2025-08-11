@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 import MissionListSection from './_components/MissionListSection';
 import MissionSummary from './_components/MissionSummary';
