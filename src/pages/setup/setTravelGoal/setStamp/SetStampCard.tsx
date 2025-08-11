@@ -12,7 +12,7 @@ import {
     arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import MenuIcon from '../../../../assets/icons/menu.svg?react';
