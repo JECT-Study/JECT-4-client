@@ -44,10 +44,17 @@ const MissionCard: React.FC<MissionCardProps> = ({
                 </span>
             )}
             {isEditMode ? (
-                <XboxIcon
+                <button
+                    type="button"
+                    aria-label="미션 삭제"
                     className="h-8 w-8 cursor-pointer"
                     onClick={onDelete}
-                />
+                >
+                    <XboxIcon
+                        aria-hidden="true"
+                        className="h-8 w-8 cursor-pointer"
+                    />
+                </button>
             ) : (
                 <input
                     checked={isChecked}
