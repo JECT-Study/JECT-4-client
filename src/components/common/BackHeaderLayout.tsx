@@ -1,6 +1,6 @@
 import LeftArrow from '../../assets/icons/left_arrow.svg?react';
 import LogIcon from '../../assets/icons/log.svg?react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 interface BackHeaderProps {
     title?: string;
