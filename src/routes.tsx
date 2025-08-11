@@ -21,6 +21,7 @@ import PomodoroPage from './pages/pomodoro/PomodoroPage';
 import LogPage from './pages/pomodoro/log/LogPage';
 
 import DashboardPage from './pages/trip/dashboard/DashboardPage';
+import TripPage from './pages/trip/TripPage';
 
 const Router = () => {
     return (
@@ -60,6 +61,8 @@ const Router = () => {
                     <Route path="/main" element={<MainPage />} />
                     {/* 세팅 페이지 */}
                     <Route path="/settings" element={<SettingsPage />} />
+                    {/* 여행 코스 페이지 */}
+                    <Route path="/trip" element={<TripPage />} />
                 </Route>
                 {/* 세팅 내부 페이지들 */}
                 <Route path="/settings/user" element={<UserPage />} />
