@@ -45,10 +45,14 @@ const MissionListSection = ({
                     >
                         {isEditMode ? '완료' : '편집'}
                     </button>
-                    <PlusIcon
+                    <button
+                        type="button"
+                        aria-label="미션 추가"
                         className="cursor-pointer"
                         onClick={onAddMission}
-                    />
+                    >
+                        <PlusIcon aria-hidden="true" />
+                    </button>
                 </div>
             </div>
 
