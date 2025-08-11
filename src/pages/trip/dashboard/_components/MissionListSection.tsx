@@ -28,7 +28,7 @@ const MissionListSection = ({
     onToggleCheck,
 }: MissionListSectionProps) => {
     return (
-        <section className="pt-13">
+        <section className="pt-[3.25rem]">
             {/* 헤더 영역 */}
             <div className="flex items-center justify-between">
                 <span className="text-body font-semibold">
