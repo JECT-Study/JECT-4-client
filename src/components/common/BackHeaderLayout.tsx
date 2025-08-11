@@ -40,8 +40,8 @@ const BackHeader = ({
             {hideLogButton ? (
                 <div className="h-4 w-4" /> // 오른쪽 공간 맞추기용
             ) : (
-                <button>
-                    <LogIcon className="h-4 w-4" />
+                <button onClick={() => navigate('/log')}>
+                    <LogIcon className="h-4 w-4 cursor-pointer" />
                 </button>
             )}
         </div>
