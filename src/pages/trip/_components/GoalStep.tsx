@@ -38,7 +38,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
 
     return (
         <div className="flex flex-col">
-            <div className={`flex ${alignStyleClass[align]} pl-26`}>
+            <div className={`flex ${alignStyleClass[align]} pl-24`}>
                 {align === 'right' && (
                     <div className="flex flex-col justify-center pr-4 text-right">
                         <h5
@@ -53,23 +53,25 @@ const GoalStep: React.FC<GoalStepProps> = ({
                         </p>
                     </div>
                 )}
-                <button>
-                    {goalState === 'enable' ? (
-                        <EnableIcon />
-                    ) : goalState === 'complete' ? (
-                        <CompleteIcon />
-                    ) : (
-                        <div className="relative">
-                            <BubbleIcon className="absolute top-[-10%] left-[50%] translate-x-[-50%] translate-y-[-50%] transform" />
-                            <button
-                                className="cursor-pointer"
-                                onClick={onNavigate}
-                            >
-                                <GoalIcon />
-                            </button>
-                        </div>
-                    )}
-                </button>
+                {goalState === 'goal' ? (
+                    <button
+                        type="button"
+                        className="relative cursor-pointer"
+                        onClick={() => onNavigate?.()}
+                        aria-label="목표로 이동"
+                    >
+                        <BubbleIcon className="absolute top-[-10%] left-[50%] translate-x-[-50%] translate-y-[-50%] transform" />
+                        <GoalIcon />
+                    </button>
+                ) : (
+                    <div aria-hidden="true">
+                        {goalState === 'enable' ? (
+                            <EnableIcon />
+                        ) : (
+                            <CompleteIcon />
+                        )}
+                    </div>
+                )}
                 {align !== 'right' && (
                     <div className="flex flex-col justify-center pl-4">
                         <h5
@@ -107,7 +109,11 @@ const GoalStep: React.FC<GoalStepProps> = ({
                                         goalState === 'complete' ? '8' : '5'
                                     }
                                     strokeLinecap="round"
-                                    strokeDasharray="10 15"
+                                    strokeDasharray={
+                                        goalState !== 'complete'
+                                            ? '10 15'
+                                            : undefined
+                                    }
                                 />
                             </g>
                         ) : (
