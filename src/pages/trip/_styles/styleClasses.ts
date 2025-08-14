@@ -1,7 +1,7 @@
 export const alignStyleClass = {
     left: 'justify-start pl-[1.25rem]',
     right: 'justify-end pr-[1.3rem]',
-    center: 'justify-center',
+    center: 'justify-center pl-[6.25rem]',
 } as const;
 
 export const goalStateNumberStyleClass = {
