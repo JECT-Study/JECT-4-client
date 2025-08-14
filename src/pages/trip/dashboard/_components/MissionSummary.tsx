@@ -10,7 +10,7 @@ interface MissionSummaryProps {
 
 const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
     return (
-        <section className="h-[7.825rem]">
+        <section className="">
             <div className="bg-plus-background flex shrink-0 flex-col rounded-xl p-4">
                 <div className="flex w-full items-center gap-1.5">
                     {missions.length ? (
@@ -32,15 +32,17 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                         </>
                     )}
                 </div>
-                <div className="flex h-13 overflow-x-hidden pt-5">
-                    {missions.map((mission, index) => (
-                        <SessionGraph
-                            key={mission.id}
-                            isCompleted={mission.isChecked}
-                            isLast={index === missions.length - 1}
-                        />
-                    ))}
-                </div>
+                {missions.length ? (
+                    <div className="flex h-13 overflow-x-hidden pt-5">
+                        {missions.map((mission, index) => (
+                            <SessionGraph
+                                key={mission.id}
+                                isCompleted={mission.isChecked}
+                                isLast={index === missions.length - 1}
+                            />
+                        ))}
+                    </div>
+                ) : undefined}
             </div>
         </section>
     );

@@ -64,20 +64,30 @@ const MissionListSection = ({
             )}
 
             {/* 미션 카드 리스트 */}
-            <div className="flex max-h-[60vh] flex-col gap-3.5 overflow-y-auto px-0.5 py-4">
-                {missions.map((mission) => (
-                    <MissionCard
-                        key={mission.id}
-                        label={mission.label}
-                        isEditing={mission.isEditing}
-                        isEditMode={isEditMode}
-                        isChecked={mission.isChecked}
-                        onChange={(value) => onUpdateLabel(mission.id, value)}
-                        onDelete={() => onDelete(mission.id)}
-                        onEditToggle={() => onToggleEdit(mission.id)}
-                        onToggleCheck={() => onToggleCheck(mission.id)}
-                    />
-                ))}
+            <div className="flex h-[calc(100vh-25rem)] flex-col gap-3.5 overflow-y-auto px-0.5 py-4">
+                {missions.length ? (
+                    missions.map((mission) => (
+                        <MissionCard
+                            key={mission.id}
+                            label={mission.label}
+                            isEditing={mission.isEditing}
+                            isEditMode={isEditMode}
+                            isChecked={mission.isChecked}
+                            onChange={(value) =>
+                                onUpdateLabel(mission.id, value)
+                            }
+                            onDelete={() => onDelete(mission.id)}
+                            onEditToggle={() => onToggleEdit(mission.id)}
+                            onToggleCheck={() => onToggleCheck(mission.id)}
+                        />
+                    ))
+                ) : (
+                    <div className="flex h-[calc(100vh-25rem)] items-center justify-center">
+                        <span className="text-body text-[#C6C5BF]">
+                            + 버튼을 눌러 미션을 추가할 수 있어요
+                        </span>
+                    </div>
+                )}
             </div>
         </section>
     );

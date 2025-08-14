@@ -21,16 +21,7 @@ export default function DashboardPage() {
         updateLabel,
         deleteMission,
         addMission,
-    } = useDashboardMissions([
-        { id: 1, label: '문제 유형 파악', isEditing: false, isChecked: false },
-        { id: 2, label: '오답 분석', isEditing: false, isChecked: false },
-        {
-            id: 3,
-            label: '핵심 어휘 및 표현 정리',
-            isEditing: false,
-            isChecked: false,
-        },
-    ]);
+    } = useDashboardMissions([]);
 
     return (
         <div className="relative flex min-h-screen flex-col">
@@ -40,7 +31,7 @@ export default function DashboardPage() {
             </div>
 
             {/* 콘텐츠 */}
-            <div className="flex-1 overflow-y-auto pt-3 pb-28">
+            <div className="flex-1 overflow-y-auto pt-3">
                 <MissionSummary
                     missions={missions}
                     checkedCount={checkedCount}
@@ -60,7 +51,7 @@ export default function DashboardPage() {
             </div>
 
             {/* 하단 버튼 */}
-            <div className="fixed bottom-0 w-[21.875rem] pb-6">
+            <div className="pb-6">
                 <MainButton
                     onClick={() => navigate('/pomodoro')}
                     colorClass="bg-text-sub"
