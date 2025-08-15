@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import ArrowIcon from '../../assets/icons/arrow.svg?react';
 import StatCard from './StatCard';
 import SettingList from './SettingList';
 import ConfirmModal from '../../components/common/ConfirmModal';
+
+import { useAtom } from 'jotai';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 const stats = [
     { label: '탐험형', count: 8 },
@@ -16,6 +19,14 @@ const SettingsPage = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // 유저이름 불러오기
+    const [userName] = useAtom(memberNameAtom);
+    const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    useEffect(() => {
+        fetchMemberName();
+    }, [fetchMemberName]);
+
     const handleLogout = async () => {
         setIsModalOpen(false);
         try {
@@ -24,7 +35,7 @@ const SettingsPage = () => {
                 refreshToken: localStorage.getItem('refreshToken'),
             });
 
-            console.log('로그아웃 성공', response);
+            console.log('로그아웃 성공');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.setItem('loginCheck', 'false');
@@ -40,7 +51,7 @@ const SettingsPage = () => {
             <div className="relative z-10 flex w-full justify-between py-24 text-white">
                 <div>
                     <div className="text-title mb-3">
-                        ㅇㅇ님,
+                        {userName}님,
                         <br />
                         안녕하세요.
                     </div>

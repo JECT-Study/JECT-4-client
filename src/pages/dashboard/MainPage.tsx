@@ -1,35 +1,131 @@
 // 셋업 이후 메인 화면
 import MainTabButton from './MainTabButton';
 import MainCardButton from './MainCardButton';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import api from '@lib/axios'; // axios 인스턴스
 
 import ConfirmModal from '../../components/common/ConfirmModal';
 
-const travelList = [
-    {
-        id: '1',
-        title: '토익 900점 달성',
-        memo: 'RC PART III 까지',
-        progress: 72,
-        leftDays: 5,
-    },
-    {
-        id: '2',
-        title: '전공수업 과제제출',
-        memo: '프로그래밍 과제 제출',
-        progress: 52,
-        leftDays: 3,
-    },
-];
+interface Travel {
+    id: number;
+    title: string;
+    memo: string;
+    progress: number;
+    leftDays: number;
+    tripCategory: string;
+}
+
+const PAGE_SIZE = 10;
 
 const MainPage = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
+    const [modalType, setModalType] = useState<
+        'newTravel' | 'deleteTravel' | null
+    >(null);
+    const [targetTravelId, setTargetTravelId] = useState<number | null>(null);
 
-    const handleDelete = (id: string) => {
-        console.log(`여행 ${id} 삭제`);
+    const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
+    const [travelList, setTravelList] = useState<Travel[]>([]);
+    const [page, setPage] = useState(0);
+    const [isFetching, setIsFetching] = useState(false);
+    const [hasNext, setHasNext] = useState(true);
+    const observer = useRef<IntersectionObserver | null>(null);
+    const fetchedOnce = useRef(false);
+
+    // 무한 스크롤 구현
+    const fetchTravels = useCallback(
+        async (currentPage: number, reset = false) => {
+            if (isFetching || (!hasNext && !reset)) return;
+            setIsFetching(true);
+
+            try {
+                const response = await api.get('/trips', {
+                    params: { page: currentPage, size: PAGE_SIZE },
+                });
+
+                const tripInfos = response.data.data.tripInfos;
+                console.log('여행 목록 불러오기 성공:', tripInfos);
+                const nextExists = response.data.data.hasNext;
+
+                const mappedTravels: Travel[] = tripInfos.map((trip: any) => ({
+                    id: trip.tripId,
+                    title: trip.tripName,
+                    memo: trip.tripMemo,
+                    progress: trip.progress,
+                    leftDays: trip.dDay,
+                    tripCategory: trip.tripCategory,
+                }));
+
+                setTravelList((prev) =>
+                    reset ? mappedTravels : [...prev, ...mappedTravels]
+                );
+                setHasNext(nextExists);
+            } catch (error) {
+                console.error('여행 목록 불러오기 실패:', error);
+            } finally {
+                setIsFetching(false);
+            }
+        },
+        [isFetching, hasNext]
+    );
+
+    useEffect(() => {
+        if (fetchedOnce.current) return;
+        fetchTravels(0, true);
+        fetchedOnce.current = true;
+    }, [fetchTravels]);
+
+    // 마지막 요소에 ref 연결
+    const lastTravelRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            if (isFetching) return;
+            if (observer.current) observer.current.disconnect();
+
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasNext && !isFetching) {
+                    setPage((prev) => prev + 1);
+                }
+            });
+
+            if (node) observer.current.observe(node);
+        },
+        [hasNext, isFetching]
+    );
+
+    // 모달 열기
+    const openDeleteModal = (id: number) => {
+        setTargetTravelId(id);
+        setModalType('deleteTravel');
+        setIsModalOpen(true);
+    };
+
+    const openNewTravelModal = () => {
+        setModalType('newTravel');
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (!targetTravelId) return;
+        console.log(`여행 ${targetTravelId} 삭제`);
+        // 모달 닫기 먼저
+        setIsModalOpen(false);
+        try {
+            const response = await api.delete(`/trips/${targetTravelId}`);
+
+            setTravelList([]);
+            setPage(0);
+            setHasNext(true);
+            setIsFetching(false);
+            fetchTravels(0, true);
+        } catch (error) {
+            console.warn('여행 삭제 실패', error);
+        } finally {
+            setTargetTravelId(null);
+            setModalType(null);
+        }
     };
 
     return (
@@ -48,7 +144,7 @@ const MainPage = () => {
                 </div>
                 <div className="flex cursor-pointer flex-col gap-4">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => openNewTravelModal()}
                         className="bg-plus-background text-text-sub flex w-full justify-center rounded-xl border py-6"
                     >
                         <svg
@@ -73,31 +169,66 @@ const MainPage = () => {
                         </svg>
                     </button>
                     <div className="flex flex-col gap-3">
-                        {travelList.map((travel) => (
-                            <MainCardButton
-                                key={travel.id}
-                                travel={travel}
-                                isEditMode={isEditMode}
-                                onDelete={() => handleDelete(travel.id)}
-                            />
-                        ))}
+                        {travelList.map((travel, index) => {
+                            const isLast = index === travelList.length - 1;
+                            return (
+                                <div
+                                    key={travel.id}
+                                    ref={isLast ? lastTravelRef : null}
+                                >
+                                    <MainCardButton
+                                        travel={travel}
+                                        isEditMode={isEditMode}
+                                        onClick={() => {
+                                            if (isEditMode) return;
+                                            navigate(
+                                                `/trip/dashboard/${travel.id}`
+                                            );
+                                        }}
+                                        onDelete={() =>
+                                            openDeleteModal(travel.id)
+                                        }
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
             <ConfirmModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onConfirm={() => {
-                    setIsModalOpen(false);
-                    navigate('/set-travel-type');
-                }}
+                onConfirm={
+                    modalType === 'newTravel'
+                        ? () => {
+                              setIsModalOpen(false);
+                              navigate('/set-travel-type');
+                          }
+                        : handleDelete
+                }
                 title={
-                    <div className="text-subtitle text-secondary flex flex-col items-center px-8 text-center font-semibold">
-                        새로운 여행을 시작하시겠습니까?
-                    </div>
+                    modalType === 'newTravel' ? (
+                        <div className="text-subtitle text-secondary flex flex-col items-center px-8 text-center font-semibold">
+                            새로운 여행을 시작하시겠습니까?
+                        </div>
+                    ) : (
+                        <div className="text-subtitle text-secondary flex flex-col items-center px-8 text-center font-semibold">
+                            여행을 삭제하시겠습니까?
+                        </div>
+                    )
                 }
                 children={
-                    <div>스터디트립과 함께 새로운 여행을 시작해보아요!</div>
+                    <div>
+                        {modalType === 'newTravel' ? (
+                            <div>
+                                스터디트립과 함께 새로운 여행을 시작해보아요!
+                            </div>
+                        ) : (
+                            <div>
+                                여행에 등록된 모든 일정과 미션이 삭제됩니다.
+                            </div>
+                        )}
+                    </div>
                 }
             />
         </div>

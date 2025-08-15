@@ -1,9 +1,22 @@
 import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+
 import BackHeader from '../../components/common/BackHeaderLayout';
 import MainButton from '../../components/common/button/MainButton';
 import api from '../../lib/axios';
 
+import { useAtom } from 'jotai';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+
 const WithdrawalPage = () => {
+    // 유저이름 불러오기
+    const [userName] = useAtom(memberNameAtom);
+    const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    useEffect(() => {
+        fetchMemberName();
+    }, [fetchMemberName]);
+
     const handleWithdrawal = async () => {
         try {
             const response = await api.delete('/members/me');
@@ -24,7 +37,7 @@ const WithdrawalPage = () => {
             <div className="flex min-h-screen w-full flex-col justify-between pb-14">
                 <div className="pt-20">
                     <div className="text-body py-4 font-semibold">
-                        ㅇㅇ님과 이별하기 너무 아쉬워요.
+                        {userName}님과 이별하기 너무 아쉬워요.
                     </div>
                     <div className="text-small">
                         계정을 삭제하면 지금까지 만들어 온 모든 여행 기록들이

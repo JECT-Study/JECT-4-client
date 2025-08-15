@@ -1,6 +1,9 @@
 import ReactDOM from 'react-dom';
 import { useEffect } from 'react';
 
+import { useAtom } from 'jotai';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -11,6 +14,14 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, onConfirm, children }: ModalProps) => {
+    // 유저이름 불러오기
+    const [userName] = useAtom(memberNameAtom);
+    const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    useEffect(() => {
+        fetchMemberName();
+    }, [fetchMemberName]);
+
     useEffect(() => {
         if (isOpen) document.body.style.overflow = 'hidden';
         else document.body.style.overflow = '';
@@ -31,7 +42,7 @@ const Modal = ({ isOpen, onClose, onConfirm, children }: ModalProps) => {
             >
                 <div className="text-subtitle text-secondary flex flex-col items-center pt-4 text-center">
                     <div className="px-8">
-                        ㅇㅇ님의 여정이 완성되었어요!
+                        {userName}님의 여정이 완성되었어요!
                         <br />
                         <span className="text-text-sub">ㅇㅇ 여행</span>을
                         시작해볼까요?

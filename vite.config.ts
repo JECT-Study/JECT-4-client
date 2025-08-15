@@ -27,6 +27,7 @@ export default defineConfig({
             '@services': path.resolve(__dirname, 'src/services'),
             '@store': path.resolve(__dirname, 'src/store'),
             '@types': path.resolve(__dirname, 'src/types'),
+            '@lib': path.resolve(__dirname, 'src/lib'),
         },
     },
     plugins: [

@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BackHeader from '../../components/common/BackHeaderLayout';
 //import PhotoIcon from '../../assets/icons/photo.svg?react';
 import ClearableInput from '../../components/common/input/ClearableInput';
 import MainButton from '../../components/common/button/MainButton';
 
+import { useAtom } from 'jotai';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+
 const UserPage = () => {
-    const [nickname, setNickname] = useState('');
+    // 유저이름 불러오기
+    const [userName] = useAtom(memberNameAtom);
+    const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    useEffect(() => {
+        fetchMemberName();
+    }, [fetchMemberName]);
+    const [nickname, setNickname] = useState(userName || '');
+
     return (
         <div>
             <BackHeader title="프로필 관리" />

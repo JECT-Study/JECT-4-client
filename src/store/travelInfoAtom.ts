@@ -11,7 +11,7 @@ export interface TravelInfo {
     name: string;
     memo: string;
     category: Category;
-    endDate: string; // yyyy-MM-dd 형식
+    endDate: string;
     stamps: Stamp[];
 }
 
@@ -20,10 +20,5 @@ export const travelInfoAtom = atom<TravelInfo>({
     memo: '',
     category: 'COURSE',
     endDate: '', // 기본값
-    stamps: [
-        {
-            name: '',
-            order: 0,
-        },
-    ],
+    stamps: [],
 });

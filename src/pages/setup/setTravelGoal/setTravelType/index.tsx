@@ -1,9 +1,20 @@
+import { useEffect } from 'react';
+
 import SetTravelHeader from '../_components/SetTravelHeader';
 import TravelTypeList from './TravelTypeList';
 
+import { useAtom } from 'jotai';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+
 // 로그인 이후 api 응답에서 userName 받아오기
 const SetTravelTypePage = () => {
-    const userName = '수진';
+    // 유저이름 불러오기
+    const [userName] = useAtom(memberNameAtom);
+    const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    useEffect(() => {
+        fetchMemberName();
+    }, [fetchMemberName]);
 
     return (
         <div className="text-text-min pt-6">

@@ -5,10 +5,7 @@ import SetTravelHeader from '../_components/SetTravelHeader';
 import SetTravelNameForm from './SetTravelNameForm';
 
 import { useAtom } from 'jotai';
-import {
-    memberNameAtom,
-    fetchMemberNameAtom,
-} from '../../../../store/userInfoAtom';
+import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 type travelType = 'course' | 'explore';
 

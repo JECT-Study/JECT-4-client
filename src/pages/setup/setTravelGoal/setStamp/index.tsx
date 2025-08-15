@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from './StampModal';
 import BackHeader from '../../../../components/common/BackHeaderLayout';
 import MainButton from '../../../../components/common/button/MainButton';
 import SetStampCard from './SetStampCard';
 import MissionList from './MissionList';
+
+import api from '@lib/axios';
+
+import { useSetAtom, useAtomValue } from 'jotai';
+import { travelInfoAtom, Stamp } from '@store/travelInfoAtom';
 
 interface Item {
     id: string;
@@ -12,21 +18,45 @@ interface Item {
 }
 
 const SetStampLinearPage = () => {
+    const navigate = useNavigate();
     const [items, setItems] = useState<Item[]>([]);
     const isNextDisabled = false;
     const [isOpen, setIsOpen] = useState(false);
+    const setTravelInfo = useSetAtom(travelInfoAtom);
+    const prevTravelInfo = useAtomValue(travelInfoAtom);
 
     const filteredMissions = items
         .filter((item) => item.text.trim() !== '')
         .map((item) => item.text);
 
-    const handleConfirm = () => {
-        console.log('확인 클릭됨');
+    const handleConfirm = async () => {
+        const stamps: Stamp[] = filteredMissions.map((text, index) => ({
+            name: text,
+            order: index + 1,
+        }));
+
+        const travelInfo = { ...prevTravelInfo, stamps: stamps };
+
+        setTravelInfo(() => ({
+            ...prevTravelInfo,
+            stamps, // 기존 stamps 대신 현재 items로 업데이트
+        }));
+
+        try {
+            const response = await api.post('/trips', travelInfo);
+
+            console.log('여행 생성 성공');
+
+            navigate('/main', { replace: true });
+        } catch (error) {
+            console.error('API 호출 실패:', error);
+            alert('서버 요청 중 오류가 발생했습니다.');
+        }
+
         setIsOpen(false);
     };
 
     const handleCancel = () => {
-        console.log('취소 클릭됨');
         setIsOpen(false);
     };
     return (

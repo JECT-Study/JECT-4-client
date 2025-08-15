@@ -15,7 +15,8 @@
             "@hooks/*": ["hooks/*"],
             "@services/*": ["services/*"],
             "@store/*": ["store/*"],
-            "@types/*": ["types/*"]
+            "@types/*": ["types/*"],
+            "@lib/*": ["lib/*"]
         }
     },
     "files": [],

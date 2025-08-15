@@ -1,12 +1,15 @@
 import { clsx } from 'clsx';
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router';
 import { getTodayDate } from '../../../../utils/date';
 import CalendarIcon from '../../../../assets/icons/calendar_icon.svg';
+
+import { useSetAtom, useAtomValue } from 'jotai';
+import { travelInfoAtom, TravelInfo } from '@store/travelInfoAtom';
 
 interface SetTravelNameFormProps {
     travelType: 'course' | 'explore';
@@ -18,15 +21,32 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
         explore: '* 선택사항입니다.',
     };
 
-    const [travelName, setTravelName] = useState('');
+    const navigate = useNavigate();
 
-    const [endDate, setEndDate] = useState<Date | null>(null); // 최종 저장값
+    const travelInfo = useAtomValue(travelInfoAtom);
+
+    const [travelName, setTravelName] = useState(travelInfo.name);
+    const [endDate, setEndDate] = useState<Date | null>(
+        travelInfo.endDate ? parseISO(travelInfo.endDate) : null
+    ); // 최종 저장값
+    const [memo, setMemo] = useState(travelInfo.memo);
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
     const isDisabled = travelName.trim() === '';
-    const navigate = useNavigate();
+    const setTravelInfo = useSetAtom(travelInfoAtom);
 
-    const handleFormSubmit = () => {
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        setTravelInfo((prev: TravelInfo) => ({
+            ...prev,
+            name: travelName,
+            memo: memo,
+            category: travelType === 'course' ? 'COURSE' : 'EXPLORE',
+            endDate: endDate ? format(endDate, 'yyyy-MM-dd') : '',
+            // stamps는 여기서 건드리지 않음
+        }));
+
         navigate('/set-stamp-linear'); // 스탬프 설정 (선형) 페이지 이동
     };
 
@@ -46,7 +66,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
     // 여행 정보 저장하기
 
     return (
-        <form className="mt-10 flex flex-col gap-3">
+        <form onSubmit={handleFormSubmit} className="mt-10 flex flex-col gap-3">
             {/* 여행 출발일 필드 (자동) */}
             <div className="flex flex-col gap-2">
                 <label className="text-small text-secondary opacity-60">
@@ -136,6 +156,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                 </label>
                 <input
                     id="travel-name"
+                    value={travelName}
                     onChange={(e) => setTravelName(e.target.value)}
                     className="text-subtitle text-text-sub text-placeholder:text-subtitle placeholder:text-text-min border-input-sub bg-input-focus h-[50px] rounded-md border py-2.5 pl-[15px] placeholder:opacity-40 focus:bg-white"
                 />
@@ -151,14 +172,16 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                 </label>
                 <textarea
                     id="memo"
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
                     placeholder="꼭 지켜야 할 내용을 작성해 주세요. "
                     className="text-text-sub text-body placeholder:text-body placeholder:text-text-min border-input-sub bg-input-focus h-25 rounded-md border pt-[11px] pl-[15px] placeholder:opacity-40 focus:bg-white"
                 />
             </div>
 
             <button
+                type="submit"
                 disabled={isDisabled}
-                onClick={handleFormSubmit}
                 className={clsx(
                     'flex h-12 w-full cursor-pointer items-center justify-center rounded-lg text-white',
                     isDisabled ? 'bg-primary/70' : 'bg-primary'

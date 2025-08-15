@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Input from '../../../components/common/input/ClearableInput';
-import MainButton from '../../../components/common/button/MainButton';
+import MainButton from '@components/common/button/MainButton';
 
 import { useAtom } from 'jotai';
-import { userInfoAtom } from '../../../store/signupUserInfoAtom';
+import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
 // const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,10}$/;
 
 function SetNamePage() {
     const [nickname, setNickname] = useState('');
 
-    const [userInfo, setUserInfo] = useAtom(userInfoAtom);
+    const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
 
     const handleSubmit = () => {
         if (nickname) {

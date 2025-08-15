@@ -2,13 +2,13 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import { userInfoAtom } from '../../../store/signupUserInfoAtom';
+import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
 function KakaoLoginAccessPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code');
-    const [, setUserInfo] = useAtom(userInfoAtom);
+    const [, setUserInfo] = useAtom(signupUserInfoAtom);
 
     const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
     const K_REDIRECT_URI = window.location.origin + '/auth/callback/kakao';
@@ -29,7 +29,6 @@ function KakaoLoginAccessPage() {
                     const response = await axios.post('/api/auth/login/kakao', {
                         code,
                     });
-                    debugger;
 
                     // 로그인 성공 시 토큰 저장 후 메인 페이지 이동
                     localStorage.setItem(
@@ -41,14 +40,13 @@ function KakaoLoginAccessPage() {
                         response.data.data.refreshToken
                     );
 
-                    console.log('로그인 성공', response);
+                    console.log('로그인 성공');
                     localStorage.setItem('loginCheck', 'false');
                     navigate('/main', { replace: true });
                 } catch (error) {
                     console.warn('로그인 실패, 신규 회원 처리', error);
 
                     localStorage.setItem('loginCheck', 'true');
-                    debugger;
                     window.location.href = kakaoURL;
                 }
             } else {

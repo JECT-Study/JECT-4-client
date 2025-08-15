@@ -4,7 +4,7 @@ import SelectButton from '../../../components/common/button/SelectButton';
 import MainButton from '../../../components/common/button/MainButton';
 
 import { useAtom } from 'jotai';
-import { userInfoAtom } from '../../../store/signupUserInfoAtom';
+import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
 import axios from 'axios';
 
@@ -13,7 +13,7 @@ function SetJobPage() {
     const navigate = useNavigate();
     const isNextDisabled = !selected;
 
-    const [userInfo, setUserInfo] = useAtom(userInfoAtom);
+    const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
 
     const handleSelect = (value: string) => {
         setSelected(value);
@@ -25,7 +25,6 @@ function SetJobPage() {
         const updatedUserInfo = { ...userInfo, category: selected };
 
         setUserInfo(updatedUserInfo);
-        debugger;
 
         try {
             const response = await axios.post(
@@ -33,7 +32,7 @@ function SetJobPage() {
                 updatedUserInfo
             );
 
-            console.log('서버 응답:', response.data);
+            console.log('회원가입 성공');
 
             // 3. 성공 시 메인 페이지로 이동
             localStorage.setItem('accessToken', response.data.accessToken);
