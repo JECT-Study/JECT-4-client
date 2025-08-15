@@ -24,7 +24,7 @@ const TripPage = () => {
             align: 'right',
             pathDirection: 'flipped',
             goalState: 'goal',
-            onNavigate: () => navigate('/trip/dashboard'),
+            onNavigate: () => navigate('/trip/dashboard/2'),
         },
         {
             sequence: '04',

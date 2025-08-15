@@ -62,7 +62,7 @@ const Router = () => {
                     {/* 세팅 페이지 */}
                     <Route path="/settings" element={<SettingsPage />} />
                     {/* 여행 코스 페이지 */}
-                    <Route path="/trip" element={<TripPage />} />
+                    <Route path="/trip/:tripId" element={<TripPage />} />
                 </Route>
                 {/* 세팅 내부 페이지들 */}
                 <Route path="/settings/user" element={<UserPage />} />
