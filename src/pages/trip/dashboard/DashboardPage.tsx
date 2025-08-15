@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
     const handleConfirm = () => {
         setOpen(false);
-        navigate('/pomodoro');
+        navigate('/pomodoro', { state: { time } });
     };
 
     return (

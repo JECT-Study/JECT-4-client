@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import BackHeader from '../../components/common/BackHeaderLayout';
@@ -19,7 +19,14 @@ const TripPage = () => {
         return Number.isFinite(number) && number > 0 ? number : null;
     }, [tripIdParam]);
 
-    if (tripId === null) alert('잘못된 여행 id입니다.');
+    useEffect(() => {
+        if (tripId === null) {
+            alert('잘못된 여행 id입니다.');
+            navigate(-1);
+        }
+    }, [tripId, navigate]);
+
+    if (tripId === null) return null;
 
     const { data, isLoading, isError } = useTripDetail(tripId);
 
@@ -80,6 +87,7 @@ const TripPage = () => {
         return <div>여행 정보를 로드 중이에요....</div>;
     }
 
+    /* alert 사이드 이펙트 방지를 위해 추후 오류 UI 반환 필요 */
     if (isError) alert('여행 정보를 불러오지 못했어요.');
 
     return (

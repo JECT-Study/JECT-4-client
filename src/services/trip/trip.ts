@@ -23,11 +23,19 @@ export interface TripDetail {
 }
 
 export const fetchTripDetail = async (tripId: number): Promise<TripDetail> => {
-    const { data } = await api.get(`/trips/${tripId}`);
+    try {
+        const { data } = await api.get<{ data: TripDetail }>(
+            `/trips/${tripId}`
+        );
 
-    if (data.status !== 200) {
-        throw new Error('해당하는 여행을 찾을 수 없습니다.');
+        return data.data;
+    } catch (error: unknown) {
+        if ((error as any)?.response?.status === 404) {
+            throw new Error('해당하는 여행을 찾을 수 없습니다.');
+        }
+
+        throw new Error(
+            '여행 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
+        );
     }
-
-    return data.data;
 };

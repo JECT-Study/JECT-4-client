@@ -63,7 +63,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
 
     return (
         <div className="flex flex-col">
-            <div className={`flex ${alignStyleClass[align]} pl-24`}>
+            <div className={`flex ${alignStyleClass[align]}`}>
                 {align === 'right' && <>{titleAlign('pr-4 text-right')}</>}
                 {goalState === 'goal' ? (
                     <button
@@ -76,7 +76,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
                         <GoalIcon />
                     </button>
                 ) : (
-                    <button aria-hidden="true">
+                    <button disabled aria-disabled tabIndex={-1}>
                         {goalState === 'enable' ? (
                             <EnableIcon />
                         ) : (
