@@ -78,7 +78,7 @@ const Router = () => {
                 <Route path="/log" element={<LogPage />} />
 
                 <Route
-                    path="/trip/dashboard/:tripId"
+                    path="/trip/:tripId/dashboard"
                     element={<DashboardPage />}
                 />
 
