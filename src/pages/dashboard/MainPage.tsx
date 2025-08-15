@@ -181,9 +181,7 @@ const MainPage = () => {
                                         isEditMode={isEditMode}
                                         onClick={() => {
                                             if (isEditMode) return;
-                                            navigate(
-                                                `/trip/dashboard/${travel.id}`
-                                            );
+                                            navigate(`/trip/${travel.id}`);
                                         }}
                                         onDelete={() =>
                                             openDeleteModal(travel.id)
