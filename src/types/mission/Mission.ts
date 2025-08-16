@@ -8,9 +8,8 @@ export interface MissionMutationProps {
 export type Ids = Omit<MissionMutationProps, 'missionContent'>;
 
 export interface MissionItem {
-    missionId: number;
+    missionId: number | string;
     missionName: string;
-    missionOrder: number;
     completed: boolean;
     isEditing: boolean;
     isChecked: boolean;

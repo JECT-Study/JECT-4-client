@@ -1,7 +1,9 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
+
 import { type MissionItem } from '../../../../types/mission/Mission';
 import useDeleteMission from '../../../../hooks/mission/useDeleteMission';
 import usePatchMission from '../../../../hooks/mission/usePatchMission';
+import useCreateMission from '../../../../hooks/mission/useCreateMission';
 
 export const useDashboardMissions = (
     tripId: number,
@@ -18,6 +20,7 @@ export const useDashboardMissions = (
 
     const { mutateDeleteMission } = useDeleteMission();
     const { mutatePatchMission } = usePatchMission();
+    const { mutateCreateMission } = useCreateMission();
 
     useEffect(() => {
         if (initialFetchedMissions) {
@@ -25,7 +28,6 @@ export const useDashboardMissions = (
                 (m) => ({
                     missionId: m.missionId,
                     missionName: m.missionName,
-                    missionOrder: m.missionOrder,
                     completed: m.completed,
                     isEditing: false,
                     isChecked: false,
@@ -124,13 +126,21 @@ export const useDashboardMissions = (
         [tripId, stampId]
     );
 
-    // ✅ 미션 추가 API 호출
+    // 미션 추가 API 호출
+    const addMission = useCallback(() => {
+        mutateCreateMission({
+            tripId,
+            stampId,
+            missionContent: { missionName: '' },
+        });
+    }, [mutateCreateMission, tripId, stampId]);
 
     return {
         missions,
         allChecked,
         checkedCount,
         checkedMissionIds,
+        addMission,
         updateLabel,
         deleteMission,
         toggleCheck,

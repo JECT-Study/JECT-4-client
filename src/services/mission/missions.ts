@@ -4,6 +4,29 @@ import type {
     ServerMissionItem,
 } from '../../types/mission/Mission';
 
+export const createMissions = async (
+    tripId: number,
+    stampId: number,
+    missionContent: MissionContent
+) => {
+    try {
+        const { data } = await api.post(
+            `/trips/${tripId}/stamps/${stampId}/missions`,
+            missionContent
+        );
+
+        return data.data;
+    } catch (error: unknown) {
+        if ((error as any)?.response.status === 404) {
+            throw new Error('미션을 생성할 수 없습니다.');
+        }
+
+        throw new Error(
+            '미션 생성에 실패했습니다. 잠시 후에 다시 시도해 주세요.'
+        );
+    }
+};
+
 export const fetchMissions = async (
     tripId: number,
     stampId: number

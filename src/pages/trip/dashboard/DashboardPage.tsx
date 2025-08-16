@@ -58,6 +58,7 @@ export default function DashboardPage() {
         allChecked,
         checkedCount,
         checkedMissionIds,
+        addMission,
         updateLabel,
         deleteMission,
         toggleCheck,
@@ -99,10 +100,13 @@ export default function DashboardPage() {
                     checkedCount={checkedCount}
                 />
                 <MissionListSection
+                    tripId={id.tripId!}
+                    stampId={id.stampId!}
                     missions={missions}
                     allChecked={allChecked}
                     checkedCount={checkedCount}
                     isEditMode={isEditMode}
+                    addMission={addMission}
                     onToggleEditMode={() => setIsEditMode((prev) => !prev)}
                     onUpdateLabel={updateLabel}
                     onDelete={deleteMission}
