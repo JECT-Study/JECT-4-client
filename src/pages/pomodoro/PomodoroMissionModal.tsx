@@ -4,7 +4,6 @@ import PomodoroMissionItem from './PomodoroMissionItem';
 interface DailyMission {
     dailyMissionId: number;
     missionName: string;
-    missionMemo: string;
 }
 
 type Props = {
@@ -55,7 +54,6 @@ const PomodoroMissionModal = ({
                         key={mission.dailyMissionId}
                         id={mission.dailyMissionId}
                         name={mission.missionName}
-                        memo={mission.missionMemo}
                         checked={checkedIds.includes(mission.dailyMissionId)} // ✅ 체크 상태 전달
                         onToggle={() => handleToggle(mission.dailyMissionId)} // ✅ 클릭 핸들러
                     />

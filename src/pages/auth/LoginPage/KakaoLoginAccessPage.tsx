@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect } from 'react';
-import axios from 'axios';
+import api from '@lib/axios';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
@@ -26,7 +26,7 @@ function KakaoLoginAccessPage() {
             // 로그인 api 호출 여부 확인
             if (localStorage.getItem('loginCheck') !== 'true') {
                 try {
-                    const response = await axios.post('/api/auth/login/kakao', {
+                    const response = await api.post('/auth/login/kakao', {
                         code,
                     });
 

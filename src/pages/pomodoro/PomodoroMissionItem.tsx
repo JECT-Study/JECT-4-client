@@ -1,7 +1,6 @@
 type missionProps = {
     id: number;
     name: string;
-    memo: string;
     checked: boolean;
     onToggle: () => void;
 };

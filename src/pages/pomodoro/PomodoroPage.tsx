@@ -16,7 +16,6 @@ interface Pomodoro {
 interface DailyMission {
     dailyMissionId: number;
     missionName: string;
-    missionMemo: string;
 }
 
 interface DailyGoal {

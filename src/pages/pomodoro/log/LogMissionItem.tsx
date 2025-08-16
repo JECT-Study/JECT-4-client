@@ -1,7 +1,6 @@
 interface LogMissionItemProps {
     id: number;
     name: string;
-    memo?: string;
     checked: boolean;
     onToggle: (id: number) => void;
 }

@@ -11,7 +11,6 @@ import LogMissionItem from './LogMissionItem';
 interface DailyMission {
     dailyMissionId: number;
     missionName: string;
-    missionMemo: string;
     checked: boolean;
 }
 
