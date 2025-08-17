@@ -1,3 +1,4 @@
+import { useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -7,6 +8,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../components/common/button/MainButton';
 import LogMissionItem from './LogMissionItem';
+import { missionsAtom } from '../../../store/mission';
 
 interface DailyMission {
     dailyMissionId: number;
@@ -15,6 +17,8 @@ interface DailyMission {
 }
 
 const LogPage = () => {
+    const setMissions = useSetAtom(missionsAtom);
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -69,6 +73,16 @@ const LogPage = () => {
                     selectedDailyMissionIds: checkedIds,
                     content: text,
                 }
+            );
+
+            setMissions((prevMissions) =>
+                prevMissions.map((mission) => {
+                    if (checkedIds.includes(Number(mission.missionId))) {
+                        return { ...mission, completed: true, isChecked: true };
+                    }
+
+                    return mission;
+                })
             );
 
             alert('공부 기록이 생성되었습니다.');
