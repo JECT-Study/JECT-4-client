@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 
 import MissionListSection from './_components/MissionListSection';
@@ -21,11 +22,14 @@ import useCreateDailyGoal, {
 
 import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
 import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
+import { missionRefetchAtom } from '../../../store/mission';
 
 export default function DashboardPage() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
     const [time, setTime] = useState<TimeValue>({ minute: '30', session: '1' });
+
+    const [, setMissionRefetch] = useAtom(missionRefetchAtom);
 
     const navigate = useNavigate();
     const id = useVaildateId();
@@ -36,7 +40,12 @@ export default function DashboardPage() {
         data: fetchedMissions,
         isLoading: isMissionLoading,
         isError: isMissionError,
+        refetch,
     } = useMissionQuery(id.tripId!, id.stampId!);
+
+    useEffect(() => {
+        setMissionRefetch(() => refetch);
+    }, [refetch, setMissionRefetch]);
 
     const {
         data: fetchedStamp,
