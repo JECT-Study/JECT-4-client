@@ -34,7 +34,7 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                     )}
                 </div>
                 {missions.length ? (
-                    <div className="flex h-13 overflow-x-hidden pt-5">
+                    <div className="flex h-13 overflow-x-scroll pt-5 [&::-webkit-scrollbar]:hidden">
                         {missions.map((mission, index) => (
                             <SessionGraph
                                 key={mission.missionId}
