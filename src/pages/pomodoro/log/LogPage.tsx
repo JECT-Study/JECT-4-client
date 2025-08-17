@@ -1,5 +1,5 @@
-import { useSetAtom } from 'jotai';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import api from '@lib/axios';
@@ -8,7 +8,6 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../components/common/button/MainButton';
 import LogMissionItem from './LogMissionItem';
-import { missionsAtom } from '../../../store/mission';
 
 interface DailyMission {
     dailyMissionId: number;
@@ -17,12 +16,11 @@ interface DailyMission {
 }
 
 const LogPage = () => {
-    const setMissions = useSetAtom(missionsAtom);
-
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
-    const { tripId, dailyGoal } = location.state || {};
+    const { tripId, dailyGoal, stampId } = location.state || {};
     console.log(dailyGoal);
 
     if (!tripId || !dailyGoal) {
@@ -47,6 +45,7 @@ const LogPage = () => {
         const sec = Math.floor(seconds % 60);
         return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     };
+
     const timeSpent = formatTime(dailyGoal.elapsedTime);
 
     const [checkedIds, setCheckedIds] = useState<number[]>(() =>
@@ -75,15 +74,9 @@ const LogPage = () => {
                 }
             );
 
-            setMissions((prevMissions) =>
-                prevMissions.map((mission) => {
-                    if (checkedIds.includes(Number(mission.missionId))) {
-                        return { ...mission, completed: true, isChecked: true };
-                    }
-
-                    return mission;
-                })
-            );
+            queryClient.invalidateQueries({
+                queryKey: ['missions', tripId, stampId],
+            });
 
             alert('공부 기록이 생성되었습니다.');
 
