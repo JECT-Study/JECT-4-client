@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { format, parse } from 'date-fns';
+
 import Modal from './StampModal';
 import BackHeader from '../../../../components/common/BackHeaderLayout';
 import MainButton from '../../../../components/common/button/MainButton';
@@ -25,6 +28,8 @@ const SetStampLinearPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const setTravelInfo = useSetAtom(travelInfoAtom);
     const prevTravelInfo = useAtomValue(travelInfoAtom);
+
+    const today = new Date();
 
     const filteredMissions = items
         .filter((item) => item.text.trim() !== '')
@@ -84,6 +89,19 @@ const SetStampLinearPage = () => {
             </section>
             <Modal
                 stampName={prevTravelInfo.name}
+                startDate={today ? format(today, 'yyyy. MM. dd') : ''}
+                endDate={
+                    prevTravelInfo.endDate
+                        ? format(
+                              parse(
+                                  prevTravelInfo.endDate,
+                                  'yyyy-MM-dd',
+                                  new Date()
+                              ),
+                              'yyyy. MM. dd'
+                          )
+                        : ''
+                }
                 isOpen={isOpen}
                 onClose={handleCancel}
                 onConfirm={handleConfirm}
