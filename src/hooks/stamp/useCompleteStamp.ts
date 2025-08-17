@@ -1,7 +1,8 @@
+import { toast } from 'react-toastify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { completeStamp } from '../../services/stamp/stamps';
 import type { ResponseDTO, MutationStampProps } from '../../types/stamp';
-import { toast } from 'react-toastify';
 
 const useCompleteStamp = () => {
     const queryClient = useQueryClient();
@@ -16,7 +17,7 @@ const useCompleteStamp = () => {
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
-                queryKey: ['stamp', variables.tripId, variables.stampId],
+                queryKey: ['tripDetail', variables.tripId],
             });
         },
         onError: () => {
