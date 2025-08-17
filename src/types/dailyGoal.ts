@@ -5,7 +5,7 @@ interface PomodoroTimer {
 
 export interface DailyGoal {
     pomodoro: PomodoroTimer;
-    missionIds: number[];
+    missionIds: (number | string)[];
 }
 
 export interface MutationDailyGoalProps {
