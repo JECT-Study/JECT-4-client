@@ -81,11 +81,9 @@ const MissionListSection = ({
             {/* 헤더 영역 */}
             <div className="flex items-center justify-between">
                 <span className="text-body font-semibold">
-                    {allChecked
-                        ? '오늘의 미션을 모두 완료했어요!'
-                        : missions.length
-                          ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
-                          : '오늘의 미션을 먼저 설정해 주세요!'}
+                    {missions.length
+                        ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
+                        : '오늘의 미션을 먼저 설정해 주세요!'}
                 </span>
                 <div className="flex items-center gap-3">
                     <button
