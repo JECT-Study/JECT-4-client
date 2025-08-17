@@ -1,5 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect } from 'react';
+import { AxiosError } from 'axios';
+
 import api from '@lib/axios';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
@@ -41,9 +43,15 @@ function KakaoLoginAccessPage() {
                     );
 
                     console.log('로그인 성공');
+
                     localStorage.setItem('loginCheck', 'false');
                     navigate('/main', { replace: true });
                 } catch (error) {
+                    const err = error as AxiosError;
+                    if (err.response?.status === 404) {
+                        alert('로그인에 문제가 발생했습니다.');
+                        navigate('/', { replace: true });
+                    }
                     console.warn('로그인 실패, 신규 회원 처리', error);
 
                     localStorage.setItem('loginCheck', 'true');
