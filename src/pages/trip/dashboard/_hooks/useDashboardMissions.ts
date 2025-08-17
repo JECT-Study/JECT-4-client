@@ -166,8 +166,9 @@ export const useDashboardMissions = (
 
     const allCompletedMission = useMemo(
         () =>
+            missions.length !== 0 &&
             missions.filter((mission) => mission.completed).length ===
-            missions.length,
+                missions.length,
         [missions]
     );
 
