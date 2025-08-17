@@ -86,7 +86,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
                 )}
                 {align !== 'right' && <>{titleAlign('pl-4')}</>}
             </div>
-            <div className="flex justify-center pl-[0.25rem]">
+            <div className="flex justify-center">
                 {!isLast && (
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
