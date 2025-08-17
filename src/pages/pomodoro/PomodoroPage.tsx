@@ -19,7 +19,7 @@ interface DailyMission {
     missionName: string;
 }
 
-interface DailyGoal {
+interface nowDailyGoal {
     dailyGoalId: number;
     completed: boolean;
     title: string;
@@ -28,7 +28,7 @@ interface DailyGoal {
     dailyMissions: DailyMission[];
 }
 
-const defaultDailyGoal: DailyGoal = {
+const defaultDailyGoal: nowDailyGoal = {
     dailyGoalId: 0,
     completed: false,
     title: '스탬프 이름',
@@ -45,41 +45,48 @@ const PomodoroPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId, dailyGoalId } = location.state || {};
+    const { tripId, stampId, stampName, time, checkedMissionIds } =
+        location.state || {};
+    console.log(tripId, stampId, stampName, time, checkedMissionIds);
     const [dailyGoal, setDailyGoal] = useState(defaultDailyGoal);
     const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
     useEffect(() => {
-        const fetchDailyGoal = async () => {
+        const fetchMissions = async () => {
             try {
                 const response = await api.get(
-                    `/trips/${tripId}/daily-goals/${dailyGoalId}`
+                    `/trips/${tripId}/stamps/${stampId}/missions`
                 );
 
-                console.log('데일리 목표 불러오기 성공:', response.data.data);
-                setDailyGoal(response.data.data);
+                console.log('미션 목록 불러오기 성공:');
+                const missions = response.data.data; // 서버에서 받아온 전체 미션 목록
+                const selectedMissions = missions.filter((mission: any) =>
+                    checkedMissionIds.includes(mission.missionId)
+                );
+
+                setDailyGoal((prev) => ({
+                    ...prev,
+                    dailyMissions: selectedMissions, // checkedMissionIds에 해당하는 미션만 세팅
+                }));
             } catch (error) {
-                console.error('데일리 목표 불러오기 실패:', error);
+                console.error('미션 목록 불러오기 실패:', error);
             }
         };
-        fetchDailyGoal();
+        fetchMissions();
     }, []);
 
-    const totalTime =
-        dailyGoal.pomodoro.focusDurationInMinute *
-        dailyGoal.pomodoro.focusSessionCount *
-        60; // 전체시간
+    const totalTime = time.minute * time.session * 60; // 전체시간
     const [isRunning, setIsRunning] = useState(false); //타이머가 작동 중인지 여부
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
     const [isAutoStop, setIsAutoStop] = useState(false);
-    const [checkedMissionIds, setCheckedMissionIds] = useState<number[]>([]); //완료된 미션 객체 넘기기
+    const [nowCheckedMissionIds, setCheckedMissionIds] = useState<number[]>([]); //완료된 미션 객체 넘기기
 
     const intervalRef = useRef<number | null>(null);
     const elapsedTimeRef = useRef(0); //총 경과한 시간
     const [sessionElapsedTime, setSessionElapsedTime] = useState(0); //현재 세션에서 경과한 시간(초)
     const [currentSession, setCurrentSession] = useState(0); // 진행 중인 세션 번호
 
-    const sessionLength = dailyGoal.pomodoro.focusDurationInMinute * 60;
+    const sessionLength = time.minute * 60;
     const completedSessions = Math.ceil(elapsedTimeRef.current / sessionLength);
 
     const endingAction = () => {
@@ -96,7 +103,7 @@ const PomodoroPage = () => {
             elapsedTime: finalElapsedTime,
             dailyMissions: dailyGoal.dailyMissions.map((mission) => ({
                 ...mission,
-                checked: checkedMissionIds.includes(mission.dailyMissionId),
+                checked: nowCheckedMissionIds.includes(mission.dailyMissionId),
             })),
         };
 
@@ -119,8 +126,7 @@ const PomodoroPage = () => {
         intervalRef.current = window.setInterval(() => {
             const nowElapsed = Math.floor((Date.now() - start) / 1000); //현재 진행한 총 시간
             const nowSessionElapsed =
-                nowElapsed -
-                dailyGoal.pomodoro.focusDurationInMinute * 60 * currentSession;
+                nowElapsed - time.minute * 60 * currentSession;
             elapsedTimeRef.current = nowElapsed;
             setSessionElapsedTime(nowSessionElapsed);
 
@@ -139,6 +145,34 @@ const PomodoroPage = () => {
     }, [isRunning]);
 
     const handleStart = () => {
+        //데일리 목표 세팅
+        const postAndSetDailyGoal = async () => {
+            try {
+                const response = await api.post(
+                    `/trips/${tripId}/daily-goals`,
+                    {
+                        pomodoro: {
+                            focusDurationInMinute: Number(time.minute),
+                            focusSessionCount: Number(time.session),
+                        },
+                        missionIds: checkedMissionIds,
+                    }
+                );
+
+                console.log('데일리 목표 생성:');
+
+                const dailyGoalId = response.data.data.dailyGoalId;
+
+                const getResponse = await api.get(
+                    `/trips/${tripId}/daily-goals/${dailyGoalId}`
+                );
+                setDailyGoal(getResponse.data.data);
+            } catch (error) {
+                console.error('데일리 목표 불러오기 실패:', error);
+            }
+        };
+        postAndSetDailyGoal();
+
         setIsStarted(true);
         setIsRunning(true);
     };
@@ -167,7 +201,7 @@ const PomodoroPage = () => {
     return (
         <div>
             <BackHeader
-                title={!isStarted ? dailyGoal.title : ''}
+                title={!isStarted ? stampName : ''}
                 hideBackButton={isStarted}
             />
             <div className="flex flex-col items-center pt-20">
@@ -194,12 +228,10 @@ const PomodoroPage = () => {
 
                 <div className="mt-9 w-full">
                     <PomodoroMissionModal
-                        stampName={dailyGoal.title}
+                        stampName={stampName}
                         isStarted={isStarted}
                         isAutoStop={isAutoStop}
-                        focusDurationInMinute={
-                            dailyGoal.pomodoro.focusDurationInMinute
-                        }
+                        focusDurationInMinute={time.minute}
                         dailyMissions={dailyGoal.dailyMissions}
                         onCheckedChange={setCheckedMissionIds}
                     />

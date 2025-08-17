@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import MissionListSection from './_components/MissionListSection';
 import MissionSummary from './_components/MissionSummary';
@@ -21,9 +21,11 @@ import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
 import { missionRefetchAtom } from '../../../store/mission';
 
 export default function DashboardPage() {
+    const [searchParams] = useSearchParams();
+    const stampId = searchParams.get('stampId');
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
-    const [time, setTime] = useState<TimeValue>({ minute: '30', session: '1' });
+    const [time, setTime] = useState<TimeValue>({ minute: '25', session: '3' });
 
     const [, setMissionRefetch] = useAtom(missionRefetchAtom);
 
@@ -98,7 +100,10 @@ export default function DashboardPage() {
         navigate('/pomodoro', {
             state: {
                 time,
+                stampId: stampId,
+                stampName: fetchedStamp?.stampName,
                 tripId: id.tripId,
+                checkedMissionIds,
             },
         });
     };
