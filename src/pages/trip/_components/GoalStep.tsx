@@ -62,7 +62,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
     );
 
     return (
-        <div className="flex flex-col">
+        <div className="relative flex flex-col">
             <div className={`flex ${alignStyleClass[align]}`}>
                 {align === 'right' && <>{titleAlign('pr-4 text-right')}</>}
                 {goalState === 'goal' ? (
