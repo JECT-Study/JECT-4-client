@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import api from '@lib/axios';
@@ -8,6 +8,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../components/common/button/MainButton';
 import LogMissionItem from './LogMissionItem';
+import { missionRefetchAtom } from '../../../store/mission';
 
 interface DailyMission {
     dailyMissionId: number;
@@ -16,6 +17,8 @@ interface DailyMission {
 }
 
 const LogPage = () => {
+    const missionRefetch = useAtomValue(missionRefetchAtom);
+
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
@@ -74,9 +77,7 @@ const LogPage = () => {
                 }
             );
 
-            queryClient.invalidateQueries({
-                queryKey: ['missions', tripId, stampId],
-            });
+            if (missionRefetch) await missionRefetch();
 
             alert('공부 기록이 생성되었습니다.');
 

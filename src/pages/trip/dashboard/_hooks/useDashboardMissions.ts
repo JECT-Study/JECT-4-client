@@ -3,7 +3,10 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { missionsAtom } from '../../../../store/mission';
-import { type MissionItem } from '../../../../types/mission/Mission';
+import type {
+    MissionItem,
+    ServerMissionItem,
+} from '../../../../types/mission/Mission';
 import useDeleteMission from '../../../../hooks/mission/useDeleteMission';
 import usePatchMission from '../../../../hooks/mission/usePatchMission';
 import useCreateMission from '../../../../hooks/mission/useCreateMission';
@@ -11,9 +14,7 @@ import useCreateMission from '../../../../hooks/mission/useCreateMission';
 export const useDashboardMissions = (
     tripId: number,
     stampId: number,
-    initialFetchedMissions?:
-        | Omit<MissionItem, 'isEditing' | 'isChecked'>[]
-        | undefined
+    initialFetchedMissions?: ServerMissionItem[] | undefined
 ) => {
     const [missions, setMissions] = useAtom(missionsAtom);
     const [debouncedUpdate, setDebouncedUpdate] = useState<{
@@ -33,9 +34,10 @@ export const useDashboardMissions = (
                     missionName: m.missionName,
                     completed: m.completed,
                     isEditing: false,
-                    isChecked: false,
+                    isChecked: m.completed || false,
                 })
             );
+
             setMissions(convertedMissions);
         }
     }, [initialFetchedMissions, setMissions]);
