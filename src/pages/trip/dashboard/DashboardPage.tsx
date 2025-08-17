@@ -66,7 +66,7 @@ export default function DashboardPage() {
 
     const {
         missions,
-        allChecked,
+        allCompletedMission,
         checkedCount,
         checkedMissionIds,
         addMission,
@@ -118,9 +118,9 @@ export default function DashboardPage() {
                 />
                 <MissionListSection
                     missions={missions}
-                    allChecked={allChecked}
                     checkedCount={checkedCount}
                     isEditMode={isEditMode}
+                    allCompleted={allCompletedMission}
                     onToggleEditMode={handleToggleEditMode}
                     addMission={addMission}
                     onUpdateLabel={updateLabel}
@@ -132,7 +132,7 @@ export default function DashboardPage() {
 
             <div className="pb-6">
                 <MainButton onClick={handleOpen} colorClass="bg-text-sub">
-                    {allChecked ? '스탬프 완료하기' : '학습 시작하기'}
+                    {allCompletedMission ? '스탬프 완료하기' : '학습 시작하기'}
                 </MainButton>
             </div>
 

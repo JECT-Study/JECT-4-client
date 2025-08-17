@@ -2,10 +2,11 @@ import PlusIcon from '../../../../assets/icons/roundedPlus.svg?react';
 import MissionCard from '../_components/MissionCard';
 
 import { type MissionItem } from '../../../../types/mission/Mission';
+import { useMemo } from 'react';
 
 interface MissionListSectionProps {
     missions: MissionItem[];
-    allChecked: boolean;
+    allCompleted: boolean;
     checkedCount: number;
     isEditMode: boolean;
 
@@ -19,7 +20,7 @@ interface MissionListSectionProps {
 
 const MissionListSection = ({
     missions,
-    allChecked,
+    allCompleted,
     checkedCount,
     isEditMode,
     addMission,
@@ -34,9 +35,12 @@ const MissionListSection = ({
             {/* 헤더 영역 */}
             <div className="flex items-center justify-between">
                 <span className="text-body font-semibold">
-                    {missions.length
-                        ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
-                        : '오늘의 미션을 먼저 설정해 주세요!'}
+                    {allCompleted && '오늘의 미션을 모두 완료했어요!'}
+                    {!allCompleted
+                        ? missions.length
+                            ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
+                            : '오늘의 미션을 먼저 설정해 주세요!'
+                        : undefined}
                 </span>
                 <div className="flex items-center gap-3">
                     <button
@@ -56,7 +60,7 @@ const MissionListSection = ({
                 </div>
             </div>
             {/* 서브 텍스트 */}
-            {allChecked && (
+            {allCompleted && (
                 <span className="text-sm text-[#585858]">
                     더 학습하고 싶다면 미션을 추가해 보세요.
                 </span>
