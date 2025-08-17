@@ -1,4 +1,4 @@
-import CalendarButton from '../_components/CalendarButton';
+// import CalendarButton from '../_components/CalendarButton';
 import SessionGraph from '../_components/SessionGraph/SessionGraph';
 import WriteIcon from '../../../../assets/icons/write.svg?react';
 
@@ -20,9 +20,9 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                                 <h5 className="text-text-sub text-xl font-bold">
                                     {`${checkedCount}/${missions.length} 세션 진행 중`}
                                 </h5>
-                                <CalendarButton />
+                                {/* <CalendarButton /> */}
                             </div>
-                            <span className="text-text-sub">1:30:00</span>
+                            {/* <span className="text-text-sub">1:30:00</span> */}
                         </div>
                     ) : (
                         <>
