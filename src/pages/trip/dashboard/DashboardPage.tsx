@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import MissionListSection from './_components/MissionListSection';
@@ -27,7 +27,6 @@ export default function DashboardPage() {
     const [time, setTime] = useState<TimeValue>({ minute: '30', session: '1' });
 
     const navigate = useNavigate();
-
     const id = useVaildateId();
 
     if (id === null) return null;
@@ -61,6 +60,10 @@ export default function DashboardPage() {
         },
     });
 
+    const handleToggleEditMode = useCallback(() => {
+        setIsEditMode((prev) => !prev);
+    }, []);
+
     const {
         missions,
         allChecked,
@@ -70,7 +73,7 @@ export default function DashboardPage() {
         updateLabel,
         deleteMission,
         toggleCheck,
-        updateMissionOrder,
+        handleToggleEdit,
     } = useDashboardMissions(id.tripId!, id.stampId!, fetchedMissions);
 
     if (isMissionLoading) return <div>미션 목록 로드 중...</div>;
@@ -114,18 +117,16 @@ export default function DashboardPage() {
                     checkedCount={checkedCount}
                 />
                 <MissionListSection
-                    tripId={id.tripId!}
-                    stampId={id.stampId!}
                     missions={missions}
                     allChecked={allChecked}
                     checkedCount={checkedCount}
                     isEditMode={isEditMode}
+                    onToggleEditMode={handleToggleEditMode}
                     addMission={addMission}
-                    onToggleEditMode={() => setIsEditMode((prev) => !prev)}
                     onUpdateLabel={updateLabel}
                     onDelete={deleteMission}
                     onToggleCheck={toggleCheck}
-                    onUpdateMissionOrder={updateMissionOrder}
+                    handleToggleEdit={handleToggleEdit}
                 />
             </div>
 

@@ -1,81 +1,34 @@
-import { useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
 import PlusIcon from '../../../../assets/icons/roundedPlus.svg?react';
 import MissionCard from '../_components/MissionCard';
 
 import { type MissionItem } from '../../../../types/mission/Mission';
-import useCreateMission from '../../../../hooks/mission/useCreateMission';
 
 interface MissionListSectionProps {
-    tripId: number;
-    stampId: number;
     missions: MissionItem[];
     allChecked: boolean;
     checkedCount: number;
     isEditMode: boolean;
+
     addMission: () => void;
-    onToggleEditMode: () => void;
     onUpdateLabel: (id: number | string, value: string) => void;
     onDelete: (id: number | string) => void;
     onToggleCheck: (id: number | string) => void;
-    onUpdateMissionOrder: (newMissions: MissionItem[]) => void;
+    handleToggleEdit: (id: number | string) => void;
+    onToggleEditMode: () => void;
 }
 
 const MissionListSection = ({
-    tripId,
-    stampId,
     missions,
     allChecked,
     checkedCount,
     isEditMode,
+    addMission,
     onToggleEditMode,
     onUpdateLabel,
     onDelete,
     onToggleCheck,
-    onUpdateMissionOrder,
+    handleToggleEdit,
 }: MissionListSectionProps) => {
-    const { mutateCreateMission } = useCreateMission();
-
-    const handleAddMission = useCallback(async () => {
-        const newMissionId = uuidv4();
-
-        const newMission: MissionItem = {
-            missionId: newMissionId,
-            missionName: '',
-            completed: false,
-            isEditing: true,
-            isChecked: false,
-        };
-
-        const updatedMissions = [...missions, newMission];
-
-        onUpdateMissionOrder(updatedMissions);
-    }, [missions, onUpdateMissionOrder]);
-
-    const handleToggleEdit = useCallback(
-        (id: number | string) => {
-            const updatedMissions = missions.map((mission) =>
-                mission.missionId === id
-                    ? { ...mission, isEditing: !mission.isEditing }
-                    : mission
-            );
-
-            onUpdateMissionOrder(updatedMissions);
-
-            const lastIndex = updatedMissions.length - 1;
-
-            mutateCreateMission({
-                tripId,
-                stampId,
-                missionContent: {
-                    missionName: updatedMissions[lastIndex].missionName,
-                },
-            });
-        },
-        [missions, onUpdateMissionOrder]
-    );
-
     return (
         <section className="pt-[3.25rem]">
             {/* 헤더 영역 */}
@@ -96,7 +49,7 @@ const MissionListSection = ({
                         type="button"
                         aria-label="미션 추가"
                         className="cursor-pointer"
-                        onClick={handleAddMission}
+                        onClick={addMission}
                     >
                         <PlusIcon aria-hidden="true" />
                     </button>
