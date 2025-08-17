@@ -209,7 +209,7 @@ const PomodoroPage = () => {
         // 초기 히스토리 스택 세팅
         window.history.pushState(null, '', window.location.href);
 
-        const handlePopState = (e: PopStateEvent) => {
+        const handlePopState = () => {
             alert(
                 '학습 중에는 이동할 수 없습니다. 중지 버튼을 눌러 학습을 종료해주세요.'
             );
