@@ -54,7 +54,7 @@ function KakaoLoginAccessPage() {
                         localStorage.setItem('loginCheck', 'true');
                         window.location.href = kakaoURL;
                     } else {
-                        alert('로그인에 문제가 발생했습니다.');
+                        alert('로그인에 문제가 발생했습니다. ' + err.message);
                         navigate('/', { replace: true });
                     }
                 }
