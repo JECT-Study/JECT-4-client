@@ -109,7 +109,11 @@ const PomodoroPage = () => {
 
         navigate('/log', {
             replace: true,
-            state: { tripId: tripId, dailyGoal: updatedDailyGoal },
+            state: {
+                tripId: tripId,
+                stampId: stampId,
+                dailyGoal: updatedDailyGoal,
+            },
         });
     };
 
@@ -197,6 +201,28 @@ const PomodoroPage = () => {
 
         endingAction();
     };
+
+    // [추가] PWA용 뒤로가기 방지
+    useEffect(() => {
+        if (!isStarted) return;
+
+        // 초기 히스토리 스택 세팅
+        window.history.pushState(null, '', window.location.href);
+
+        const handlePopState = (e: PopStateEvent) => {
+            alert(
+                '학습 중에는 이동할 수 없습니다. 중지 버튼을 눌러 학습을 종료해주세요.'
+            );
+            // 다시 현재 페이지로 히스토리 유지
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [isStarted]);
 
     return (
         <div>
