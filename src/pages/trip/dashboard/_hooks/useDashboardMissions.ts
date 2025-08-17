@@ -1,5 +1,7 @@
+import { useAtom } from 'jotai';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
+import { missionsAtom } from '../../../../store/mission';
 import { type MissionItem } from '../../../../types/mission/Mission';
 import useDeleteMission from '../../../../hooks/mission/useDeleteMission';
 import usePatchMission from '../../../../hooks/mission/usePatchMission';
@@ -12,7 +14,7 @@ export const useDashboardMissions = (
         | Omit<MissionItem, 'isEditing' | 'isChecked'>[]
         | undefined
 ) => {
-    const [missions, setMissions] = useState<MissionItem[]>([]);
+    const [missions, setMissions] = useAtom(missionsAtom);
     const [debouncedUpdate, setDebouncedUpdate] = useState<{
         id: number | string;
         value: string;
@@ -69,7 +71,7 @@ export const useDashboardMissions = (
     const checkedMissionIds = useMemo(
         () =>
             missions
-                .filter((mission) => mission.isChecked)
+                .filter((mission) => mission.isChecked && !mission.completed)
                 .map((mission) => mission.missionId),
         [missions]
     );
@@ -110,11 +112,13 @@ export const useDashboardMissions = (
     // 미션 체크 상태 토글
     const toggleCheck = useCallback((id: number | string) => {
         setMissions((prev) =>
-            prev.map((mission) =>
-                mission.missionId === id
-                    ? { ...mission, isChecked: !mission.isChecked }
-                    : mission
-            )
+            prev.map((mission) => {
+                if (mission.missionId === id && !mission.completed) {
+                    return { ...mission, isChecked: !mission.isChecked };
+                }
+
+                return mission;
+            })
         );
     }, []);
 

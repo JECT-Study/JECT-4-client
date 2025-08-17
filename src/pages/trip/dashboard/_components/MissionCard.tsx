@@ -70,7 +70,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
                 </button>
             ) : (
                 <input
-                    checked={isChecked}
+                    checked={mission.completed || isChecked}
                     onChange={() => onToggleCheck(mission.missionId)}
                     type="checkbox"
                     className="accent-text-sub ml-4 h-5 w-5"
