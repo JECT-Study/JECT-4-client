@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import MissionListSection from './_components/MissionListSection';
@@ -19,22 +19,30 @@ import useCreateDailyGoal, {
     type CreateDailyGoalSuccessResponse,
 } from '../../../hooks/dailyGoal/useCreateDailyGoal';
 
+import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
+import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
+
 export default function DashboardPage() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
     const [time, setTime] = useState<TimeValue>({ minute: '30', session: '1' });
 
     const navigate = useNavigate();
-
     const id = useVaildateId();
 
     if (id === null) return null;
 
     const {
         data: fetchedMissions,
-        isLoading,
-        isError,
+        isLoading: isMissionLoading,
+        isError: isMissionError,
     } = useMissionQuery(id.tripId!, id.stampId!);
+
+    const {
+        data: fetchedStamp,
+        isLoading: isStampLoading,
+        isError: isStampError,
+    } = useDetailStampQuery(id.tripId!, id.stampId!);
 
     const { mutateCreateDailyGoal } = useCreateDailyGoal({
         onSuccess: (data: CreateDailyGoalSuccessResponse) => {
@@ -53,23 +61,49 @@ export default function DashboardPage() {
         },
     });
 
+    const { mutateCompleteStamp } = useCompleteStamp();
+
+    const handleToggleEditMode = useCallback(() => {
+        setIsEditMode((prev) => !prev);
+    }, []);
+
     const {
         missions,
-        allChecked,
-        checkedCount,
+        allCompletedMission,
+        completedCount,
         checkedMissionIds,
         addMission,
         updateLabel,
         deleteMission,
         toggleCheck,
-        updateMissionOrder,
+        handleToggleEdit,
     } = useDashboardMissions(id.tripId!, id.stampId!, fetchedMissions);
 
-    if (isLoading) return <div>미션 목록 로드 중...</div>;
-    if (isError) alert('미션 목록을 불러올 수 없습니다.');
+    if (isMissionLoading) return <div>미션 목록 로드 중...</div>;
+    if (isMissionError) alert('미션 목록을 불러올 수 없습니다.');
+
+    if (isStampLoading) return <div>스탬프 로드 중...</div>;
+    if (isStampError) alert('스탬프를 로드할 수 없습니다.');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const checkedCount = checkedMissionIds.length;
+
+    const buttonText = allCompletedMission
+        ? '스탬프 완료하기'
+        : '학습 시작하기';
+
+    const handleButtonClick = () => {
+        if (buttonText === '학습 시작하기' && missions.length && checkedCount) {
+            handleOpen();
+        }
+
+        if (buttonText === '스탬프 완료하기') {
+            mutateCompleteStamp({ tripId: id.tripId!, stampId: id.stampId! });
+            navigate(-1);
+        }
+    };
 
     const handleConfirm = () => {
         setOpen(false);
@@ -91,33 +125,37 @@ export default function DashboardPage() {
     return (
         <div className="relative flex min-h-screen flex-col">
             <div className="h-[4rem]">
-                <BackHeader title="유형연습 Q8-10 복습" hideLogButton={false} />
+                <BackHeader
+                    title={fetchedStamp?.stampName}
+                    hideLogButton={false}
+                />
             </div>
 
             <div className="flex-1 overflow-y-auto pt-3">
                 <MissionSummary
                     missions={missions}
-                    checkedCount={checkedCount}
+                    completedCount={completedCount}
                 />
                 <MissionListSection
-                    tripId={id.tripId!}
-                    stampId={id.stampId!}
                     missions={missions}
-                    allChecked={allChecked}
-                    checkedCount={checkedCount}
+                    completedCount={completedCount}
                     isEditMode={isEditMode}
+                    allCompleted={allCompletedMission}
+                    onToggleEditMode={handleToggleEditMode}
                     addMission={addMission}
-                    onToggleEditMode={() => setIsEditMode((prev) => !prev)}
                     onUpdateLabel={updateLabel}
                     onDelete={deleteMission}
                     onToggleCheck={toggleCheck}
-                    onUpdateMissionOrder={updateMissionOrder}
+                    handleToggleEdit={handleToggleEdit}
                 />
             </div>
 
             <div className="pb-6">
-                <MainButton onClick={handleOpen} colorClass="bg-text-sub">
-                    {allChecked ? '스탬프 완료하기' : '학습 시작하기'}
+                <MainButton
+                    onClick={handleButtonClick}
+                    colorClass="bg-text-sub"
+                >
+                    {buttonText}
                 </MainButton>
             </div>
 

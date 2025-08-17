@@ -1,4 +1,4 @@
-import CalendarButton from '../_components/CalendarButton';
+// import CalendarButton from '../_components/CalendarButton';
 import SessionGraph from '../_components/SessionGraph/SessionGraph';
 import WriteIcon from '../../../../assets/icons/write.svg?react';
 
@@ -6,10 +6,14 @@ import { type MissionItem } from '../../../../types/mission/Mission';
 
 interface MissionSummaryProps {
     missions: MissionItem[];
-    checkedCount: number;
+    completedCount: number;
 }
 
-const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
+const MissionSummary = ({ missions, completedCount }: MissionSummaryProps) => {
+    const completedMissionCount = missions.filter(
+        (mission) => mission.completed
+    ).length;
+
     return (
         <section className="">
             <div className="bg-plus-background flex shrink-0 flex-col rounded-xl p-4">
@@ -18,11 +22,11 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                         <div className="flex w-full flex-col gap-1">
                             <div className="flex justify-between">
                                 <h5 className="text-text-sub text-xl font-bold">
-                                    {`${checkedCount}/${missions.length} 세션 진행 중`}
+                                    {`${completedCount}/${missions.length} 세션 진행 중`}
                                 </h5>
-                                <CalendarButton />
+                                {/* <CalendarButton /> */}
                             </div>
-                            <span className="text-text-sub">1:30:00</span>
+                            {/* <span className="text-text-sub">1:30:00</span> */}
                         </div>
                     ) : (
                         <>
@@ -34,11 +38,11 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                     )}
                 </div>
                 {missions.length ? (
-                    <div className="flex h-13 overflow-x-hidden pt-5">
+                    <div className="flex h-13 overflow-x-scroll pt-5 [&::-webkit-scrollbar]:hidden">
                         {missions.map((mission, index) => (
                             <SessionGraph
                                 key={mission.missionId}
-                                isCompleted={mission.isChecked}
+                                isCompleted={index < completedMissionCount}
                                 isLast={index === missions.length - 1}
                             />
                         ))}

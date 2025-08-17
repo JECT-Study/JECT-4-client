@@ -1,91 +1,45 @@
-import { useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
 import PlusIcon from '../../../../assets/icons/roundedPlus.svg?react';
 import MissionCard from '../_components/MissionCard';
 
 import { type MissionItem } from '../../../../types/mission/Mission';
-import useCreateMission from '../../../../hooks/mission/useCreateMission';
 
 interface MissionListSectionProps {
-    tripId: number;
-    stampId: number;
     missions: MissionItem[];
-    allChecked: boolean;
-    checkedCount: number;
+    allCompleted: boolean;
+    completedCount: number;
     isEditMode: boolean;
+
     addMission: () => void;
-    onToggleEditMode: () => void;
     onUpdateLabel: (id: number | string, value: string) => void;
     onDelete: (id: number | string) => void;
     onToggleCheck: (id: number | string) => void;
-    onUpdateMissionOrder: (newMissions: MissionItem[]) => void;
+    handleToggleEdit: (id: number | string) => void;
+    onToggleEditMode: () => void;
 }
 
 const MissionListSection = ({
-    tripId,
-    stampId,
     missions,
-    allChecked,
-    checkedCount,
+    allCompleted,
+    completedCount,
     isEditMode,
+    addMission,
     onToggleEditMode,
     onUpdateLabel,
     onDelete,
     onToggleCheck,
-    onUpdateMissionOrder,
+    handleToggleEdit,
 }: MissionListSectionProps) => {
-    const { mutateCreateMission } = useCreateMission();
-
-    const handleAddMission = useCallback(async () => {
-        const newMissionId = uuidv4();
-
-        const newMission: MissionItem = {
-            missionId: newMissionId,
-            missionName: '',
-            completed: false,
-            isEditing: true,
-            isChecked: false,
-        };
-
-        const updatedMissions = [...missions, newMission];
-
-        onUpdateMissionOrder(updatedMissions);
-    }, [missions, onUpdateMissionOrder]);
-
-    const handleToggleEdit = useCallback(
-        (id: number | string) => {
-            const updatedMissions = missions.map((mission) =>
-                mission.missionId === id
-                    ? { ...mission, isEditing: !mission.isEditing }
-                    : mission
-            );
-
-            onUpdateMissionOrder(updatedMissions);
-
-            const lastIndex = updatedMissions.length - 1;
-
-            mutateCreateMission({
-                tripId,
-                stampId,
-                missionContent: {
-                    missionName: updatedMissions[lastIndex].missionName,
-                },
-            });
-        },
-        [missions, onUpdateMissionOrder]
-    );
-
     return (
         <section className="pt-[3.25rem]">
             {/* 헤더 영역 */}
             <div className="flex items-center justify-between">
                 <span className="text-body font-semibold">
-                    {allChecked
-                        ? '오늘의 미션을 모두 완료했어요!'
-                        : missions.length
-                          ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
-                          : '오늘의 미션을 먼저 설정해 주세요!'}
+                    {allCompleted && '오늘의 미션을 모두 완료했어요!'}
+                    {!allCompleted
+                        ? missions.length
+                            ? `오늘의 미션, ${missions.length - completedCount}개 남았어요!`
+                            : '오늘의 미션을 먼저 설정해 주세요!'
+                        : undefined}
                 </span>
                 <div className="flex items-center gap-3">
                     <button
@@ -98,14 +52,14 @@ const MissionListSection = ({
                         type="button"
                         aria-label="미션 추가"
                         className="cursor-pointer"
-                        onClick={handleAddMission}
+                        onClick={addMission}
                     >
                         <PlusIcon aria-hidden="true" />
                     </button>
                 </div>
             </div>
             {/* 서브 텍스트 */}
-            {allChecked && (
+            {allCompleted && (
                 <span className="text-sm text-[#585858]">
                     더 학습하고 싶다면 미션을 추가해 보세요.
                 </span>

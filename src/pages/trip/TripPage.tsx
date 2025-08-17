@@ -96,7 +96,7 @@ const TripPage = () => {
             <div className="h-[4rem]">
                 <BackHeader title={data?.name} hideLogButton={false} />
             </div>
-            <div className="h-[calc(100vh-10rem)] overflow-y-auto pt-[4rem] [&::-webkit-scrollbar]:hidden">
+            <div className="h-[calc(100vh-10rem)] overflow-y-auto pt-[8rem] [&::-webkit-scrollbar]:hidden">
                 {steps.map((step) => (
                     <GoalStep
                         key={`${data?.tripId}-${step.sequence}`}
