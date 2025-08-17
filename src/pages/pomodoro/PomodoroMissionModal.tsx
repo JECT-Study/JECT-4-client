@@ -8,6 +8,7 @@ interface DailyMission {
 
 type Props = {
     isAutoStop: boolean;
+    isStarted: boolean;
     stampName: string;
     focusDurationInMinute: number;
     dailyMissions: DailyMission[];
@@ -16,6 +17,7 @@ type Props = {
 
 const PomodoroMissionModal = ({
     isAutoStop,
+    isStarted,
     stampName,
     focusDurationInMinute,
     dailyMissions,
@@ -56,6 +58,7 @@ const PomodoroMissionModal = ({
                         name={mission.missionName}
                         checked={checkedIds.includes(mission.dailyMissionId)} // ✅ 체크 상태 전달
                         onToggle={() => handleToggle(mission.dailyMissionId)} // ✅ 클릭 핸들러
+                        disabled={!isStarted}
                     />
                 ))}
             </div>
