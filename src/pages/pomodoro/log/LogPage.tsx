@@ -94,7 +94,7 @@ const LogPage = () => {
         // 초기 히스토리 스택 세팅
         window.history.pushState(null, '', window.location.href);
 
-        const handlePopState = (e: PopStateEvent) => {
+        const handlePopState = () => {
             alert(
                 '기록 작성 중에는 이동할 수 없습니다. 확인 버튼을 눌러 마무리해주세요.'
             );
