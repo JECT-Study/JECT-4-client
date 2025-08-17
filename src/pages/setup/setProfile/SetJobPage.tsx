@@ -6,7 +6,7 @@ import MainButton from '../../../components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
-import axios from 'axios';
+import api from 'axios';
 
 function SetJobPage() {
     const [selected, setSelected] = useState<string>('');
@@ -27,8 +27,8 @@ function SetJobPage() {
         setUserInfo(updatedUserInfo);
 
         try {
-            const response = await axios.post(
-                '/api/auth/signup/kakao',
+            const response = await api.post(
+                '/auth/signup/kakao',
                 updatedUserInfo
             );
 

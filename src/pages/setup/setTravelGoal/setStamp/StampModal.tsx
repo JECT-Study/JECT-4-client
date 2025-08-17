@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 interface ModalProps {
+    stampName: string;
     isOpen: boolean;
     onClose: () => void;
     onConfirm?: () => void;
@@ -13,7 +14,13 @@ interface ModalProps {
     children?: React.ReactNode;
 }
 
-const Modal = ({ isOpen, onClose, onConfirm, children }: ModalProps) => {
+const Modal = ({
+    stampName,
+    isOpen,
+    onClose,
+    onConfirm,
+    children,
+}: ModalProps) => {
     // 유저이름 불러오기
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
@@ -44,8 +51,8 @@ const Modal = ({ isOpen, onClose, onConfirm, children }: ModalProps) => {
                     <div className="px-8">
                         {userName}님의 여정이 완성되었어요!
                         <br />
-                        <span className="text-text-sub">ㅇㅇ 여행</span>을
-                        시작해볼까요?
+                        <span className="text-text-sub">{stampName} 여행</span>
+                        을 시작해볼까요?
                     </div>
                 </div>
                 <div className="text-secondary my-2 max-h-72 overflow-y-auto px-8">

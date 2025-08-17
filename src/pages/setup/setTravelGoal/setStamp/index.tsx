@@ -83,6 +83,7 @@ const SetStampLinearPage = () => {
                 ></MainButton>
             </section>
             <Modal
+                stampName={prevTravelInfo.name}
                 isOpen={isOpen}
                 onClose={handleCancel}
                 onConfirm={handleConfirm}

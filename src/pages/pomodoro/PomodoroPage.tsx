@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PomodoroTimer from './PomodoroTimer';
 import PomodoroButton from './PomodoroButton';
 import PomodoroMissionModal from './PomodoroMissionModal';
@@ -16,7 +16,6 @@ interface Pomodoro {
 interface DailyMission {
     dailyMissionId: number;
     missionName: string;
-    missionMemo: string;
 }
 
 interface DailyGoal {
@@ -43,8 +42,9 @@ const defaultDailyGoal: DailyGoal = {
 
 const PomodoroPage = () => {
     const navigate = useNavigate();
-    const tripId = 15; // 임시
-    const dailyGoalId = 1; // 임시
+    const location = useLocation();
+
+    const { tripId, dailyGoalId } = location.state || {};
     const [dailyGoal, setDailyGoal] = useState(defaultDailyGoal);
 
     useEffect(() => {
@@ -63,50 +63,30 @@ const PomodoroPage = () => {
         fetchDailyGoal();
     }, []);
 
-    // TODO : 스탬프 이름 출력
-    // TODO : 완료한 미션 ID 담아서 넘기기
     const totalTime =
         dailyGoal.pomodoro.focusDurationInMinute *
         dailyGoal.pomodoro.focusSessionCount *
-        60; // 총 75분
-    const [elapsedTime, setElapsedTime] = useState(0); //경과한 시간(초)
+        60; // 전체시간
     const [isRunning, setIsRunning] = useState(false); //타이머가 작동 중인지 여부
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
-    const intervalRef = useRef<number | null>(null);
     const [isAutoStop, setIsAutoStop] = useState(false);
     const [checkedMissionIds, setCheckedMissionIds] = useState<number[]>([]); //완료된 미션 객체 넘기기
 
+    const intervalRef = useRef<number | null>(null);
+    const elapsedTimeRef = useRef(0); //총 경과한 시간
+    const [sessionElapsedTime, setSessionElapsedTime] = useState(0); //현재 세션에서 경과한 시간(초)
+    const [currentSession, setCurrentSession] = useState(0); // 진행 중인 세션 번호
+
     const sessionLength = dailyGoal.pomodoro.focusDurationInMinute * 60;
-    const completedSessions = Math.ceil(elapsedTime / sessionLength);
-
-    // 자동 정지 타이밍 계산
-    const getPausePoints = (duration: number, step: number) => {
-        if (step <= 0) return [];
-        return Array.from({ length: step - 1 }, (_, i) => duration * (i + 1));
-    };
-
-    const shouldPauseAt = useRef<number[]>(
-        getPausePoints(
-            dailyGoal.pomodoro.focusDurationInMinute * 60,
-            dailyGoal.pomodoro.focusSessionCount
-        )
-    );
-
-    useEffect(() => {
-        shouldPauseAt.current = getPausePoints(
-            dailyGoal.pomodoro.focusDurationInMinute * 60,
-            dailyGoal.pomodoro.focusSessionCount
-        );
-    }, [totalTime, dailyGoal]);
+    const completedSessions = Math.ceil(elapsedTimeRef.current / sessionLength);
 
     const endingAction = () => {
         if (intervalRef.current !== null) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
-        setIsRunning(false);
-        const finalElapsedTime = elapsedTime;
-        setElapsedTime(finalElapsedTime);
+
+        const finalElapsedTime = elapsedTimeRef.current;
 
         // 완료 미션 담아서 넘기기
         const updatedDailyGoal = {
@@ -125,15 +105,25 @@ const PomodoroPage = () => {
     };
 
     useEffect(() => {
-        if (!isRunning) return;
+        if (!isRunning) {
+            if (isAutoStop) {
+                setSessionElapsedTime(0);
+                return;
+            } else return;
+        }
 
-        const start = Date.now() - elapsedTime * 1000;
+        const start = Date.now() - elapsedTimeRef.current * 1000;
 
         intervalRef.current = window.setInterval(() => {
-            const nowElapsed = Math.floor((Date.now() - start) / 1000);
-            setElapsedTime(nowElapsed);
+            const nowElapsed = Math.floor((Date.now() - start) / 1000); //현재 진행한 총 시간
+            const nowSessionElapsed =
+                nowElapsed -
+                dailyGoal.pomodoro.focusDurationInMinute * 60 * currentSession;
+            elapsedTimeRef.current = nowElapsed;
+            setSessionElapsedTime(nowSessionElapsed);
 
-            if (shouldPauseAt.current.includes(nowElapsed)) {
+            if (nowSessionElapsed >= sessionLength) {
+                //현재 경과시간이 초과했을 때
                 setIsRunning(false); // 자동 멈춤
                 setIsAutoStop(true);
             }
@@ -153,6 +143,10 @@ const PomodoroPage = () => {
 
     const handlePause = () => setIsRunning(false);
     const handleResume = () => {
+        if (isAutoStop) {
+            // 휴식 후 재시작할 경우
+            setCurrentSession((prev) => prev + 1); // 세션 번호 증가
+        }
         setIsRunning(true);
         setIsAutoStop(false);
     };
@@ -160,7 +154,8 @@ const PomodoroPage = () => {
         setIsStarted(false);
         setIsRunning(false);
         setIsAutoStop(false);
-        setElapsedTime(0);
+        setSessionElapsedTime(0);
+        setCurrentSession(0);
 
         endingAction();
     };
@@ -173,8 +168,8 @@ const PomodoroPage = () => {
             />
             <div className="flex flex-col items-center pt-20">
                 <PomodoroTimer
-                    duration={totalTime}
-                    elapsedTime={elapsedTime}
+                    duration={sessionLength}
+                    elapsedTime={sessionElapsedTime}
                     width={250}
                 />
                 {/* 세션 점 표시 */}
@@ -196,6 +191,7 @@ const PomodoroPage = () => {
                 <div className="mt-9 w-full">
                     <PomodoroMissionModal
                         stampName={dailyGoal.title}
+                        isStarted={isStarted}
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={
                             dailyGoal.pomodoro.focusDurationInMinute

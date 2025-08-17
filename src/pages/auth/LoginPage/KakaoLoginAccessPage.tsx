@@ -1,6 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect } from 'react';
-import axios from 'axios';
+import { AxiosError } from 'axios';
+
+import api from '@lib/axios';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
@@ -26,7 +28,7 @@ function KakaoLoginAccessPage() {
             // 로그인 api 호출 여부 확인
             if (localStorage.getItem('loginCheck') !== 'true') {
                 try {
-                    const response = await axios.post('/api/auth/login/kakao', {
+                    const response = await api.post('/auth/login/kakao', {
                         code,
                     });
 
@@ -41,13 +43,20 @@ function KakaoLoginAccessPage() {
                     );
 
                     console.log('로그인 성공');
+
                     localStorage.setItem('loginCheck', 'false');
                     navigate('/main', { replace: true });
                 } catch (error) {
-                    console.warn('로그인 실패, 신규 회원 처리', error);
+                    const err = error as AxiosError;
+                    if (err.response?.status === 409) {
+                        console.warn('로그인 실패, 신규 회원 처리', error);
 
-                    localStorage.setItem('loginCheck', 'true');
-                    window.location.href = kakaoURL;
+                        localStorage.setItem('loginCheck', 'true');
+                        window.location.href = kakaoURL;
+                    } else {
+                        alert('로그인에 문제가 발생했습니다.');
+                        navigate('/', { replace: true });
+                    }
                 }
             } else {
                 // 새 code가 있으면 userInfo에 저장하고 /set-name으로 이동
