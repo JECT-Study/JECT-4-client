@@ -15,10 +15,6 @@ import useVaildateId from './_hooks/useVaildateId';
 import BackHeader from '../../../components/common/BackHeaderLayout';
 import MainButton from '../../../components/common/button/MainButton';
 import useMissionQuery from '../../../hooks/mission/useMissionQuery';
-import { type DailyGoal } from '../../../types/dailyGoal';
-import useCreateDailyGoal, {
-    type CreateDailyGoalSuccessResponse,
-} from '../../../hooks/dailyGoal/useCreateDailyGoal';
 
 import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
 import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
@@ -52,23 +48,6 @@ export default function DashboardPage() {
         isLoading: isStampLoading,
         isError: isStampError,
     } = useDetailStampQuery(id.tripId!, id.stampId!);
-
-    const { mutateCreateDailyGoal } = useCreateDailyGoal({
-        onSuccess: (data: CreateDailyGoalSuccessResponse) => {
-            const dailyGoalId = data?.dailyGoalId;
-
-            navigate('/pomodoro', {
-                state: {
-                    time,
-                    tripId: id.tripId,
-                    dailyGoalId,
-                },
-            });
-        },
-        onError: () => {
-            alert('데일리 목표 추가를 실패했습니다.');
-        },
-    });
 
     const { mutateCompleteStamp } = useCompleteStamp();
 
@@ -116,18 +95,11 @@ export default function DashboardPage() {
 
     const handleConfirm = () => {
         setOpen(false);
-
-        const payloadDailyGoal: DailyGoal = {
-            pomodoro: {
-                focusDurationInMinute: Number(time.minute),
-                focusSessionCount: Number(time.session),
+        navigate('/pomodoro', {
+            state: {
+                time,
+                tripId: id.tripId,
             },
-            missionIds: checkedMissionIds,
-        };
-
-        mutateCreateDailyGoal({
-            tripId: id.tripId!,
-            dailyGoal: payloadDailyGoal,
         });
     };
 
