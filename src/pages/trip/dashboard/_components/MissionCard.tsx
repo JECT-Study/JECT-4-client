@@ -1,4 +1,5 @@
 import React from 'react';
+
 import XboxIcon from '../../../../assets/icons/x.svg?react';
 import { type MissionItem } from '../../../../types/mission/Mission';
 
@@ -6,15 +7,16 @@ interface MissionCardProps {
     mission: MissionItem;
     isEditing: boolean;
     isChecked: boolean;
-    onChange: (id: number, value: string) => void;
-    onEditToggle: (id: number, index: number) => void;
-    onDelete: (id: number) => void;
-    onToggleCheck: (id: number) => void;
+    onChange: (id: number | string, value: string) => void;
+    onEditToggle: (id: number | string, index: number) => void;
+    onDelete: (id: number | string) => void;
+    onToggleCheck: (id: number | string) => void;
     isEditMode: boolean;
     index: number;
 }
 
 const MissionCard: React.FC<MissionCardProps> = ({
+    index,
     mission,
     isChecked,
     isEditing,
@@ -23,7 +25,6 @@ const MissionCard: React.FC<MissionCardProps> = ({
     isEditMode,
     onDelete,
     onToggleCheck,
-    index, // 추가된 index
 }) => {
     return (
         <article
