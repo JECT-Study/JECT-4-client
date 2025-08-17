@@ -21,9 +21,8 @@ const LogPage = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const queryClient = useQueryClient();
 
-    const { tripId, dailyGoal, stampId } = location.state || {};
+    const { tripId, dailyGoal } = location.state || {};
     console.log(dailyGoal);
 
     if (!tripId || !dailyGoal) {
