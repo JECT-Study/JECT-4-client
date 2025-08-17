@@ -20,6 +20,7 @@ import useCreateDailyGoal, {
 } from '../../../hooks/dailyGoal/useCreateDailyGoal';
 
 import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
+import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
 
 export default function DashboardPage() {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -60,6 +61,8 @@ export default function DashboardPage() {
         },
     });
 
+    const { mutateCompleteStamp } = useCompleteStamp();
+
     const handleToggleEditMode = useCallback(() => {
         setIsEditMode((prev) => !prev);
     }, []);
@@ -67,7 +70,7 @@ export default function DashboardPage() {
     const {
         missions,
         allCompletedMission,
-        checkedCount,
+        completedCount,
         checkedMissionIds,
         addMission,
         updateLabel,
@@ -84,6 +87,23 @@ export default function DashboardPage() {
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const checkedCount = checkedMissionIds.length;
+
+    const buttonText = allCompletedMission
+        ? '스탬프 완료하기'
+        : '학습 시작하기';
+
+    const handleButtonClick = () => {
+        if (buttonText === '학습 시작하기' && missions.length && checkedCount) {
+            handleOpen();
+        }
+
+        if (buttonText === '스탬프 완료하기') {
+            mutateCompleteStamp({ tripId: id.tripId!, stampId: id.stampId! });
+            navigate(-1);
+        }
+    };
 
     const handleConfirm = () => {
         setOpen(false);
@@ -114,11 +134,11 @@ export default function DashboardPage() {
             <div className="flex-1 overflow-y-auto pt-3">
                 <MissionSummary
                     missions={missions}
-                    checkedCount={checkedCount}
+                    completedCount={completedCount}
                 />
                 <MissionListSection
                     missions={missions}
-                    checkedCount={checkedCount}
+                    completedCount={completedCount}
                     isEditMode={isEditMode}
                     allCompleted={allCompletedMission}
                     onToggleEditMode={handleToggleEditMode}
@@ -131,8 +151,11 @@ export default function DashboardPage() {
             </div>
 
             <div className="pb-6">
-                <MainButton onClick={handleOpen} colorClass="bg-text-sub">
-                    {allCompletedMission ? '스탬프 완료하기' : '학습 시작하기'}
+                <MainButton
+                    onClick={handleButtonClick}
+                    colorClass="bg-text-sub"
+                >
+                    {buttonText}
                 </MainButton>
             </div>
 

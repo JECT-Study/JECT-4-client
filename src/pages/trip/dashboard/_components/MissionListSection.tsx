@@ -6,7 +6,7 @@ import { type MissionItem } from '../../../../types/mission/Mission';
 interface MissionListSectionProps {
     missions: MissionItem[];
     allCompleted: boolean;
-    checkedCount: number;
+    completedCount: number;
     isEditMode: boolean;
 
     addMission: () => void;
@@ -20,7 +20,7 @@ interface MissionListSectionProps {
 const MissionListSection = ({
     missions,
     allCompleted,
-    checkedCount,
+    completedCount,
     isEditMode,
     addMission,
     onToggleEditMode,
@@ -37,7 +37,7 @@ const MissionListSection = ({
                     {allCompleted && '오늘의 미션을 모두 완료했어요!'}
                     {!allCompleted
                         ? missions.length
-                            ? `오늘의 미션, ${missions.length - checkedCount}개 남았어요!`
+                            ? `오늘의 미션, ${missions.length - completedCount}개 남았어요!`
                             : '오늘의 미션을 먼저 설정해 주세요!'
                         : undefined}
                 </span>

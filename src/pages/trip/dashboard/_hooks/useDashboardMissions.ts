@@ -180,7 +180,7 @@ export const useDashboardMissions = (
         [missions]
     );
 
-    const checkedCount = useMemo(
+    const completedCount = useMemo(
         () => missions.filter((mission) => mission.completed).length,
         [missions]
     );
@@ -188,7 +188,7 @@ export const useDashboardMissions = (
     return {
         missions,
         allCompletedMission,
-        checkedCount,
+        completedCount,
         checkedMissionIds,
         addMission,
         updateLabel,

@@ -6,10 +6,10 @@ import { type MissionItem } from '../../../../types/mission/Mission';
 
 interface MissionSummaryProps {
     missions: MissionItem[];
-    checkedCount: number;
+    completedCount: number;
 }
 
-const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
+const MissionSummary = ({ missions, completedCount }: MissionSummaryProps) => {
     const completedMissionCount = missions.filter(
         (mission) => mission.completed
     ).length;
@@ -22,7 +22,7 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                         <div className="flex w-full flex-col gap-1">
                             <div className="flex justify-between">
                                 <h5 className="text-text-sub text-xl font-bold">
-                                    {`${checkedCount}/${missions.length} 세션 진행 중`}
+                                    {`${completedCount}/${missions.length} 세션 진행 중`}
                                 </h5>
                                 {/* <CalendarButton /> */}
                             </div>
