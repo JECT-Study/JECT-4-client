@@ -23,7 +23,7 @@ export const fetchStampDetail = async (
 export const completeStamp = async (tripId: number, stampId: number) => {
     try {
         const { data } = await api.patch(
-            `/api/trips/${tripId}/stamps/${stampId}/complete`
+            `/trips/${tripId}/stamps/${stampId}/complete`
         );
 
         return data.data;
