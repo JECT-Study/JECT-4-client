@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import { toast, ToastContainer } from 'react-toastify';
 
 type TravelTypeCardProps = {
     name: 'course' | 'explore';
@@ -27,7 +28,18 @@ const TravelTypeCard = ({
             explore: `/set-travel-name?type=${selectedName}`,
         };
 
-        navigate(paths[selectedName]);
+        if (selectedName === 'explore') {
+            toast('아직 준비 중인 기능입니다.', {
+                closeButton: false,
+                autoClose: 1000,
+                hideProgressBar: true,
+                position: 'top-center',
+            });
+
+            return;
+        }
+
+        navigate(paths.course);
     };
 
     return (
@@ -41,6 +53,7 @@ const TravelTypeCard = ({
                 <hr className="border-primary absolute top-1/2 right-0 left-0 border-0 border-t-[0.3px] border-solid" />
                 <span className="text-text-min text-[12px]">{recommend}</span>
             </p>
+            <ToastContainer />
         </section>
     );
 };
