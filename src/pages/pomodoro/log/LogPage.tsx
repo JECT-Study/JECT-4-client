@@ -18,10 +18,12 @@ interface DailyMission {
 
 const LogPage = () => {
     const missionRefetch = useAtomValue(missionRefetchAtom);
+
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
-    const { tripId, dailyGoal } = location.state || {};
+    const { tripId, dailyGoal, stampId } = location.state || {};
     console.log(dailyGoal);
 
     if (!tripId || !dailyGoal) {
