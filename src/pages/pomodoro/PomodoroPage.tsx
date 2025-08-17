@@ -47,6 +47,7 @@ const PomodoroPage = () => {
 
     const { tripId, dailyGoalId } = location.state || {};
     const [dailyGoal, setDailyGoal] = useState(defaultDailyGoal);
+    const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
     useEffect(() => {
         const fetchDailyGoal = async () => {
@@ -152,6 +153,8 @@ const PomodoroPage = () => {
         setIsAutoStop(false);
     };
     const handleReset = () => {
+        setIsModalOpen(true);
+
         setIsStarted(false);
         setIsRunning(false);
         setIsAutoStop(false);
@@ -206,10 +209,21 @@ const PomodoroPage = () => {
                         onStart={handleStart}
                         onPause={handlePause}
                         onResume={handleResume}
-                        onReset={handleReset}
+                        onReset={() => setIsModalOpen(true)}
                     />
                 </div>
             </div>
+            <ConfirmModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleReset}
+                title={
+                    <div className="text-subtitle text-secondary flex flex-col items-center px-8 text-center font-semibold">
+                        오늘의 학습을 마무리하고
+                        <br /> 기록 화면으로 이동할까요?
+                    </div>
+                }
+            />
         </div>
     );
 };
