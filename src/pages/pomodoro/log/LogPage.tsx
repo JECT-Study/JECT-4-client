@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ const LogPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId, dailyGoal } = location.state || {};
+    const { tripId, stampId, dailyGoal } = location.state || {};
     console.log(dailyGoal);
 
     if (!tripId || !dailyGoal) {
@@ -80,13 +80,34 @@ const LogPage = () => {
 
             alert('공부 기록이 생성되었습니다.');
 
-            navigate(-1);
+            navigate(`/trip/${tripId}/dashboard?stampId=${stampId}`, {
+                replace: true,
+            });
 
             console.log('로그 생성 성공');
         } catch (error) {
             console.warn('로그 생성 실패', error);
         }
     };
+
+    useEffect(() => {
+        // 초기 히스토리 스택 세팅
+        window.history.pushState(null, '', window.location.href);
+
+        const handlePopState = (e: PopStateEvent) => {
+            alert(
+                '기록 작성 중에는 이동할 수 없습니다. 확인 버튼을 눌러 마무리해주세요.'
+            );
+            // 다시 현재 페이지로 히스토리 유지
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
 
     return (
         <div className="flex min-h-screen flex-col justify-between">
