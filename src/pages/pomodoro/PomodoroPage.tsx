@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PomodoroTimer from './PomodoroTimer';
 import PomodoroButton from './PomodoroButton';
 import PomodoroMissionModal from './PomodoroMissionModal';
-import BackHeader from '../../components/common/BackHeaderLayout';
+import BackHeader from '@components/common/BackHeaderLayout';
+import ConfirmModal from '@components/common/ConfirmModal';
 
 import api from '@lib/axios';
 
@@ -46,6 +47,7 @@ const PomodoroPage = () => {
 
     const { tripId, dailyGoalId } = location.state || {};
     const [dailyGoal, setDailyGoal] = useState(defaultDailyGoal);
+    const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
     useEffect(() => {
         const fetchDailyGoal = async () => {
@@ -151,6 +153,8 @@ const PomodoroPage = () => {
         setIsAutoStop(false);
     };
     const handleReset = () => {
+        setIsModalOpen(true);
+
         setIsStarted(false);
         setIsRunning(false);
         setIsAutoStop(false);
@@ -163,7 +167,7 @@ const PomodoroPage = () => {
     return (
         <div>
             <BackHeader
-                title={!isRunning ? dailyGoal.title : ''}
+                title={!isStarted ? dailyGoal.title : ''}
                 hideBackButton={isStarted}
             />
             <div className="flex flex-col items-center pt-20">
@@ -205,10 +209,21 @@ const PomodoroPage = () => {
                         onStart={handleStart}
                         onPause={handlePause}
                         onResume={handleResume}
-                        onReset={handleReset}
+                        onReset={() => setIsModalOpen(true)}
                     />
                 </div>
             </div>
+            <ConfirmModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleReset}
+                title={
+                    <div className="text-subtitle text-secondary flex flex-col items-center px-8 text-center font-semibold">
+                        오늘의 학습을 마무리하고
+                        <br /> 기록 화면으로 이동할까요?
+                    </div>
+                }
+            />
         </div>
     );
 };

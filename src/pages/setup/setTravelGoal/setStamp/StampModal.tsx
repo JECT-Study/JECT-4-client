@@ -6,6 +6,8 @@ import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 interface ModalProps {
     stampName: string;
+    startDate: string;
+    endDate: string;
     isOpen: boolean;
     onClose: () => void;
     onConfirm?: () => void;
@@ -16,6 +18,8 @@ interface ModalProps {
 
 const Modal = ({
     stampName,
+    startDate,
+    endDate,
     isOpen,
     onClose,
     onConfirm,
@@ -57,11 +61,11 @@ const Modal = ({
                 </div>
                 <div className="text-secondary my-2 max-h-72 overflow-y-auto px-8">
                     <div className="bg-primary text-small mb-2 inline-block rounded-full px-2.5 py-1 font-bold text-white">
-                        2025. 7. 4
+                        {startDate}
                     </div>
                     <div>{children}</div>
                     <div className="bg-point1 text-small mt-2 inline-block rounded-full px-2.5 py-1 font-bold text-white">
-                        2025. 7. 15
+                        {endDate}
                     </div>
                 </div>
                 <div className="flex w-full border-t border-[#e3e3e3] text-[18px] font-semibold">
