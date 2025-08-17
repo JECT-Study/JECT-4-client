@@ -48,14 +48,15 @@ function KakaoLoginAccessPage() {
                     navigate('/main', { replace: true });
                 } catch (error) {
                     const err = error as AxiosError;
-                    if (err.response?.status === 404) {
+                    if (err.response?.status === 409) {
+                        console.warn('로그인 실패, 신규 회원 처리', error);
+
+                        localStorage.setItem('loginCheck', 'true');
+                        window.location.href = kakaoURL;
+                    } else {
                         alert('로그인에 문제가 발생했습니다.');
                         navigate('/', { replace: true });
                     }
-                    console.warn('로그인 실패, 신규 회원 처리', error);
-
-                    localStorage.setItem('loginCheck', 'true');
-                    window.location.href = kakaoURL;
                 }
             } else {
                 // 새 code가 있으면 userInfo에 저장하고 /set-name으로 이동
