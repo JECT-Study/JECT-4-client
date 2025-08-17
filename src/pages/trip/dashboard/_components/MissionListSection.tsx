@@ -2,7 +2,6 @@ import PlusIcon from '../../../../assets/icons/roundedPlus.svg?react';
 import MissionCard from '../_components/MissionCard';
 
 import { type MissionItem } from '../../../../types/mission/Mission';
-import { useMemo } from 'react';
 
 interface MissionListSectionProps {
     missions: MissionItem[];
