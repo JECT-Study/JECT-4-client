@@ -54,7 +54,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
                 {sequence}
             </h5>
             <p
-                className={`${goalStateTitleStyleClass[goalState]} text-base whitespace-pre-wrap`}
+                className={`${goalStateTitleStyleClass[goalState]} line-clamp-2 truncate text-base whitespace-pre-wrap`}
             >
                 {title}
             </p>
