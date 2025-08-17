@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PomodoroTimer from './PomodoroTimer';
 import PomodoroButton from './PomodoroButton';
 import PomodoroMissionModal from './PomodoroMissionModal';
-import BackHeader from '../../components/common/BackHeaderLayout';
+import BackHeader from '@components/common/BackHeaderLayout';
+import ConfirmModal from '@components/common/ConfirmModal';
 
 import api from '@lib/axios';
 
@@ -163,7 +164,7 @@ const PomodoroPage = () => {
     return (
         <div>
             <BackHeader
-                title={!isRunning ? dailyGoal.title : ''}
+                title={!isStarted ? dailyGoal.title : ''}
                 hideBackButton={isStarted}
             />
             <div className="flex flex-col items-center pt-20">
