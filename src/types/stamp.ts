@@ -1,3 +1,14 @@
+export interface ResponseDTO {
+    success: boolean;
+    status: number;
+    data: null;
+}
+
+export interface MutationStampProps {
+    tripId: number;
+    stampId: number;
+}
+
 export interface StampDetail {
     stampId: number;
     stampName: string;
