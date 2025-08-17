@@ -19,6 +19,8 @@ import useCreateDailyGoal, {
     type CreateDailyGoalSuccessResponse,
 } from '../../../hooks/dailyGoal/useCreateDailyGoal';
 
+import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
+
 export default function DashboardPage() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
@@ -32,9 +34,15 @@ export default function DashboardPage() {
 
     const {
         data: fetchedMissions,
-        isLoading,
-        isError,
+        isLoading: isMissionLoading,
+        isError: isMissionError,
     } = useMissionQuery(id.tripId!, id.stampId!);
+
+    const {
+        data: fetchedStamp,
+        isLoading: isStampLoading,
+        isError: isStampError,
+    } = useDetailStampQuery(id.tripId!, id.stampId!);
 
     const { mutateCreateDailyGoal } = useCreateDailyGoal({
         onSuccess: (data: CreateDailyGoalSuccessResponse) => {
@@ -65,8 +73,11 @@ export default function DashboardPage() {
         updateMissionOrder,
     } = useDashboardMissions(id.tripId!, id.stampId!, fetchedMissions);
 
-    if (isLoading) return <div>미션 목록 로드 중...</div>;
-    if (isError) alert('미션 목록을 불러올 수 없습니다.');
+    if (isMissionLoading) return <div>미션 목록 로드 중...</div>;
+    if (isMissionError) alert('미션 목록을 불러올 수 없습니다.');
+
+    if (isStampLoading) return <div>스탬프 로드 중...</div>;
+    if (isStampError) alert('스탬프를 로드할 수 없습니다.');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -91,7 +102,10 @@ export default function DashboardPage() {
     return (
         <div className="relative flex min-h-screen flex-col">
             <div className="h-[4rem]">
-                <BackHeader title="유형연습 Q8-10 복습" hideLogButton={false} />
+                <BackHeader
+                    title={fetchedStamp?.stampName}
+                    hideLogButton={false}
+                />
             </div>
 
             <div className="flex-1 overflow-y-auto pt-3">
