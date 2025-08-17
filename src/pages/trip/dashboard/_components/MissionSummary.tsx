@@ -10,6 +10,10 @@ interface MissionSummaryProps {
 }
 
 const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
+    const completedMissionCount = missions.filter(
+        (mission) => mission.completed
+    ).length;
+
     return (
         <section className="">
             <div className="bg-plus-background flex shrink-0 flex-col rounded-xl p-4">
@@ -38,7 +42,7 @@ const MissionSummary = ({ missions, checkedCount }: MissionSummaryProps) => {
                         {missions.map((mission, index) => (
                             <SessionGraph
                                 key={mission.missionId}
-                                isCompleted={mission.isChecked}
+                                isCompleted={index < completedMissionCount}
                                 isLast={index === missions.length - 1}
                             />
                         ))}
