@@ -34,7 +34,7 @@ const BackHeader = ({
                     <LeftArrow className="h-4 w-4" />
                 </button>
             )}
-            <div className="text-text-sub text-subtitle flex-1 text-center font-semibold">
+            <div className="text-text-sub text-subtitle line-clamp-1 flex-1 text-center font-semibold">
                 {title}
             </div>
             {hideLogButton ? (
