@@ -6,7 +6,7 @@ import MainButton from '../../../components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
-import api from 'axios';
+import api from '@lib/axios';
 
 function SetJobPage() {
     const [selected, setSelected] = useState<string>('');
