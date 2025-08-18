@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
         if (buttonText === '스탬프 완료하기') {
             mutateCompleteStamp({ tripId: id.tripId!, stampId: id.stampId! });
-            navigate(-1);
+            navigate(`/trip/${id.tripId}`);
         }
     };
 
