@@ -91,6 +91,7 @@ const PomodoroPage = () => {
             dailyGoalId,
             title: stampName,
             elapsedTime: finalElapsedTime,
+            totalTime,
             dailyMissions: dailyMissions.map((mission) => ({
                 ...mission,
                 checked: nowCheckedMissionIdsRef.current.includes(
