@@ -43,8 +43,8 @@ export default defineConfig({
             injectRegister: 'auto', // 서비스 워커 자동 등록
 
             manifest: {
-                name: 'PLOG',
-                short_name: 'PLOG',
+                name: 'Study Trip',
+                short_name: 'StudyTrip',
                 start_url: '/',
                 display: 'standalone',
                 background_color: '#ffffff',
