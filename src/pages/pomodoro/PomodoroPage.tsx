@@ -267,7 +267,7 @@ const PomodoroPage = () => {
                         isStarted={isStarted}
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={time.minute}
-                        dailyMissions={dailyMissionsRef.current}
+                        dailyMissions={dailyMissions}
                         onCheckedChange={handleCheckedChange}
                     />
                     <PomodoroButton
