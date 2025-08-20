@@ -78,7 +78,6 @@ const PomodoroPage = () => {
     const [isRunning, setIsRunning] = useState(false); //타이머가 작동 중인지 여부
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
     const [isAutoStop, setIsAutoStop] = useState(false);
-    const [nowCheckedMissionIds, setCheckedMissionIds] = useState<number[]>([]); //완료된 미션 객체 넘기기
     const nowCheckedMissionIdsRef = useRef<number[]>([]); // 완료된 미션 객체 실시간
 
     const intervalRef = useRef<number | null>(null);
@@ -91,7 +90,6 @@ const PomodoroPage = () => {
 
     const handleCheckedChange = (ids: number[]) => {
         nowCheckedMissionIdsRef.current = ids; // 항상 최신 값 유지
-        setCheckedMissionIds(ids); // 화면 UI 업데이트용
     };
 
     const endingAction = () => {
