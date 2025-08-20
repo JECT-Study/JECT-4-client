@@ -91,6 +91,7 @@ const PomodoroPage = () => {
 
     const handleCheckedChange = (ids: number[]) => {
         nowCheckedMissionIdsRef.current = ids; // 항상 최신 값 유지
+        console.log(nowCheckedMissionIdsRef);
     };
 
     const endingAction = () => {
@@ -157,6 +158,13 @@ const PomodoroPage = () => {
     }, [isRunning]);
 
     const handleStart = () => {
+        console.log('데일리 목표 세팅: ', {
+            pomodoro: {
+                focusDurationInMinute: Number(time.minute),
+                focusSessionCount: Number(time.session),
+            },
+            missionIds: checkedMissionIds,
+        });
         //데일리 목표 세팅
         const postAndSetDailyGoal = async () => {
             try {
@@ -171,7 +179,7 @@ const PomodoroPage = () => {
                     }
                 );
 
-                console.log('데일리 목표 생성:');
+                console.log('데일리 목표 생성: ', response.data);
 
                 const dailyGoalId = response.data.data.dailyGoalId;
 
