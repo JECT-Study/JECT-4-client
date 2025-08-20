@@ -38,7 +38,7 @@ const PomodoroMissionModal = ({
         return (
             <div className="flex flex-col items-center">
                 <div className="text-title text-text-sub">
-                    {focusDurationInMinute}분 집중 완료!
+                    {Number(focusDurationInMinute)}분 집중 완료!
                 </div>
                 <div className="text-caption text-text-sub">
                     이제 잠깐 숨을 돌릴 시간이에요. 5분 휴식하세요.

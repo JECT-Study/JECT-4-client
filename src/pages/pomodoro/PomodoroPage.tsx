@@ -47,7 +47,6 @@ const PomodoroPage = () => {
 
     const { tripId, stampId, stampName, time, checkedMissionIds } =
         location.state || {};
-    console.log(tripId, stampId, stampName, time, checkedMissionIds);
     const [dailyGoal, setDailyGoal] = useState(defaultDailyGoal);
     const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
@@ -80,6 +79,7 @@ const PomodoroPage = () => {
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
     const [isAutoStop, setIsAutoStop] = useState(false);
     const [nowCheckedMissionIds, setCheckedMissionIds] = useState<number[]>([]); //완료된 미션 객체 넘기기
+    const nowCheckedMissionIdsRef = useRef<number[]>([]); // 완료된 미션 객체 실시간
 
     const intervalRef = useRef<number | null>(null);
     const elapsedTimeRef = useRef(0); //총 경과한 시간
@@ -88,6 +88,11 @@ const PomodoroPage = () => {
 
     const sessionLength = time.minute * 60;
     const completedSessions = Math.ceil(elapsedTimeRef.current / sessionLength);
+
+    const handleCheckedChange = (ids: number[]) => {
+        nowCheckedMissionIdsRef.current = ids; // 항상 최신 값 유지
+        setCheckedMissionIds(ids); // 화면 UI 업데이트용
+    };
 
     const endingAction = () => {
         if (intervalRef.current !== null) {
@@ -103,9 +108,13 @@ const PomodoroPage = () => {
             elapsedTime: finalElapsedTime,
             dailyMissions: dailyGoal.dailyMissions.map((mission) => ({
                 ...mission,
-                checked: nowCheckedMissionIds.includes(mission.dailyMissionId),
+                checked: nowCheckedMissionIdsRef.current.includes(
+                    mission.dailyMissionId
+                ),
             })),
         };
+        console.log(updatedDailyGoal);
+        debugger;
 
         navigate('/log', {
             replace: true,
@@ -259,7 +268,7 @@ const PomodoroPage = () => {
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={time.minute}
                         dailyMissions={dailyGoal.dailyMissions}
-                        onCheckedChange={setCheckedMissionIds}
+                        onCheckedChange={handleCheckedChange}
                     />
                     <PomodoroButton
                         isRunning={isRunning}
