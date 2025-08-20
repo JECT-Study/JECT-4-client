@@ -33,7 +33,7 @@ const PomodoroPage = () => {
                     `/trips/${tripId}/stamps/${stampId}/missions`
                 );
 
-                console.log('미션 목록 불러오기 성공:');
+                console.log('미션 목록 불러오기 성공');
                 const missions = response.data.data; // 서버에서 받아온 전체 미션 목록
                 const selectedMissions: DailyMission[] = missions
                     .filter((mission: any) =>
@@ -43,9 +43,6 @@ const PomodoroPage = () => {
                         dailyMissionId: index, // 지금은 임시로 인덱스 사용
                         missionName: mission.missionName,
                     }));
-
-                console.log(missions, selectedMissions);
-
                 setDailyMissions(selectedMissions);
             } catch (error) {
                 console.error('미션 목록 불러오기 실패:', error);
@@ -70,16 +67,14 @@ const PomodoroPage = () => {
 
     const handleCheckedChange = (ids: number[]) => {
         nowCheckedMissionIdsRef.current = ids; // 항상 최신 값 유지
-        console.log(nowCheckedMissionIdsRef);
     };
 
     useEffect(() => {
         dailyMissionsRef.current = dailyMissions;
-        console.log('dailyMissions updated:', dailyMissionsRef.current);
     }, [dailyMissions]);
+
     useEffect(() => {
         dailyGoalIdRef.current = dailyGoalId;
-        console.log('dailyGoalIds updated:', dailyGoalIdRef.current);
     }, [dailyGoalId]);
 
     const endingAction = () => {
@@ -103,8 +98,6 @@ const PomodoroPage = () => {
                 ),
             })),
         };
-        console.log(updatedDailyGoal);
-        debugger;
 
         navigate('/log', {
             replace: true,
@@ -148,13 +141,6 @@ const PomodoroPage = () => {
     }, [isRunning]);
 
     const handleStart = () => {
-        console.log('데일리 목표 세팅: ', {
-            pomodoro: {
-                focusDurationInMinute: Number(time.minute),
-                focusSessionCount: Number(time.session),
-            },
-            missionIds: checkedMissionIds,
-        });
         //데일리 목표 세팅
         const postAndSetDailyGoal = async () => {
             try {
@@ -169,7 +155,7 @@ const PomodoroPage = () => {
                     }
                 );
 
-                console.log('데일리 목표 생성: ', response.data);
+                console.log('데일리 목표 생성');
 
                 const nowDailyGoalId = response.data.data.dailyGoalId;
                 setDailyGoalId(nowDailyGoalId);
@@ -178,7 +164,6 @@ const PomodoroPage = () => {
                     `/trips/${tripId}/daily-goals/${nowDailyGoalId}`
                 );
 
-                console.log('데일리 목표 불러오기: ', getResponse.data);
                 setDailyMissions(getResponse.data.data.dailyMissions);
             } catch (error) {
                 console.error('데일리 목표 불러오기 실패:', error);
