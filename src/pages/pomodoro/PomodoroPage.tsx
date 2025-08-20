@@ -159,7 +159,7 @@ const PomodoroPage = () => {
                 console.log('데일리 목표 생성: ', response.data);
 
                 const nowDailyGoalId = response.data.data.dailyGoalId;
-                setDailyGoalId(dailyGoalId);
+                setDailyGoalId(nowDailyGoalId);
 
                 const getResponse = await api.get(
                     `/trips/${tripId}/daily-goals/${nowDailyGoalId}`
