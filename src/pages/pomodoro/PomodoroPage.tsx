@@ -62,6 +62,7 @@ const PomodoroPage = () => {
                 const selectedMissions = missions.filter((mission: any) =>
                     checkedMissionIds.includes(mission.missionId)
                 );
+                console.log(missions, selectedMissions);
 
                 setDailyGoal((prev) => ({
                     ...prev,
