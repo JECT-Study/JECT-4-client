@@ -39,8 +39,8 @@ const PomodoroPage = () => {
                     .filter((mission: any) =>
                         checkedMissionIds.includes(mission.missionId)
                     )
-                    .map((mission: any) => ({
-                        dailyMissionId: 0, // 지금은 0으로 고정
+                    .map((mission: any, index: number) => ({
+                        dailyMissionId: index, // 지금은 임시로 인덱스 사용
                         missionName: mission.missionName,
                     }));
 
