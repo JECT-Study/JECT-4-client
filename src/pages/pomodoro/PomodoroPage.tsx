@@ -70,6 +70,14 @@ const PomodoroPage = () => {
         console.log(nowCheckedMissionIdsRef);
     };
 
+    //테스트용 출력 콘솔
+    useEffect(() => {
+        console.log('dailyMissions updated:', dailyMissions);
+    }, [dailyMissions]);
+    useEffect(() => {
+        console.log('dailyGoalIds updated:', dailyGoalId);
+    }, [dailyGoalId]);
+
     const endingAction = () => {
         if (intervalRef.current !== null) {
             clearInterval(intervalRef.current);
