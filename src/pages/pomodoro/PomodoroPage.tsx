@@ -21,6 +21,9 @@ const PomodoroPage = () => {
         location.state || {};
     const [dailyGoalId, setDailyGoalId] = useState(0);
     const [dailyMissions, setDailyMissions] = useState<DailyMission[]>([]);
+
+    const dailyGoalIdRef = useRef(dailyGoalId);
+    const dailyMissionsRef = useRef(dailyMissions);
     const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
     useEffect(() => {
@@ -70,12 +73,13 @@ const PomodoroPage = () => {
         console.log(nowCheckedMissionIdsRef);
     };
 
-    //테스트용 출력 콘솔
     useEffect(() => {
-        console.log('dailyMissions updated:', dailyMissions);
+        dailyMissionsRef.current = dailyMissions;
+        console.log('dailyMissions updated:', dailyMissionsRef.current);
     }, [dailyMissions]);
     useEffect(() => {
-        console.log('dailyGoalIds updated:', dailyGoalId);
+        dailyGoalIdRef.current = dailyGoalId;
+        console.log('dailyGoalIds updated:', dailyGoalIdRef.current);
     }, [dailyGoalId]);
 
     const endingAction = () => {
@@ -88,11 +92,11 @@ const PomodoroPage = () => {
 
         // 완료 미션 담아서 넘기기
         const updatedDailyGoal = {
-            dailyGoalId,
+            dailyGoalId: dailyGoalIdRef.current,
             title: stampName,
             elapsedTime: finalElapsedTime,
             totalTime,
-            dailyMissions: dailyMissions.map((mission) => ({
+            dailyMissions: dailyMissionsRef.current.map((mission) => ({
                 ...mission,
                 checked: nowCheckedMissionIdsRef.current.includes(
                     mission.dailyMissionId
@@ -263,7 +267,7 @@ const PomodoroPage = () => {
                         isStarted={isStarted}
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={time.minute}
-                        dailyMissions={dailyMissions}
+                        dailyMissions={dailyMissionsRef.current}
                         onCheckedChange={handleCheckedChange}
                     />
                     <PomodoroButton
