@@ -66,7 +66,7 @@ const LogPage = () => {
             await api.post(
                 `trips/${tripId}/daily-goals/${dailyGoal.dailyGoalId}/study-logs`,
                 {
-                    totalFocusTimeInMinutes: dailyGoal.elapsedTime,
+                    totalFocusTimeInSeconds: dailyGoal.elapsedTime,
                     selectedDailyMissionIds: checkedIds,
                     content: text,
                 }
