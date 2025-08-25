@@ -1,7 +1,7 @@
 import Picker from 'react-mobile-picker';
 
-const minutes = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, '0')
+const minutes = Array.from({ length: 59 }, (_, i) =>
+    (i + 1).toString().padStart(2, '0')
 );
 const sessions = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
 

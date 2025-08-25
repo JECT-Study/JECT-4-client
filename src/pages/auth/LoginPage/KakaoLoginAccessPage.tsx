@@ -45,6 +45,7 @@ function KakaoLoginAccessPage() {
                     console.log('로그인 성공');
 
                     localStorage.setItem('loginCheck', 'false');
+                    debugger;
                     navigate('/main', { replace: true });
                 } catch (error) {
                     const err = error as AxiosError;
@@ -54,6 +55,7 @@ function KakaoLoginAccessPage() {
                         localStorage.setItem('loginCheck', 'true');
                         window.location.href = kakaoURL;
                     } else {
+                        debugger;
                         alert('로그인에 문제가 발생했습니다. ' + err.message);
                         navigate('/', { replace: true });
                     }
@@ -72,7 +74,7 @@ function KakaoLoginAccessPage() {
         login();
     }, [code, navigate, setUserInfo]);
 
-    return null;
+    return <div>로그인 중입니다..</div>;
 }
 
 export default KakaoLoginAccessPage;
