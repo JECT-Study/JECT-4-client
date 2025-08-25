@@ -52,6 +52,11 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        // 제외 경로를 한 번 더 체크
+        if (authExcludedPaths.includes(originalRequest.url || '')) {
+            return Promise.reject(error);
+        }
+
         // accessToken 만료 (401) + 한 번만 재시도
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {

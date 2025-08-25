@@ -35,11 +35,7 @@ const LogPage = () => {
     const maxLength = 500;
 
     const percentage = Math.min(
-        (dailyGoal.elapsedTime /
-            (dailyGoal.pomodoro.focusDurationInMinute *
-                dailyGoal.pomodoro.focusSessionCount *
-                60)) *
-            100,
+        (dailyGoal.elapsedTime / dailyGoal.totalTime) * 100,
         100
     );
     const formatTime = (seconds: number) => {
@@ -70,7 +66,7 @@ const LogPage = () => {
             await api.post(
                 `trips/${tripId}/daily-goals/${dailyGoal.dailyGoalId}/study-logs`,
                 {
-                    totalFocusTimeInMinutes: dailyGoal.elapsedTime,
+                    totalFocusTimeInSeconds: dailyGoal.elapsedTime,
                     selectedDailyMissionIds: checkedIds,
                     content: text,
                 }
