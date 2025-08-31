@@ -6,39 +6,32 @@ import MainButton from '@components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
-import { NICKNAME_REGEX } from '@constants/regex';
+import { validateNickname } from '@constants/regex';
 
 function SetNamePage() {
+    const navigate = useNavigate();
     const [nickname, setNickname] = useState('');
     const [error, setError] = useState<boolean>(false);
-
     const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
 
     const handleSubmit = () => {
-        if (nickname) {
-            if (!NICKNAME_REGEX.test(nickname)) {
-                alert('닉네임은 영어, 숫자, 한글 포함 2~10자로 입력해주세요.');
-                return;
-            }
-            setUserInfo({
-                ...userInfo,
-                nickname: nickname,
-            });
-            navigate('/set-job', { replace: true });
-        } else {
+        if (!nickname) {
             alert('닉네임을 입력해 주세요.');
+            return;
         }
+        if (!validateNickname(nickname)) {
+            alert('닉네임은 영어, 숫자, 한글 포함 2~10자로 입력해주세요.');
+            return;
+        }
+        setUserInfo({ ...userInfo, nickname });
+        navigate('/set-job', { replace: true });
     };
 
     const handleNicknameChange = (value: string) => {
         setNickname(value);
-
-        if (value.length === 0) setError(false);
-        else if (!NICKNAME_REGEX.test(value)) setError(true);
-        else setError(false);
+        setError(!validateNickname(value));
     };
 
-    const navigate = useNavigate();
     return (
         <div className="flex min-h-screen flex-col justify-between py-14">
             <section className="mb-12 rounded-lg bg-gradient-to-r py-5">
