@@ -5,6 +5,7 @@ import PomodoroButton from './PomodoroButton';
 import PomodoroMissionModal from './PomodoroMissionModal';
 import BackHeader from '@components/common/BackHeaderLayout';
 import ConfirmModal from '@components/common/ConfirmModal';
+import { clearPomodoroStorage } from '@constants/pomodoroLocalStorageKey';
 
 import api from '@lib/axios';
 
@@ -20,7 +21,7 @@ const PomodoroPage = () => {
     // state로 받아오는 기본값들
     const [tripId, setTripId] = useState<Number>(0);
     const [stampId, setStampId] = useState<Number>(0);
-    const [stampName, setStampName] = useState<String>('');
+    const [stampName, setStampName] = useState('');
     const [time, setTime] = useState<{ minute: number; session: number }>({
         minute: 0,
         session: 0,
@@ -214,10 +215,7 @@ const PomodoroPage = () => {
             })),
         };
 
-        localStorage.removeItem('saveLocalStorage');
-        localStorage.removeItem('state');
-        localStorage.removeItem('isState');
-        localStorage.removeItem('sessionState');
+        clearPomodoroStorage();
 
         navigate('/log', {
             replace: true,
