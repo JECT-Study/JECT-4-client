@@ -12,6 +12,7 @@ type Props = {
     stampName: string;
     focusDurationInMinute: number;
     dailyMissions: DailyMission[];
+    checkedIds: number[];
     onCheckedChange: (checkedIds: number[]) => void;
 };
 
@@ -21,16 +22,14 @@ const PomodoroMissionModal = ({
     stampName,
     focusDurationInMinute,
     dailyMissions,
+    checkedIds,
     onCheckedChange,
 }: Props) => {
-    const [checkedIds, setCheckedIds] = useState<number[]>([]);
-
     const handleToggle = (id: number) => {
         const newCheckedIds = checkedIds.includes(id)
             ? checkedIds.filter((cid) => cid !== id)
             : [...checkedIds, id];
 
-        setCheckedIds(newCheckedIds);
         onCheckedChange(newCheckedIds); // ✅ 상위로 전달
     };
 

@@ -6,40 +6,32 @@ import MainButton from '@components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
-// const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,10}$/;
+import { validateNickname } from '@constants/regex';
 
 function SetNamePage() {
+    const navigate = useNavigate();
     const [nickname, setNickname] = useState('');
-
+    const [error, setError] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
 
     const handleSubmit = () => {
-        if (nickname) {
-            setUserInfo({
-                ...userInfo,
-                nickname: nickname,
-            });
-            navigate('/set-job', { replace: true });
-        } else {
+        if (!nickname) {
             alert('닉네임을 입력해 주세요.');
+            return;
         }
+        if (!validateNickname(nickname)) {
+            alert('닉네임은 영어, 숫자, 한글 포함 2~10자로 입력해주세요.');
+            return;
+        }
+        setUserInfo({ ...userInfo, nickname });
+        navigate('/set-job', { replace: true });
     };
 
-    // const [error, setError] = useState('');
+    const handleNicknameChange = (value: string) => {
+        setNickname(value);
+        setError(!validateNickname(value));
+    };
 
-    // const handleNicknameChange = (value: string) => {
-    //     setNickname(value);
-
-    //     if (value.length === 0) {
-    //         setError(''); // 빈값일 땐 에러 없음
-    //     } else if (!nicknameRegex.test(value)) {
-    //         setError('2~10자의 영문, 숫자, 한글만 사용할 수 있습니다.');
-    //     } else {
-    //         setError('');
-    //     }
-    // };
-
-    const navigate = useNavigate();
     return (
         <div className="flex min-h-screen flex-col justify-between py-14">
             <section className="mb-12 rounded-lg bg-gradient-to-r py-5">
@@ -52,8 +44,11 @@ function SetNamePage() {
                 <div className="relative mt-12">
                     <Input
                         value={nickname}
-                        onValueChange={setNickname}
+                        onValueChange={handleNicknameChange}
                         placeholder="닉네임을 입력하세요"
+                        borderColor={
+                            error ? 'border-point1' : 'border-text-sub'
+                        }
                     />
                 </div>
                 <p className="text-small text-point1 mt-2">

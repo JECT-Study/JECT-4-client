@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AxiosError } from 'axios';
 
 import api from '@lib/axios';
@@ -8,6 +8,7 @@ import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
 function KakaoLoginAccessPage() {
     const navigate = useNavigate();
+    const didLogin = useRef(false);
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code');
     const [, setUserInfo] = useAtom(signupUserInfoAtom);
@@ -18,6 +19,9 @@ function KakaoLoginAccessPage() {
 
     // code가 있을 경우 1. 로그인 시도 2. 로그인 실패할 시 userInfoAtom에 저장하고 이름 설정 페이지로 이동
     useEffect(() => {
+        if (didLogin.current) return;
+        didLogin.current = true;
+
         if (code === null) {
             alert('로그인 실패: 인증 코드가 없습니다.');
             navigate('/', { replace: true });
@@ -45,6 +49,7 @@ function KakaoLoginAccessPage() {
                     console.log('로그인 성공');
 
                     localStorage.setItem('loginCheck', 'false');
+                    debugger;
                     navigate('/main', { replace: true });
                 } catch (error) {
                     const err = error as AxiosError;
@@ -54,6 +59,7 @@ function KakaoLoginAccessPage() {
                         localStorage.setItem('loginCheck', 'true');
                         window.location.href = kakaoURL;
                     } else {
+                        debugger;
                         alert('로그인에 문제가 발생했습니다. ' + err.message);
                         navigate('/', { replace: true });
                     }
@@ -72,7 +78,7 @@ function KakaoLoginAccessPage() {
         login();
     }, [code, navigate, setUserInfo]);
 
-    return null;
+    return <div>로그인 중입니다..</div>;
 }
 
 export default KakaoLoginAccessPage;

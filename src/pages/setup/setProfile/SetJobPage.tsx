@@ -32,12 +32,13 @@ function SetJobPage() {
                 updatedUserInfo
             );
 
-            console.log('회원가입 성공');
+            alert('회원가입에 성공하였습니다.');
 
             // 3. 성공 시 메인 페이지로 이동
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
-            navigate('/main', { replace: true });
+            sessionStorage.setItem('signupFlag', 'true');
+            navigate('/set-travel-type', { replace: true });
         } catch (error) {
             console.error('API 호출 실패:', error);
             alert('서버 요청 중 오류가 발생했습니다.');

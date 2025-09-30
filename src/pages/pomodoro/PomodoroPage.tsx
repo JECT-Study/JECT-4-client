@@ -5,6 +5,7 @@ import PomodoroButton from './PomodoroButton';
 import PomodoroMissionModal from './PomodoroMissionModal';
 import BackHeader from '@components/common/BackHeaderLayout';
 import ConfirmModal from '@components/common/ConfirmModal';
+import { clearPomodoroStorage } from '@constants/pomodoroLocalStorageKey';
 
 import api from '@lib/axios';
 
@@ -17,8 +18,16 @@ const PomodoroPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId, stampId, stampName, time, checkedMissionIds } =
-        location.state || {};
+    // state로 받아오는 기본값들
+    const [tripId, setTripId] = useState<Number>(0);
+    const [stampId, setStampId] = useState<Number>(0);
+    const [stampName, setStampName] = useState('');
+    const [time, setTime] = useState<{ minute: number; session: number }>({
+        minute: 0,
+        session: 0,
+    });
+    const [checkedMissionIds, setCheckedMissionIds] = useState([]);
+
     const [dailyGoalId, setDailyGoalId] = useState(0);
     const [dailyMissions, setDailyMissions] = useState<DailyMission[]>([]);
 
@@ -26,43 +35,149 @@ const PomodoroPage = () => {
     const dailyMissionsRef = useRef(dailyMissions);
     const [isModalOpen, setIsModalOpen] = useState(false); // 중지 확인 모달
 
-    useEffect(() => {
-        const fetchMissions = async () => {
-            try {
-                const response = await api.get(
-                    `/trips/${tripId}/stamps/${stampId}/missions`
-                );
+    const isMounted = useRef(false); // 마운트 여부
 
-                console.log('미션 목록 불러오기 성공');
-                const missions = response.data.data; // 서버에서 받아온 전체 미션 목록
-                const selectedMissions: DailyMission[] = missions
-                    .filter((mission: any) =>
-                        checkedMissionIds.includes(mission.missionId)
-                    )
-                    .map((mission: any, index: number) => ({
-                        dailyMissionId: index, // 지금은 임시로 인덱스 사용
-                        missionName: mission.missionName,
-                    }));
-                setDailyMissions(selectedMissions);
-            } catch (error) {
-                console.error('미션 목록 불러오기 실패:', error);
+    // 처음 페이지 로딩 시 미션 목록 세팅하기
+    useEffect(() => {
+        //localStorge에 넣은 데이터가 존재할 때(새로고침 했을 때)
+        if (localStorage.getItem('saveLocalStorage') == 'true') {
+            // 데이터 전부 불러와서 변수에 세팅
+            const savedState = localStorage.getItem('state');
+            if (savedState) {
+                const { tripId, stampId, stampName, time, checkedMissionIds } =
+                    JSON.parse(savedState);
+
+                setTripId(Number(tripId));
+                setStampId(Number(stampId));
+                setStampName(stampName);
+                setTime({
+                    minute: Number(time.minute),
+                    session: Number(time.session),
+                });
+                setCheckedMissionIds(checkedMissionIds);
             }
-        };
-        fetchMissions();
+
+            const savedIsState = localStorage.getItem('isState');
+            if (savedIsState) {
+                const { isStarted, isRunning, isAutoStop } =
+                    JSON.parse(savedIsState);
+                setIsStarted(Boolean(isStarted));
+                setIsRunning(Boolean(isRunning));
+                setIsAutoStop(Boolean(isAutoStop));
+            }
+
+            const savedSessionState = localStorage.getItem('sessionState');
+            if (savedSessionState) {
+                const { elapsedTime, sessionElapsedTime, currentSession } =
+                    JSON.parse(savedSessionState);
+                elapsedTimeRef.current = Number(elapsedTime);
+                setSessionElapsedTime(Number(sessionElapsedTime));
+                setCurrentSession(Number(currentSession));
+            }
+
+            const savedMissionState = localStorage.getItem('missionState');
+            if (savedMissionState) {
+                const dailyMissions = JSON.parse(savedMissionState);
+                setDailyMissions(dailyMissions);
+            }
+
+            const savedDailyGoalId = localStorage.getItem('dailyGoalIdState');
+            if (savedDailyGoalId) {
+                const dailyGoalId = JSON.parse(savedDailyGoalId);
+                setDailyGoalId(dailyGoalId);
+            }
+
+            const savedCheckedMission = localStorage.getItem(
+                'checkedMissionState'
+            );
+            if (savedCheckedMission) {
+                nowCheckedMissionIdsRef.current =
+                    JSON.parse(savedCheckedMission);
+            }
+        } else {
+            // localStorage에 저장된 데이터가 없을 경우(해당 페이지에 처음 진입했을 경우)
+            const { tripId, stampId, stampName, time, checkedMissionIds } =
+                location.state || {};
+            setTripId(Number(tripId));
+            setStampId(Number(stampId));
+            setStampName(stampName);
+            setTime({
+                minute: Number(time.minute),
+                session: Number(time.session),
+            });
+            setCheckedMissionIds(checkedMissionIds);
+
+            localStorage.setItem(
+                'state',
+                JSON.stringify({
+                    tripId,
+                    stampId,
+                    stampName,
+                    time,
+                    checkedMissionIds,
+                })
+            );
+            //isState, sessionState, missionState는 해당 단계에서 기본 값 저장
+            localStorage.setItem(
+                'isState',
+                JSON.stringify({ isStarted, isRunning, isAutoStop })
+            );
+            localStorage.setItem(
+                'sessionState',
+                JSON.stringify({
+                    elapsedTime: elapsedTimeRef.current,
+                    sessionElapsedTime,
+                    currentSession,
+                })
+            );
+
+            //시작 버튼 안눌렀을 경우
+            if (!isStarted) {
+                // 처음 미션 세팅
+                const fetchMissions = async () => {
+                    try {
+                        const response = await api.get(
+                            `/trips/${tripId}/stamps/${stampId}/missions`
+                        );
+
+                        console.log('미션 목록 불러오기 성공');
+                        const missions = response.data.data; // 서버에서 받아온 전체 미션 목록
+                        const selectedMissions: DailyMission[] = missions
+                            .filter((mission: any) =>
+                                checkedMissionIds.includes(mission.missionId)
+                            )
+                            .map((mission: any, index: number) => ({
+                                dailyMissionId: index, // 지금은 임시로 인덱스 사용
+                                missionName: mission.missionName,
+                            }));
+                        setDailyMissions(selectedMissions);
+                        localStorage.setItem(
+                            'missionState',
+                            JSON.stringify(selectedMissions)
+                        );
+                    } catch (error) {
+                        console.error('미션 목록 불러오기 실패:', error);
+                    }
+                };
+                fetchMissions();
+            }
+
+            localStorage.setItem('saveLocalStorage', 'true');
+        }
     }, []);
 
     const totalTime = Number(time.minute) * Number(time.session) * 60; // 전체시간
     const [isRunning, setIsRunning] = useState(false); //타이머가 작동 중인지 여부
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
-    const [isAutoStop, setIsAutoStop] = useState(false);
-    const nowCheckedMissionIdsRef = useRef<number[]>([]); // 완료된 미션 객체 실시간
+    const [isAutoStop, setIsAutoStop] = useState(false); // 한 세션이 끝나서 멈췄을 경우
+    const nowCheckedMissionIdsRef = useRef<number[]>([]); // 완료된 미션 객체 실시간 값
 
     const intervalRef = useRef<number | null>(null);
     const elapsedTimeRef = useRef(0); //총 경과한 시간
     const [sessionElapsedTime, setSessionElapsedTime] = useState(0); //현재 세션에서 경과한 시간(초)
     const [currentSession, setCurrentSession] = useState(0); // 진행 중인 세션 번호
 
-    const sessionLength = Number(time.minute) * 60;
+    const sessionLength = Number(time.minute) * 60; // 한 세션 길이
     const completedSessions = Math.ceil(elapsedTimeRef.current / sessionLength);
 
     const handleCheckedChange = (ids: number[]) => {
@@ -86,6 +201,7 @@ const PomodoroPage = () => {
         const finalElapsedTime = elapsedTimeRef.current;
 
         // 완료 미션 담아서 넘기기
+        console.log(dailyGoalIdRef);
         const updatedDailyGoal = {
             dailyGoalId: dailyGoalIdRef.current,
             title: stampName,
@@ -98,6 +214,8 @@ const PomodoroPage = () => {
                 ),
             })),
         };
+
+        clearPomodoroStorage();
 
         navigate('/log', {
             replace: true,
@@ -196,9 +314,11 @@ const PomodoroPage = () => {
         endingAction();
     };
 
-    // [추가] PWA용 뒤로가기 방지
+    // PWA용 뒤로가기 방지
     useEffect(() => {
-        if (!isStarted) return;
+        if (!isStarted) {
+            return;
+        }
 
         // 초기 히스토리 스택 세팅
         window.history.pushState(null, '', window.location.href);
@@ -217,6 +337,57 @@ const PomodoroPage = () => {
             window.removeEventListener('popstate', handlePopState);
         };
     }, [isStarted]);
+
+    // 새로고침 시 진행시간 데이터만 추가로 저장
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+
+            localStorage.setItem(
+                'dailyGoalIdState',
+                JSON.stringify(dailyGoalIdRef.current)
+            );
+
+            localStorage.setItem(
+                'sessionState',
+                JSON.stringify({
+                    elapsedTime: elapsedTimeRef.current,
+                    sessionElapsedTime:
+                        elapsedTimeRef.current -
+                        time.minute * 60 * currentSession,
+                    currentSession,
+                })
+            );
+
+            localStorage.setItem(
+                'missionState',
+                JSON.stringify(dailyMissionsRef.current)
+            );
+
+            localStorage.setItem(
+                'checkedMissionState',
+                JSON.stringify(nowCheckedMissionIdsRef.current)
+            );
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+
+    // 진행 상태가 바뀔 때마다 localStorage에 저장
+    useEffect(() => {
+        if (isMounted.current) {
+            localStorage.setItem(
+                'isState',
+                JSON.stringify({ isStarted, isRunning, isAutoStop })
+            );
+        } else {
+            isMounted.current = true; // 첫 렌더링은 무시
+        }
+    }, [isStarted, isRunning, isAutoStop]);
 
     return (
         <div>
@@ -252,7 +423,8 @@ const PomodoroPage = () => {
                         isStarted={isStarted}
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={time.minute}
-                        dailyMissions={dailyMissions}
+                        dailyMissions={dailyMissions ?? []}
+                        checkedIds={nowCheckedMissionIdsRef.current}
                         onCheckedChange={handleCheckedChange}
                     />
                     <PomodoroButton

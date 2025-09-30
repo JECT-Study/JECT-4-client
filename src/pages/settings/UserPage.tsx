@@ -5,6 +5,8 @@ import BackHeader from '../../components/common/BackHeaderLayout';
 import ClearableInput from '../../components/common/input/ClearableInput';
 import MainButton from '../../components/common/button/MainButton';
 
+import { validateNickname } from '@constants/regex';
+
 import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
@@ -12,19 +14,27 @@ import api from '@lib/axios';
 
 const UserPage = () => {
     const navigate = useNavigate();
-    // 유저이름 불러오기
     const [userName] = useAtom(memberNameAtom);
+    const [nickname, setNickname] = useState(userName || '');
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+    const [error, setError] = useState<boolean>(false);
 
     useEffect(() => {
         fetchMemberName();
     }, [fetchMemberName]);
-    const [nickname, setNickname] = useState(userName || '');
 
     const handleSave = async () => {
+        if (!nickname) {
+            alert('닉네임을 입력해 주세요.');
+            return;
+        }
+        if (!validateNickname(nickname)) {
+            alert('닉네임은 영어, 숫자, 한글 포함 2~10자로 입력해주세요.');
+            return;
+        }
         try {
             const response = await api.patch('/members/me', {
-                nickname: nickname,
+                nickname,
             });
             fetchMemberName(nickname);
             console.log('프로필 저장 성공', response.data);
@@ -33,6 +43,11 @@ const UserPage = () => {
         } catch (error) {
             console.warn('프로필 저장 실패', error);
         }
+    };
+
+    const handleNicknameChange = (value: string) => {
+        setNickname(value);
+        setError(!validateNickname(value));
     };
 
     return (
@@ -54,9 +69,15 @@ const UserPage = () => {
                         </div>
                         <ClearableInput
                             value={nickname}
-                            onValueChange={setNickname}
+                            onValueChange={handleNicknameChange}
                             placeholder="닉네임을 입력하세요"
+                            borderColor={
+                                error ? 'border-point1' : 'border-text-sub'
+                            }
                         />
+                        <p className="text-small text-point1 mt-2">
+                            * 특수문자를 제외하고 2~10자 내로 입력해 주세요.
+                        </p>
                     </div>
                 </div>
                 <MainButton

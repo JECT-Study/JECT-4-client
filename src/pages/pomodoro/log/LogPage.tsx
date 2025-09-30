@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,15 @@ import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../components/common/button/MainButton';
 import LogMissionItem from './LogMissionItem';
 import { missionRefetchAtom } from '../../../store/mission';
+
+import { clearLogStorage } from '@constants/pomodoroLocalStorageKey';
+
+interface DailyGoalExceptMissions {
+    dailyGoalId: number;
+    elapsedTime: number;
+    title: string;
+    totalTime: number;
+}
 
 interface DailyMission {
     dailyMissionId: number;
@@ -22,16 +31,21 @@ const LogPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { tripId, stampId, dailyGoal } = location.state || {};
-    console.log(dailyGoal);
-
-    if (!tripId || !dailyGoal) {
-        return null;
-    }
+    const [tripId, setTripId] = useState<Number>(0);
+    const [stampId, setStampId] = useState<Number>(0);
+    const [dailyGoal, setDailyGoal] = useState<DailyGoalExceptMissions>({
+        dailyGoalId: 0,
+        elapsedTime: 0,
+        title: '',
+        totalTime: 0,
+    });
+    const [dailyMissions, setDailyMissions] = useState<DailyMission[]>([]);
+    const [text, setText] = useState('');
+    const dailyMissionsRef = useRef(dailyMissions);
+    const textRef = useRef(text);
 
     const isNextDisabled = false;
     const [isOpen, setIsOpen] = useState(false);
-    const [text, setText] = useState('');
     const maxLength = 500;
 
     const percentage = Math.min(
@@ -46,22 +60,30 @@ const LogPage = () => {
 
     const timeSpent = formatTime(dailyGoal.elapsedTime);
 
-    const [checkedIds, setCheckedIds] = useState<number[]>(() =>
-        dailyGoal
-            ? dailyGoal.dailyMissions
-                  .filter((mission: DailyMission) => mission.checked) // checked === true 인 것만
-                  .map((mission: DailyMission) => mission.dailyMissionId) // id 배열로 변환
-            : []
-    );
+    useEffect(() => {
+        dailyMissionsRef.current = dailyMissions;
+    }, [dailyMissions]);
+
+    useEffect(() => {
+        textRef.current = text;
+    }, [text]);
 
     // 체크 토글 함수
     const handleToggle = (id: number) => {
-        setCheckedIds((prev) =>
-            prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id]
+        setDailyMissions((prev) =>
+            prev.map((mission) =>
+                mission.dailyMissionId === id
+                    ? { ...mission, checked: !mission.checked }
+                    : mission
+            )
         );
     };
 
     const handleComplete = async () => {
+        const checkedIds = dailyMissions
+            .filter((mission) => mission.checked)
+            .map((mission) => mission.dailyMissionId);
+
         try {
             await api.post(
                 `trips/${tripId}/daily-goals/${dailyGoal.dailyGoalId}/study-logs`,
@@ -74,17 +96,62 @@ const LogPage = () => {
 
             if (missionRefetch) await missionRefetch();
 
+            clearLogStorage();
+
             alert('공부 기록이 생성되었습니다.');
 
             navigate(`/trip/${tripId}/dashboard?stampId=${stampId}`, {
                 replace: true,
             });
-
             console.log('로그 생성 성공');
         } catch (error) {
             console.warn('로그 생성 실패', error);
         }
     };
+
+    useEffect(() => {
+        if (localStorage.getItem('saveLocalStorage') == 'true') {
+            // 데이터 전부 불러와서 변수에 세팅
+            const savedTripId = localStorage.getItem('tripId');
+            if (savedTripId) setTripId(Number(JSON.parse(savedTripId)));
+
+            const savedStampId = localStorage.getItem('stampId');
+            if (savedStampId) setStampId(Number(JSON.parse(savedStampId)));
+
+            const savedDailyGoal = localStorage.getItem('dailyGoal');
+            if (savedDailyGoal) setDailyGoal(JSON.parse(savedDailyGoal));
+
+            const savedDailyMissions = localStorage.getItem('dailyMissions');
+            if (savedDailyMissions)
+                setDailyMissions(JSON.parse(savedDailyMissions));
+
+            const savedText = localStorage.getItem('text');
+            if (savedText) setText(savedText);
+        } else {
+            console.log(location.state);
+            // localStorage에 저장된 데이터가 없을 경우(해당 페이지에 처음 진입했을 경우)
+            const { tripId, stampId, dailyGoal } = location.state || {};
+            setTripId(tripId);
+            setStampId(stampId);
+            setDailyGoal({
+                dailyGoalId: dailyGoal.dailyGoalId,
+                elapsedTime: dailyGoal.elapsedTime,
+                totalTime: dailyGoal.totalTime,
+                title: dailyGoal.title,
+            });
+            setDailyMissions(dailyGoal.dailyMissions);
+            localStorage.setItem('tripId', tripId);
+            localStorage.setItem('stampId', stampId);
+            localStorage.setItem('dailyGoal', JSON.stringify(dailyGoal));
+            localStorage.setItem(
+                'dailyMissions',
+                JSON.stringify(dailyGoal.dailyMissions)
+            );
+            localStorage.setItem('text', '');
+
+            localStorage.setItem('saveLocalStorage', 'true');
+        }
+    }, []);
 
     useEffect(() => {
         // 초기 히스토리 스택 세팅
@@ -98,10 +165,22 @@ const LogPage = () => {
             window.history.pushState(null, '', window.location.href);
         };
 
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+
+            localStorage.setItem(
+                'dailyMissions',
+                JSON.stringify(dailyMissionsRef.current)
+            );
+            localStorage.setItem('text', textRef.current);
+        };
+
         window.addEventListener('popstate', handlePopState);
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
             window.removeEventListener('popstate', handlePopState);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, []);
 
@@ -123,19 +202,15 @@ const LogPage = () => {
                             <div className="text-text-sub w-full">
                                 <div className="text-body flex max-h-40 flex-col items-baseline gap-3 overflow-y-auto">
                                     <div className="text-body flex max-h-40 flex-col items-baseline gap-3 overflow-y-auto">
-                                        {dailyGoal.dailyMissions.map(
-                                            (mission: any) => (
-                                                <LogMissionItem
-                                                    key={mission.dailyMissionId}
-                                                    id={mission.dailyMissionId}
-                                                    name={mission.missionName}
-                                                    checked={checkedIds.includes(
-                                                        mission.dailyMissionId
-                                                    )}
-                                                    onToggle={handleToggle}
-                                                />
-                                            )
-                                        )}
+                                        {dailyMissions.map((mission: any) => (
+                                            <LogMissionItem
+                                                key={mission.dailyMissionId}
+                                                id={mission.dailyMissionId}
+                                                name={mission.missionName}
+                                                checked={mission.checked}
+                                                onToggle={handleToggle}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </div>

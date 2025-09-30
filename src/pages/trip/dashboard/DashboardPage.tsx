@@ -20,6 +20,8 @@ import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
 import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
 import { missionRefetchAtom } from '../../../store/mission';
 
+import { clearAllStorage } from '@constants/pomodoroLocalStorageKey';
+
 export default function DashboardPage() {
     const [searchParams] = useSearchParams();
     const stampId = searchParams.get('stampId');
@@ -40,6 +42,10 @@ export default function DashboardPage() {
         isError: isMissionError,
         refetch,
     } = useMissionQuery(id.tripId!, id.stampId!);
+
+    useEffect(() => {
+        clearAllStorage();
+    }, []);
 
     useEffect(() => {
         setMissionRefetch(() => refetch);
