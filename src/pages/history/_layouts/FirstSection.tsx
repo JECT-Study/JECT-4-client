@@ -17,13 +17,13 @@ const FirstSection = ({ goalCardContents }: FirstSectionProps) => {
                 </p>
             </div>
             <div className="flex w-full gap-1.5">
-                {Object.keys(goalCardContents).map((keyAsString, index) => {
+                {Object.keys(goalCardContents).map((keyAsString) => {
                     const type = keyAsString as keyof GoalCardContentsType;
 
                     return (
                         <GoalCard
                             type={type}
-                            key={index}
+                            key={type}
                             goal={goalCardContents[type]}
                         />
                     );
