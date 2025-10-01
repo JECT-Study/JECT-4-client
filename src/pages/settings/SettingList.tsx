@@ -41,7 +41,7 @@ const SettingList = () => {
     ];
 
     return (
-        <div>
+        <div className="flex flex-col">
             {settings.map((item) => (
                 <SettingItem label={item.label} onClick={item.onClick} />
             ))}

@@ -6,6 +6,8 @@ import MainButton from '../../../components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
+import { accessTokenAtom } from '@store/auth';
+
 import api from '@lib/axios';
 
 function SetJobPage() {
@@ -14,6 +16,7 @@ function SetJobPage() {
     const isNextDisabled = !selected;
 
     const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
+    const [, setAccessToken] = useAtom(accessTokenAtom);
 
     const handleSelect = (value: string) => {
         setSelected(value);
@@ -35,8 +38,7 @@ function SetJobPage() {
             alert('회원가입에 성공하였습니다.');
 
             // 3. 성공 시 메인 페이지로 이동
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
+            setAccessToken(response.data.data.accessToken);
             sessionStorage.setItem('signupFlag', 'true');
             navigate('/set-travel-type', { replace: true });
         } catch (error) {
