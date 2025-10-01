@@ -142,7 +142,7 @@ const MainPage = () => {
     };
 
     return (
-        <div>
+        <div className="flex flex-col">
             <div className="pt-7">
                 <MainTabButton />
             </div>

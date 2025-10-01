@@ -21,7 +21,6 @@ const MainCardButton = ({
     onClick,
     onDelete,
 }: MainCardButtonProps) => {
-    console.log('MainCardButton travel:', travel);
     return (
         <div
             onClick={onClick}
