@@ -29,70 +29,84 @@ const MainPage = () => {
 
     const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
     const [travelList, setTravelList] = useState<Travel[]>([]);
-    const [, setPage] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
     const observer = useRef<IntersectionObserver | null>(null);
-    const fetchedOnce = useRef(false);
+
+    const pageRef = useRef(0);
+    const isFetchingRef = useRef(false); // fetch 중복 방지
 
     // 무한 스크롤 구현
-    const fetchTravels = useCallback(
-        async (currentPage: number, reset = false) => {
-            if (isFetching || (!hasNext && !reset)) return;
-            setIsFetching(true);
+    const fetchTravels = useCallback(async (reset = false) => {
+        if (isFetchingRef.current) return;
 
-            try {
-                const response = await api.get('/trips', {
-                    params: { page: currentPage, size: PAGE_SIZE },
-                });
+        isFetchingRef.current = true;
+        setIsFetching(true);
 
-                const tripInfos = response.data.data.tripInfos;
-                console.log('여행 목록 불러오기 성공:', tripInfos);
-                const nextExists = response.data.data.hasNext;
+        try {
+            const currentPage = reset ? 0 : pageRef.current;
+            console.log(
+                'fetchTravels 호출, page:',
+                currentPage,
+                'reset:',
+                reset
+            );
 
-                const mappedTravels: Travel[] = tripInfos.map((trip: any) => ({
-                    id: trip.tripId,
-                    title: trip.tripName,
-                    memo: trip.tripMemo,
-                    progress: trip.progress,
-                    leftDays: trip.dDay,
-                    tripCategory: trip.tripCategory,
-                }));
+            const response = await api.get('/trips', {
+                params: { page: currentPage, size: PAGE_SIZE },
+            });
 
-                setTravelList((prev) =>
-                    reset ? mappedTravels : [...prev, ...mappedTravels]
-                );
-                setHasNext(nextExists);
-            } catch (error) {
-                console.error('여행 목록 불러오기 실패:', error);
-            } finally {
-                setIsFetching(false);
-            }
-        },
-        [isFetching, hasNext]
-    );
+            const tripInfos = response.data.data.tripInfos;
+            const nextExists = response.data.data.hasNext;
+
+            const mappedTravels: Travel[] = tripInfos.map((trip: any) => ({
+                id: trip.tripId,
+                title: trip.tripName,
+                memo: trip.tripMemo,
+                progress: trip.progress,
+                leftDays: trip.dDay,
+                tripCategory: trip.tripCategory,
+            }));
+
+            setTravelList((prev) =>
+                reset ? mappedTravels : [...prev, ...mappedTravels]
+            );
+            setHasNext(nextExists);
+
+            if (!reset)
+                pageRef.current += 1; // 다음 페이지 준비
+            else pageRef.current = 1; // reset이면 1부터 시작
+            console.log('페이지 증가 후 pageRef.current:', pageRef.current);
+        } catch (error) {
+            console.error('여행 목록 불러오기 실패:', error);
+        } finally {
+            isFetchingRef.current = false;
+            setIsFetching(false);
+        }
+    }, []);
 
     useEffect(() => {
-        if (fetchedOnce.current) return;
-        fetchTravels(0, true);
-        fetchedOnce.current = true;
+        fetchTravels(true); // 첫 렌더 시 reset
     }, [fetchTravels]);
 
     // 마지막 요소에 ref 연결
     const lastTravelRef = useCallback(
         (node: HTMLDivElement | null) => {
-            if (isFetching) return;
             if (observer.current) observer.current.disconnect();
 
             observer.current = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting && hasNext && !isFetching) {
-                    setPage((prev) => prev + 1);
+                if (
+                    entries[0].isIntersecting &&
+                    hasNext &&
+                    !isFetchingRef.current
+                ) {
+                    fetchTravels(false); // reset=false
                 }
             });
 
             if (node) observer.current.observe(node);
         },
-        [hasNext, isFetching]
+        [hasNext, fetchTravels]
     );
 
     // 모달 열기
@@ -116,10 +130,9 @@ const MainPage = () => {
             await api.delete(`/trips/${targetTravelId}`);
 
             setTravelList([]);
-            setPage(0);
+            pageRef.current = 0;
             setHasNext(true);
-            setIsFetching(false);
-            fetchTravels(0, true);
+            fetchTravels(true);
         } catch (error) {
             console.warn('여행 삭제 실패', error);
         } finally {
@@ -168,7 +181,7 @@ const MainPage = () => {
                             />
                         </svg>
                     </button>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex max-h-[50vh] flex-col gap-3 overflow-y-auto">
                         {travelList.map((travel, index) => {
                             const isLast = index === travelList.length - 1;
                             return (
