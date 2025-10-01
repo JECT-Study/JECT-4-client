@@ -23,7 +23,6 @@ const WithdrawalPage = () => {
             alert('회원 탈퇴가 완료되었습니다.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            localStorage.setItem('loginCheck', 'false');
             navigate('/'); // 홈으로 리다이렉트
         } catch (error) {
             console.warn('회원탈퇴 실패', error);

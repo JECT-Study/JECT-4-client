@@ -1,7 +1,12 @@
 import axios from 'axios';
+import { getDefaultStore } from 'jotai';
+import { accessTokenAtom } from '@store/auth';
+
+const store = getDefaultStore();
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
+    withCredentials: true, // 쿠키 자동 전송
 });
 
 const authExcludedPaths = [
@@ -13,10 +18,10 @@ const authExcludedPaths = [
 
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('accessToken');
+        const token = store.get(accessTokenAtom);
 
         if (!authExcludedPaths.includes(config.url || '')) {
-            if (token) {
+            if (token && config.headers) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
         }
@@ -26,7 +31,7 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// 응답 인터셉터 – accessToken 만료 시 자동 갱신
+// 401 처리 - 중복 처리 방지
 let isRefreshing = false;
 
 type FailedRequest = {
@@ -38,15 +43,13 @@ let failedQueue: FailedRequest[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
     failedQueue.forEach(({ resolve, reject }) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(token as string);
-        }
+        if (error) reject(error);
+        else resolve(token as string);
     });
     failedQueue = [];
 };
 
+// 응답 인터셉터 – accessToken 만료 시 자동 갱신
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -60,34 +63,25 @@ api.interceptors.response.use(
         // accessToken 만료 (401) + 한 번만 재시도
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
-                return new Promise((resolve, reject) => {
+                return new Promise<string>((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
                 })
                     .then((token) => {
                         originalRequest.headers.Authorization = `Bearer ${token}`;
                         return api(originalRequest);
                     })
-                    .catch((err) => {
-                        return Promise.reject(err);
-                    });
+                    .catch((err) => Promise.reject(err));
             }
 
             originalRequest._retry = true;
             isRefreshing = true;
 
+            //accessToken 재발급시도
             try {
-                const refreshToken = localStorage.getItem('refreshToken');
-
-                const res = await axios.post('/api/auth/token/reissue', {
-                    refreshToken,
-                });
+                const res = await api.post('/auth/token/reissue');
 
                 const newAccessToken = res.data.accessToken;
-                //refreshToken도 갱신되는 경우 처리
-                if (res.data.refreshToken) {
-                    localStorage.setItem('refreshToken', res.data.refreshToken);
-                }
-                localStorage.setItem('accessToken', newAccessToken);
+                store.set(accessTokenAtom, newAccessToken);
 
                 processQueue(null, newAccessToken);
 
@@ -97,9 +91,9 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 console.error('토큰 갱신 실패', refreshError);
                 processQueue(refreshError, null);
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                window.location.href = '/'; // 또는 navigate('/') 등 로그아웃 처리
+
+                store.set(accessTokenAtom, null);
+                window.location.href = '/';
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;
