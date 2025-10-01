@@ -22,6 +22,8 @@ import LogPage from './pages/pomodoro/log/LogPage';
 
 import DashboardPage from './pages/trip/dashboard/DashboardPage';
 import TripPage from './pages/trip/TripPage';
+import MyHistoryPage from './pages/history/MyHistoryPage';
+import HistoryPage from './pages/history/[id]/HistoryPage';
 
 const Router = () => {
     return (
@@ -81,6 +83,9 @@ const Router = () => {
                     path="/trip/:tripId/dashboard"
                     element={<DashboardPage />}
                 />
+
+                <Route path="/history" element={<MyHistoryPage />} />
+                <Route path="/history/:historyId" element={<HistoryPage />} />
 
                 {/* 404 처리 : 메인 페이지 리다이렉트 (임시) */}
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
