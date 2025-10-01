@@ -8,6 +8,10 @@ import ConfirmModal from '../../components/common/ConfirmModal';
 
 import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+import { getDefaultStore } from 'jotai';
+import { accessTokenAtom } from '@store/auth';
+
+const store = getDefaultStore();
 
 const SettingsPage = () => {
     const navigate = useNavigate();
@@ -57,13 +61,10 @@ const SettingsPage = () => {
         setIsModalOpen(false);
         try {
             await api.post('/auth/logout', {
-                accessToken: localStorage.getItem('accessToken'),
-                refreshToken: localStorage.getItem('refreshToken'),
+                accessToken: store.get(accessTokenAtom),
             });
 
             console.log('로그아웃 성공');
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             navigate('/', { replace: true });
         } catch (error) {
             console.warn('로그아웃 실패', error);

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import Input from '../../../components/common/input/ClearableInput';
+import Input from '@components/common/input/ClearableInput';
 import MainButton from '@components/common/button/MainButton';
 
 import { useAtom } from 'jotai';
-import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
+import { signupUserInfoAtom } from '@store/signupUserInfoAtom';
 
 import { validateNickname } from '@constants/regex';
 

@@ -47,7 +47,6 @@ function KakaoLoginAccessPage() {
                 const err = error as AxiosError;
                 if (err.response?.status === 409) {
                     console.warn('로그인 실패, 신규 회원 처리', error);
-
                     navigate('/set-name', { replace: true });
                 } else {
                     debugger;

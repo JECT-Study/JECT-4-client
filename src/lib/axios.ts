@@ -12,7 +12,6 @@ const api = axios.create({
 const authExcludedPaths = [
     '/auth/login/kakao',
     '/auth/signup/kakao',
-    '/auth/logout',
     '/auth/token/reissue',
 ];
 

@@ -35,7 +35,7 @@ const MainCardButton = ({
                     <div
                         className={`text-body ${travel.tripCategory === 'COURSE' ? 'bg-point1' : 'bg-secondary'} flex items-center rounded-full px-3 font-extralight text-white`}
                     >
-                        D-{travel.leftDays}
+                        D{travel.leftDays}
                     </div>
                 </div>
                 <div className="text-caption">{travel.memo}</div>
