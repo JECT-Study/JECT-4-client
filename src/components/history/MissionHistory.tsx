@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import ChevronDown from '../../assets/icons/chevron-down.svg?react';
 import ChevronUp from '../../assets/icons/chevron-up.svg?react';
+import { headerFontStyles, headerStyles } from './_styles/MissionHistoryStyle';
 
 export interface History {
     date: string;
@@ -27,16 +28,6 @@ const MissionHistory = ({
 
         setOpenCardIndex(newOpenCardIndex);
     }
-
-    const headerStyles = {
-        write: 'bg-[#F1F9F8]',
-        history: 'bg-secondary',
-    };
-
-    const headerFontStyles = {
-        write: 'text-secondary',
-        history: 'text-white',
-    };
 
     return (
         <div className="flex flex-col pt-3">

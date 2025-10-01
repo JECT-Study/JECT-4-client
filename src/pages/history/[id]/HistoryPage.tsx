@@ -1,4 +1,4 @@
-import MissionHistory from '../../../components/common/MissionHistory';
+import MissionHistory from '../../../components/history/MissionHistory';
 import { history } from '../../../mocks/history';
 
 const HistoryPage = () => {
