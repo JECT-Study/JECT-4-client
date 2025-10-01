@@ -79,7 +79,7 @@ api.interceptors.response.use(
             try {
                 const res = await api.post('/auth/token/reissue');
 
-                const newAccessToken = res.data.accessToken;
+                const newAccessToken = res.data.data.accessToken;
                 store.set(accessTokenAtom, newAccessToken);
 
                 processQueue(null, newAccessToken);
