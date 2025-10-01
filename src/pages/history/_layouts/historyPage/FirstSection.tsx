@@ -1,4 +1,4 @@
-import GoalCard, { type GoalCardProps } from '../_componenets/GoalCard';
+import GoalCard, { type GoalCardProps } from '../../_componenets/GoalCard';
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
