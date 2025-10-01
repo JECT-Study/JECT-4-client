@@ -65,6 +65,8 @@ const Router = () => {
                     <Route path="/settings" element={<SettingsPage />} />
                     {/* 여행 코스 페이지 */}
                     <Route path="/trip/:tripId" element={<TripPage />} />
+                    {/* 여행 기록 페이지 */}
+                    <Route path="/history" element={<MyHistoryPage />} />
                 </Route>
                 {/* 세팅 내부 페이지들 */}
                 <Route path="/settings/user" element={<UserPage />} />
@@ -79,12 +81,13 @@ const Router = () => {
                 {/* 학습 후 학습 로그 페이지 */}
                 <Route path="/log" element={<LogPage />} />
 
+                {/* 여행 대시보드 페이지 */}
                 <Route
                     path="/trip/:tripId/dashboard"
                     element={<DashboardPage />}
                 />
 
-                <Route path="/history" element={<MyHistoryPage />} />
+                {/* 여행 기록 페이지 (TR-01.1) */}
                 <Route path="/history/:historyId" element={<HistoryPage />} />
 
                 {/* 404 처리 : 메인 페이지 리다이렉트 (임시) */}
