@@ -1,3 +1,11 @@
+import type { GoalCardProps } from '@/pages/history/_componenets/GoalCard';
+
+type GoalTypeKeys = GoalCardProps['type'];
+
+type GoalContentObject = {
+    [K in GoalTypeKeys]: number;
+};
+
 export const history = [
     {
         date: '2025.09.28',
@@ -20,3 +28,9 @@ export const history = [
         contents: ['발표용 메모/스크립트 정리', '제출 & 백업'],
     },
 ];
+
+export const goalCardContents: GoalContentObject = {
+    learning: 36,
+    session: 12,
+    studyDays: 7,
+};
