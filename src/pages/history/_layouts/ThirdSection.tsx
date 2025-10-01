@@ -10,6 +10,7 @@ const ThirdSection = () => {
                 <img
                     src="/assets/images/library.png"
                     className="w-full object-fill"
+                    alt="2025년 6월 8일 도서관에서의 학습 기록"
                 />
             </div>
         </section>
