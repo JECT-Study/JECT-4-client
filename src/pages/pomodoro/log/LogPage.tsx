@@ -31,8 +31,8 @@ const LogPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [tripId, setTripId] = useState<Number>(0);
-    const [stampId, setStampId] = useState<Number>(0);
+    const [tripId, setTripId] = useState<number>(0);
+    const [stampId, setStampId] = useState<number>(0);
     const [dailyGoal, setDailyGoal] = useState<DailyGoalExceptMissions>({
         dailyGoalId: 0,
         elapsedTime: 0,
@@ -113,10 +113,10 @@ const LogPage = () => {
         if (localStorage.getItem('saveLocalStorage') == 'true') {
             // 데이터 전부 불러와서 변수에 세팅
             const savedTripId = localStorage.getItem('tripId');
-            if (savedTripId) setTripId(Number(JSON.parse(savedTripId)));
+            if (savedTripId) setTripId(Number(savedTripId));
 
             const savedStampId = localStorage.getItem('stampId');
-            if (savedStampId) setStampId(Number(JSON.parse(savedStampId)));
+            if (savedStampId) setStampId(Number(savedStampId));
 
             const savedDailyGoal = localStorage.getItem('dailyGoal');
             if (savedDailyGoal) setDailyGoal(JSON.parse(savedDailyGoal));
@@ -128,9 +128,14 @@ const LogPage = () => {
             const savedText = localStorage.getItem('text');
             if (savedText) setText(savedText);
         } else {
-            console.log(location.state);
             // localStorage에 저장된 데이터가 없을 경우(해당 페이지에 처음 진입했을 경우)
+            if (!location.state) {
+                alert('올바르지 않은 접근입니다.');
+                navigate('/main', { replace: true });
+                return;
+            }
             const { tripId, stampId, dailyGoal } = location.state || {};
+
             setTripId(tripId);
             setStampId(stampId);
             setDailyGoal({

@@ -64,7 +64,6 @@ const SettingsPage = () => {
             console.log('로그아웃 성공');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            localStorage.setItem('loginCheck', 'false');
             navigate('/', { replace: true });
         } catch (error) {
             console.warn('로그아웃 실패', error);

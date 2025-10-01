@@ -12,7 +12,6 @@ const KakaoLoginButton = () => {
 
     const handleKakaoLogin = () => {
         try {
-            localStorage.setItem('loginCheck', 'false');
             window.location.href = kakaoURL;
         } catch (error) {
             console.error('카카오 로그인 리디렉션 중 오류 발생:', error);
