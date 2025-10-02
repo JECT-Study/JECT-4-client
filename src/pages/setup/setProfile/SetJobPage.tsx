@@ -28,6 +28,7 @@ function SetJobPage() {
         const updatedUserInfo = { ...userInfo, category: selected };
 
         setUserInfo(updatedUserInfo);
+        debugger;
 
         try {
             const response = await api.post(
