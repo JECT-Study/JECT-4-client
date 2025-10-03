@@ -8,14 +8,12 @@ import ConfirmModal from '../../components/common/ConfirmModal';
 
 import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
-import { getDefaultStore } from 'jotai';
 import { accessTokenAtom } from '@store/auth';
-
-const store = getDefaultStore();
 
 const SettingsPage = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [accessToken, setAccessToken] = useAtom(accessTokenAtom);
 
     // 유저이름 불러오기
     const [userName] = useAtom(memberNameAtom);
@@ -61,9 +59,10 @@ const SettingsPage = () => {
         setIsModalOpen(false);
         try {
             await api.post('/auth/logout', {
-                accessToken: store.get(accessTokenAtom),
+                accessToken,
             });
 
+            setAccessToken(null);
             console.log('로그아웃 성공');
             navigate('/', { replace: true });
         } catch (error) {
