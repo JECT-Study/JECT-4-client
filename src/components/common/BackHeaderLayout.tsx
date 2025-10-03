@@ -1,7 +1,7 @@
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import LeftArrow from '../../assets/icons/left_arrow.svg?react';
 import LogIcon from '../../assets/icons/log.svg?react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface BackHeaderProps {
     title?: string;
@@ -17,6 +17,7 @@ const BackHeader = ({
     hideLogButton = true,
 }: BackHeaderProps) => {
     const navigate = useNavigate();
+    const { tripId: tripIdParam } = useParams<{ tripId: string }>();
 
     const handleBack = () => {
         if (onBack) {
@@ -24,6 +25,10 @@ const BackHeader = ({
         } else {
             navigate(-1); // 기본 뒤로가기
         }
+    };
+
+    const handleNavigate = () => {
+        navigate(`/trip/${tripIdParam}/setting`);
     };
 
     return (
@@ -41,16 +46,7 @@ const BackHeader = ({
             {hideLogButton ? (
                 <div className="h-4 w-4" /> // 오른쪽 공간 맞추기용
             ) : (
-                <button
-                    onClick={() =>
-                        toast('아직 준비 중인 기능입니다.', {
-                            closeButton: false,
-                            autoClose: 1000,
-                            hideProgressBar: true,
-                            position: 'top-center',
-                        })
-                    }
-                >
+                <button onClick={handleNavigate}>
                     <LogIcon className="h-4 w-4 cursor-pointer" />
                 </button>
             )}
