@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 
-import BackHeader from '../../components/common/BackHeaderLayout';
-import MainButton from '../../components/common/button/MainButton';
-import api from '../../lib/axios';
+import BackHeader from '@components/common/BackHeaderLayout';
+import MainButton from '@components/common/button/MainButton';
+import api from '@lib/axios';
 
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+import { accessTokenAtom } from '@store/auth';
 
 const WithdrawalPage = () => {
+    const resetToken = useSetAtom(accessTokenAtom);
     // 유저이름 불러오기
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
@@ -20,7 +22,9 @@ const WithdrawalPage = () => {
     const handleWithdrawal = async () => {
         try {
             await api.delete('/members/me');
+            resetToken(null);
             alert('회원 탈퇴가 완료되었습니다.');
+
             navigate('/'); // 홈으로 리다이렉트
         } catch (error) {
             console.warn('회원탈퇴 실패', error);

@@ -21,10 +21,14 @@ const MainCardButton = ({
     onClick,
     onDelete,
 }: MainCardButtonProps) => {
+    const leftDaysText =
+        travel.leftDays > 0
+            ? 'D-' + travel.leftDays
+            : 'D+' + Math.abs(travel.leftDays);
     return (
         <div
             onClick={onClick}
-            className="text-secondary flex w-full items-center justify-between rounded-md bg-white pl-4 shadow-xl"
+            className="text-secondary mx-5 flex w-[-webkit-fill-available] items-center justify-between rounded-md bg-white pl-4 shadow-[0_6px_12px_rgba(0,0,0,0.1)]"
         >
             <div>
                 <div className="mb-1 flex gap-1.5">
@@ -34,7 +38,7 @@ const MainCardButton = ({
                     <div
                         className={`text-body ${travel.tripCategory === 'COURSE' ? 'bg-point1' : 'bg-secondary'} flex items-center rounded-full px-3 font-extralight text-white`}
                     >
-                        D{travel.leftDays}
+                        {leftDaysText}
                     </div>
                 </div>
                 <div className="text-caption">{travel.memo}</div>

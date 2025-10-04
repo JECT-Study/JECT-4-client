@@ -77,8 +77,8 @@ body {
 
 .mobile-container {
     position: relative;
-    max-width: 390px;
-    /* min-width: 100vw; */
+    width: 100%;
+    max-width: 40rem;
     margin: 0 auto; /* 가운데 정렬 */
     min-height: 100vh; /* 뷰포트 높이 채우기*/
     padding: 0 20px; /* 디자인 토큰 좌우 패딩*/
