@@ -22,7 +22,9 @@ const MainCardButton = ({
     onDelete,
 }: MainCardButtonProps) => {
     const leftDaysText =
-        travel.leftDays > 0 ? 'D-' + travel.leftDays : 'D+' + travel.leftDays;
+        travel.leftDays > 0
+            ? 'D-' + travel.leftDays
+            : 'D+' + Math.abs(travel.leftDays);
     return (
         <div
             onClick={onClick}
