@@ -40,7 +40,7 @@ const MissionHistory = ({
                     미션 히스토리
                 </p>
             </header>
-            <div className="max-h-[23rem] overflow-auto rounded-b-md bg-white">
+            <div className="max-h-[23rem] overflow-auto rounded-b-md border-1 border-[#E2E2E2] bg-white">
                 {historyList.map((history, index) => {
                     const isCardOpen = openCardIndex.has(index);
 
