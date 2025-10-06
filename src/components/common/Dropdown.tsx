@@ -26,7 +26,7 @@ export default function Dropdown({ options, onSelect }: DropdownProps) {
             </button>
 
             {isOpen && (
-                <ul className="absolute left-0 z-10 mt-1 w-full rounded-md border border-gray-300 bg-white shadow-md">
+                <ul className="absolute right-0 z-10 mt-1 w-full min-w-max rounded-md border border-gray-300 bg-white shadow-md">
                     {options.map((option) => (
                         <li
                             key={option}
