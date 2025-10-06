@@ -29,7 +29,7 @@ const LogCard = ({ log }: LogCardProps) => {
                         <button className="px-1">
                             <RightArrowIcon
                                 className={
-                                    isExpaneded
+                                    !isExpaneded
                                         ? 'rotate-90 transition-transform'
                                         : 'rotate-270 transition-transform'
                                 }
