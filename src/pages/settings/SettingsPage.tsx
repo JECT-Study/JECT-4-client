@@ -93,14 +93,17 @@ const SettingsPage = () => {
                 </div>
             </div>
             <StatCard stats={stats} />
-            <SettingList />
-            <div className="-mx-5 my-1.5 h-2 w-screen bg-[#F4EDDE]"></div>
-            <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-secondary flex w-full cursor-pointer items-center justify-between rounded-lg px-2 py-5"
-            >
-                <div className="text-point1">로그아웃</div>
-            </button>
+            <div className="flex max-h-[calc(100vh-400px-100px)] flex-col overflow-y-auto">
+                <SettingList />
+                <div className="bg-background -mx-5 my-1.5 h-2 w-full flex-shrink-0"></div>
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-secondary flex w-full cursor-pointer items-center justify-between rounded-lg px-2 py-5"
+                >
+                    <div className="text-point1">로그아웃</div>
+                </button>
+            </div>
+
             <ConfirmModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
