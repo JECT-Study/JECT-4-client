@@ -26,14 +26,18 @@ const LogCard = ({ log }: LogCardProps) => {
                 <div className="border-point2 bg-history text-text-sub -m-px flex flex-col gap-1 rounded-[6px] border p-4">
                     <div className="text-history-subtitle flex justify-between">
                         {createdDate.split('-').join('. ')}
-                        <button className="px-1">
+                        <button
+                            className="px-1"
+                            type="button"
+                            onClick={() => setIsExpanded(!isExpaneded)}
+                            aria-expanded={isExpaneded}
+                        >
                             <RightArrowIcon
                                 className={
                                     !isExpaneded
                                         ? 'rotate-90 transition-transform'
                                         : 'rotate-270 transition-transform'
                                 }
-                                onClick={() => setIsExpanded(!isExpaneded)}
                             />
                         </button>
                     </div>
