@@ -24,6 +24,7 @@ import DashboardPage from './pages/trip/dashboard/DashboardPage';
 import TripPage from './pages/trip/TripPage';
 import MyHistoryPage from './pages/history/MyHistoryPage';
 import HistoryPage from './pages/history/[id]/HistoryPage';
+import AddHistoryPage from './pages/add-history/AddHistoryPage';
 import LogListPage from './pages/log/LogListPage';
 
 const Router = () => {
@@ -82,6 +83,9 @@ const Router = () => {
                 {/* 학습 후 학습 로그 페이지 */}
                 <Route path="/log" element={<LogPage />} />
 
+                {/* 공부 기록 페이지 (LOG-02) */}
+                <Route path="/log/:tripId" element={<LogListPage />} />
+
                 {/* 여행 대시보드 페이지 */}
                 <Route
                     path="/trip/:tripId/dashboard"
@@ -91,8 +95,8 @@ const Router = () => {
                 {/* 여행 기록 페이지 (TR-01.1) */}
                 <Route path="/history/:historyId" element={<HistoryPage />} />
 
-                {/* 공부 기록 페이지 */}
-                <Route path="/log/:tripId" element={<LogListPage />} />
+                {/* 여행 완료 후 여행 기록 입력 페이지 (TR-02) */}
+                <Route path="/add-history" element={<AddHistoryPage />} />
 
                 {/* 404 처리 : 메인 페이지 리다이렉트 (임시) */}
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}

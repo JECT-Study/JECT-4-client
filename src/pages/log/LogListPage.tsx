@@ -54,11 +54,9 @@ const LogListPage = () => {
         }
     }, [tripId, navigate]);
 
-    if (tripId === null) return null;
-
     const fetchLogs = useCallback(
         async (reset = false) => {
-            if (isFetchingRef.current) return;
+            if (tripId === null || isFetchingRef.current) return;
 
             isFetchingRef.current = true;
             setIsFetching(true);
@@ -121,7 +119,7 @@ const LogListPage = () => {
         <div>
             <BackHeader title="미션 히스토리" hideLogButton />
             <div className="mb-6 flex flex-col items-center pt-20">
-                <div className="text-text-sub bg-text-sub/20 flex w-full items-center gap-4 rounded-[6px] px-4 py-2">
+                <div className="text-text-sub bg-text-sub/20 flex w-full items-center gap-4 rounded-md px-4 py-2">
                     <SearchIcon />
                     <input
                         className="text-small w-full"

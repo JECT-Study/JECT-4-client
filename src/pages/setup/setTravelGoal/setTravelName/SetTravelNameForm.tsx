@@ -93,7 +93,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                     readOnly
                     type="text"
                     value={endDate ? format(endDate, 'yyyy년 M월 d일') : ''}
-                    className="text-subtitle text-text-sub bg-input-focus transitionfocus:outline-none w-full rounded-[6px] border border-[#895A3F] px-4 py-2 pr-10"
+                    className="text-subtitle text-text-sub bg-input-focus transitionfocus:outline-none border-input-sub w-full rounded-md border px-4 py-2 pr-10"
                 />
                 <button
                     type="button"
