@@ -22,8 +22,8 @@ const LogCard = ({ log }: LogCardProps) => {
     const createdDate = log.createdAt.split(' ')[0];
     return (
         <div>
-            <div className="border-point2 rounded-[6px] border bg-white">
-                <div className="border-point2 bg-history text-text-sub -m-px flex flex-col gap-1 rounded-[6px] border p-4">
+            <div className="border-point2 rounded-md border bg-white">
+                <div className="border-point2 bg-history text-text-sub -m-px flex flex-col gap-1 rounded-md border p-4">
                     <div className="text-history-subtitle flex justify-between">
                         {createdDate.split('-').join('. ')}
                         <button
@@ -60,9 +60,9 @@ const LogCard = ({ log }: LogCardProps) => {
                                 </ul>
                             </div>
 
-                            <div className="mt-2 rounded-[6px]">사진 영역</div>
+                            <div className="mt-2 rounded-md">사진 영역</div>
                         </div>
-                        <div className="text-caption text-text-min rounded-b-[6px] bg-white px-4 py-2">
+                        <div className="text-caption text-text-min rounded-b-md bg-white px-4 py-2">
                             {log.content}
                         </div>
                     </div>
