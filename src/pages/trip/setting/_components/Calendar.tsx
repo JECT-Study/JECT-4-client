@@ -9,14 +9,15 @@ interface CalendarProps {
 
 const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [inMonth, setInMonth] = useState(month);
+    const [currentYear, setCurrentYear] = useState(year);
+    const [currentMonth, setCurrentMonth] = useState(month);
 
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
-    const firstDay = new Date(year, inMonth, 1);
-    const lastDay = new Date(year, inMonth + 1, 0);
+    const firstDay = new Date(year, currentMonth, 1);
+    const lastDay = new Date(year, currentMonth + 1, 0);
 
-    const prevMonthLastDay = new Date(year, inMonth, 0);
+    const prevMonthLastDay = new Date(year, currentMonth, 0);
 
     const daysInMonth = lastDay.getDate();
 
@@ -33,24 +34,42 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
         dates.push(i);
     }
 
+    const handlePrevMonth = () => {
+        if (currentMonth === 0) {
+            setCurrentMonth(11);
+            setCurrentYear((prev) => prev - 1);
+        } else {
+            setCurrentMonth((prev) => prev - 1);
+        }
+    };
+
+    const handleNextMonth = () => {
+        if (currentMonth === 11) {
+            setCurrentMonth(0);
+            setCurrentYear((prev) => prev + 1);
+        } else {
+            setCurrentMonth((prev) => prev + 1);
+        }
+    };
+
     const handleSelect = (day: number | null) => {
         if (!day) return;
 
-        setSelectedDate(new Date(year, month, day));
+        setSelectedDate(new Date(year, currentMonth, day));
     };
 
     return (
         <div className="rounded-2xl bg-white px-4 py-5 shadow">
             <div className="flex items-center justify-between px-4 pb-4">
                 <ChevronLeft
-                    onClick={() => setInMonth((prev) => prev - 1)}
+                    onClick={handlePrevMonth}
                     className="h-5 w-5 cursor-pointer text-gray-400"
                 />
                 <h2 className="text-subtitle text-text-sub font-semibold">
-                    {inMonth + 1}월
+                    {currentMonth + 1}월
                 </h2>
                 <ChevronRight
-                    onClick={() => setInMonth((prev) => prev + 1)}
+                    onClick={handleNextMonth}
                     className="h-5 w-5 cursor-pointer text-gray-400"
                 />
             </div>
@@ -68,7 +87,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month }) => {
                     const isSelected =
                         day &&
                         selectedDate?.getDate() === day &&
-                        selectedDate?.getMonth() === month;
+                        selectedDate?.getMonth() === currentMonth;
 
                     return (
                         <div
