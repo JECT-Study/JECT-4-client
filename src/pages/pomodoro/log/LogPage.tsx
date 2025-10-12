@@ -3,13 +3,17 @@ import { useAtomValue } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import api from '@lib/axios';
-
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import axios from 'axios'; // ✅ S3 PUT 요청용
 import 'react-circular-progressbar/dist/styles.css';
-import MainButton from '../../../components/common/button/MainButton';
-import LogMissionItem from './LogMissionItem';
-import { missionRefetchAtom } from '../../../store/mission';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
+import PhotoIcon from '@assets/icons/logPhoto.svg?react';
+
+import MainButton from '@components/common/button/MainButton';
+import ImageEditModal from './_components/ImageEditModal';
+import LogMissionItem from './LogMissionItem';
+
+import { missionRefetchAtom } from '@store/mission';
 import { clearLogStorage } from '@constants/pomodoroLocalStorageKey';
 
 interface DailyGoalExceptMissions {
@@ -43,6 +47,13 @@ const LogPage = () => {
     const [text, setText] = useState('');
     const dailyMissionsRef = useRef(dailyMissions);
     const textRef = useRef(text);
+
+    const [selectedFile, setSelectedFile] = useState<File | null>(null); // ✅ 추가\
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false); // ✅ 업로드 중 여부 표시용
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const isNextDisabled = false;
     const [isOpen, setIsOpen] = useState(false);
@@ -79,13 +90,48 @@ const LogPage = () => {
         );
     };
 
+    // 파일 선택 핸들러
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setSelectedFile(file);
+
+            // 미리보기 URL 생성
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleAddPhotoClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleImageClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleEditImage = () => {
+        setIsModalOpen(false);
+        fileInputRef.current?.click(); // 다시 파일 선택
+    };
+
+    const handleDeleteImage = () => {
+        setIsModalOpen(false);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        fileInputRef.current!.value = '';
+    };
+
+    // 학습 로그 생성 + 이미지 업로드 + Confirm 통합 함수
     const handleComplete = async () => {
         const checkedIds = dailyMissions
-            .filter((mission) => mission.checked)
-            .map((mission) => mission.dailyMissionId);
+            .filter((m) => m.checked)
+            .map((m) => m.dailyMissionId);
 
         try {
-            await api.post(
+            // 1️. 학습 로그 생성
+            const { data } = await api.post(
                 `trips/${tripId}/daily-goals/${dailyGoal.dailyGoalId}/study-logs`,
                 {
                     totalFocusTimeInSeconds: dailyGoal.elapsedTime,
@@ -93,19 +139,53 @@ const LogPage = () => {
                     content: text,
                 }
             );
+            console.log('로그 생성 완료');
+
+            const studyLogId = data.data.studyLogId;
+
+            // 2️. 파일이 있다면 Presigned URL 요청 + 업로드 + Confirm
+            if (selectedFile) {
+                setUploading(true);
+
+                // Presigned URL 요청
+                const { data: presigned } = await api.post(
+                    `/study-logs/${studyLogId}/images/presigned`,
+                    {
+                        originFilename: selectedFile.name,
+                    }
+                );
+
+                console.log('Presigned URL 응답 완료');
+
+                const { presignedUrl, tmpKey } = presigned.data;
+
+                // S3 PUT 업로드
+                await axios.put(presignedUrl, selectedFile, {
+                    headers: {
+                        'Content-Type': selectedFile.type,
+                    },
+                });
+                console.log('S3 업로드 완료');
+
+                // Confirm API 호출
+                await api.post(`/study-logs/${studyLogId}/images/confirm`, {
+                    tmpKey,
+                });
+
+                console.log('이미지 업로드 및 확정 완료');
+                setUploading(false);
+            }
 
             if (missionRefetch) await missionRefetch();
-
             clearLogStorage();
-
             alert('공부 기록이 생성되었습니다.');
 
             navigate(`/trip/${tripId}/dashboard?stampId=${stampId}`, {
                 replace: true,
             });
-            console.log('로그 생성 성공');
         } catch (error) {
-            console.warn('로그 생성 실패', error);
+            console.error('❌ 로그 생성 또는 업로드 실패', error);
+            setUploading(false);
         }
     };
 
@@ -205,33 +285,116 @@ const LogPage = () => {
                                 {dailyGoal.title}
                             </div>
                             <div className="text-text-sub w-full">
-                                <div className="text-body flex max-h-40 flex-col items-baseline gap-3 overflow-y-auto">
-                                    <div className="text-body flex max-h-40 flex-col items-baseline gap-3 overflow-y-auto">
-                                        {dailyMissions.map((mission: any) => (
-                                            <LogMissionItem
-                                                key={mission.dailyMissionId}
-                                                id={mission.dailyMissionId}
-                                                name={mission.missionName}
-                                                checked={mission.checked}
-                                                onToggle={handleToggle}
-                                            />
-                                        ))}
-                                    </div>
+                                <div className="text-body flex max-h-32 flex-col items-baseline gap-3 overflow-y-auto">
+                                    {dailyMissions.map((mission: any) => (
+                                        <LogMissionItem
+                                            key={mission.dailyMissionId}
+                                            id={mission.dailyMissionId}
+                                            name={mission.missionName}
+                                            checked={mission.checked}
+                                            onToggle={handleToggle}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                             <div className="-mt-5 w-full">
                                 <div className="text-caption text-text-sub flex justify-end">
                                     {text.length}/{maxLength}
                                 </div>
-                                <textarea
-                                    value={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                    maxLength={maxLength}
-                                    placeholder="기록하고 싶은 내용을 남겨주세요."
-                                    className="text-background text-small flex w-full justify-center rounded-md border border-white bg-white/20 p-3"
+                                <div className="rounded-md bg-white p-2.5">
+                                    {previewUrl && (
+                                        <div
+                                            className="mb-2.5 aspect-video w-full overflow-hidden"
+                                            onClick={handleImageClick}
+                                        >
+                                            <img
+                                                src={previewUrl}
+                                                alt="미리보기"
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    )}
+                                    <textarea
+                                        value={text}
+                                        onChange={(e) =>
+                                            setText(e.target.value)
+                                        }
+                                        maxLength={maxLength}
+                                        placeholder="기록하고 싶은 내용을 남겨주세요."
+                                        className="text-text-min text-small flex min-h-28 w-full justify-center p-2"
+                                    />
+                                </div>
+                                {!previewUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={handleAddPhotoClick}
+                                        className="text-course-bagic text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-white py-3.5"
+                                    >
+                                        <PhotoIcon className="inline pb-0.5" />
+                                        사진 추가하기
+                                    </button>
+                                )}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    className="hidden"
                                 />
                             </div>
                         </div>
+                        {/* 모달 */}
+                        {isModalOpen && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                                <div className="w-64 rounded-xl bg-white p-6 text-center shadow-lg">
+                                    <p className="text-body mb-4 font-medium">
+                                        사진을 어떻게 할까요?
+                                    </p>
+                                    <div className="flex justify-around">
+                                        <button
+                                            onClick={handleEditImage}
+                                            className="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
+                                        >
+                                            수정하기
+                                        </button>
+                                        <button
+                                            onClick={handleDeleteImage}
+                                            className="rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
+                                        >
+                                            삭제하기
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="mt-4 text-sm text-gray-500"
+                                    >
+                                        닫기
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        {isModalOpen && previewUrl && (
+                            <ImageEditModal
+                                isOpen={isModalOpen}
+                                onClose={() => setIsModalOpen(false)}
+                                onEdit={handleEditImage}
+                                onDelete={handleDeleteImage}
+                                title={
+                                    <div className="text-subtitle text-secondary -pt-4 flex flex-col items-center text-center font-semibold">
+                                        사진을 수정할까요?
+                                    </div>
+                                }
+                                children={
+                                    <div className="aspect-video w-full overflow-hidden">
+                                        <img
+                                            src={previewUrl}
+                                            alt="미리보기"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+                                }
+                            />
+                        )}
                     </div>
                 ) : (
                     <div className="pt-16" onClick={() => setIsOpen(true)}>
