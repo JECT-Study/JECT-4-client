@@ -27,6 +27,7 @@ import HistoryPage from './pages/history/[id]/HistoryPage';
 import StampSettingPage from './pages/trip/setting/StampSettingPage';
 import AddHistoryPage from './pages/add-history/AddHistoryPage';
 import LogListPage from './pages/log/LogListPage';
+import AddStampPage from './pages/trip/setting/AddStampPage';
 
 const Router = () => {
     return (
@@ -97,6 +98,11 @@ const Router = () => {
                 <Route
                     path="/trip/:tripId/setting"
                     element={<StampSettingPage />}
+                />
+
+                <Route
+                    path="/trip/:tripId/setting/add"
+                    element={<AddStampPage />}
                 />
 
                 {/* 여행 기록 페이지 (TR-01.1) */}
