@@ -40,9 +40,10 @@ const AddStampPage = () => {
             <div className="pt-3">
                 <MainButton
                     onClick={() => console.log('버튼 클릭')}
-                    children="저장"
                     colorClass="bg-text-sub"
-                />
+                >
+                    저장
+                </MainButton>
             </div>
         </div>
     );
