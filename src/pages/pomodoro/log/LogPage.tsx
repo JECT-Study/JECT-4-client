@@ -8,11 +8,11 @@ import 'react-circular-progressbar/dist/styles.css';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
-
 import MainButton from '@components/common/button/MainButton';
 import ImageEditModal from './_components/ImageEditModal';
 import LogMissionItem from './LogMissionItem';
 
+import { useImageUpload } from '@hooks/image/useImageUpload';
 import { missionRefetchAtom } from '@store/mission';
 import { clearLogStorage } from '@constants/pomodoroLocalStorageKey';
 
@@ -45,18 +45,26 @@ const LogPage = () => {
     });
     const [dailyMissions, setDailyMissions] = useState<DailyMission[]>([]);
     const [text, setText] = useState('');
+    const [, setUploading] = useState(false);
+
     const dailyMissionsRef = useRef(dailyMissions);
     const textRef = useRef(text);
 
-    const [selectedFile, setSelectedFile] = useState<File | null>(null); // ✅ 추가\
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [uploading, setUploading] = useState(false); // ✅ 업로드 중 여부 표시용
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {
+        selectedFile,
+        previewUrl,
+        isModalOpen,
+        fileInputRef,
+        handleFileChange,
+        handleAddPhotoClick,
+        handleImageClick,
+        handleEditImage,
+        handleDeleteImage,
+        setIsModalOpen,
+    } = useImageUpload();
 
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-    const isNextDisabled = false;
     const [isOpen, setIsOpen] = useState(false);
+    const isNextDisabled = false;
     const maxLength = 500;
 
     const percentage = Math.min(
@@ -88,39 +96,6 @@ const LogPage = () => {
                     : mission
             )
         );
-    };
-
-    // 파일 선택 핸들러
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setSelectedFile(file);
-
-            // 미리보기 URL 생성
-            const reader = new FileReader();
-            reader.onloadend = () => setPreviewUrl(reader.result as string);
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleAddPhotoClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleImageClick = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleEditImage = () => {
-        setIsModalOpen(false);
-        fileInputRef.current?.click(); // 다시 파일 선택
-    };
-
-    const handleDeleteImage = () => {
-        setIsModalOpen(false);
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        fileInputRef.current!.value = '';
     };
 
     // 학습 로그 생성 + 이미지 업로드 + Confirm 통합 함수
