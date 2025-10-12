@@ -47,14 +47,14 @@ const GoalStep: React.FC<GoalStepProps> = ({
     );
 
     const titleAlign = (titleStyle: string) => (
-        <div className={`flex flex-col justify-center ${titleStyle}`}>
+        <div className={`flex flex-col justify-center ${titleStyle} `}>
             <h5
                 className={`${goalStateNumberStyleClass[goalState]} text-xl font-bold`}
             >
                 {sequence}
             </h5>
             <p
-                className={`${goalStateTitleStyleClass[goalState]} line-clamp-2 truncate text-base whitespace-pre-wrap`}
+                className={`${goalStateTitleStyleClass[goalState]} line-clamp-2 max-w-[12rem] truncate text-base whitespace-pre-wrap`}
             >
                 {title}
             </p>
@@ -86,7 +86,7 @@ const GoalStep: React.FC<GoalStepProps> = ({
                 )}
                 {align !== 'right' && <>{titleAlign('pl-4')}</>}
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center pr-5">
                 {!isLast && (
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
