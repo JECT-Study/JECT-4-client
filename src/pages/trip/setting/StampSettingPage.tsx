@@ -6,8 +6,11 @@ import EditIcon from '../../../assets/icons/edit.svg?react';
 import PlusIcon from '../../../assets/icons/plus.svg?react';
 import Button from './_components/Button';
 import ProgressBar from './_components/ProgressBar';
+import { useNavigate } from 'react-router-dom';
 
 const StampSettingPage = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="flex flex-col gap-3">
             <div className="h-[4rem]">
@@ -70,7 +73,10 @@ const StampSettingPage = () => {
                 </div>
             </section>
             <div className="pt-5">
-                <button className="text-secondary flex w-full items-center justify-center rounded-xl bg-[#EEE7D8] px-4 py-8">
+                <button
+                    className="text-secondary flex w-full cursor-pointer items-center justify-center rounded-xl bg-[#EEE7D8] px-4 py-8"
+                    onClick={() => navigate('/trip/5/setting/add')}
+                >
                     <PlusIcon />
                 </button>
             </div>
