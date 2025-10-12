@@ -94,7 +94,11 @@ const TripPage = () => {
         <div className="flex flex-col">
             {/* 상단 헤더 */}
             <div className="h-[4rem]">
-                <BackHeader title={data?.name} hideLogButton={false} />
+                <BackHeader
+                    title={data?.name}
+                    hideLogButton={false}
+                    hideEditButton={false}
+                />
             </div>
             <div className="h-[calc(100vh-10rem)] overflow-y-auto pt-[8rem] [&::-webkit-scrollbar]:hidden">
                 {steps.map((step) => (
