@@ -30,7 +30,9 @@ const ConfirmModal = ({
             onClick={onClose}
         >
             <div
-                className={'max-w-md rounded-xl bg-white shadow-xl'}
+                className={
+                    'flex w-[20.625rem] max-w-md flex-col items-center rounded-xl bg-white shadow-xl'
+                }
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="text-subtitle text-secondary flex flex-col items-center pt-8 text-center">
