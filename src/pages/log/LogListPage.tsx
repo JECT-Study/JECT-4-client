@@ -18,6 +18,7 @@ interface Log {
     title: string;
     content: string;
     createdAt: string;
+    imageUrl: string | null;
     dailyMissions: CompletedMission[];
 }
 
@@ -68,6 +69,7 @@ const LogListPage = () => {
                 });
 
                 const logsResponse: LogsResponse = response.data.data;
+                console.log(logsResponse);
 
                 setLogs((prev) =>
                     reset

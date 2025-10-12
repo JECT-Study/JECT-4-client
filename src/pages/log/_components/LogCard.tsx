@@ -12,6 +12,7 @@ interface LogCardProps {
         title: string;
         content: string;
         createdAt: string;
+        imageUrl: string | null;
         dailyMissions: CompletedMission[];
     };
 }
@@ -59,8 +60,14 @@ const LogCard = ({ log }: LogCardProps) => {
                                     ))}
                                 </ul>
                             </div>
-
-                            <div className="mt-2 rounded-md">사진 영역</div>
+                            {log.imageUrl && (
+                                <div className="mt-2 aspect-video overflow-hidden rounded-md">
+                                    <img
+                                        src={log.imageUrl}
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="text-caption text-text-min rounded-b-md bg-white px-4 py-2">
                             {log.content}
