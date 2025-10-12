@@ -43,7 +43,7 @@ const BackHeader = ({
     };
 
     const handleNavigate = () => {
-        navigate(`/trip/${tripIdParam}/setting`);
+        navigate(`/trip/${tripId}/setting`);
     };
 
     return (
