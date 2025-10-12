@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import ChevronLeft from '../../../assets/icons/chevron-left.svg?react';
-import ChevronRight from '../../../assets/icons/chevron-right.svg?react';
+import ChevronLeft from '../../../../assets/icons/chevron-left.svg?react';
+import ChevronRight from '../../../../assets/icons/chevron-right.svg?react';
 
 interface CalendarProps {
     year: number;
