@@ -3,8 +3,9 @@ import BackHeader from '../../../components/common/BackHeaderLayout';
 import BxCalendarIcon from '../../../assets/icons/bx_calendar.svg?react';
 import CalendarIcon from '../../../assets/icons/calendar.svg?react';
 import EditIcon from '../../../assets/icons/edit.svg?react';
-import ProgressBg from '../../../assets/icons/progress_bg.svg?react';
 import PlusIcon from '../../../assets/icons/plus.svg?react';
+import Button from './_components/Button';
+import ProgressBar from './_components/ProgressBar';
 
 const StampSettingPage = () => {
     return (
@@ -59,12 +60,11 @@ const StampSettingPage = () => {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <ProgressBg />
-                            <button className="cursor-pointer rounded-md bg-[#EEE7D8] px-5 py-0.5">
-                                <span className="text-text-sub text-caption">
-                                    완료
-                                </span>
-                            </button>
+                            <ProgressBar
+                                completedLength={1}
+                                progressLength={5}
+                            />
+                            <Button isCompleted={true} />
                         </div>
                     </article>
                 </div>
