@@ -4,10 +4,12 @@ interface ProgressBarProps {
 }
 
 const ProgressBar = ({ completedLength, progressLength }: ProgressBarProps) => {
-    const progressPercent = Math.min(
-        (completedLength / progressLength) * 100,
-        100
-    );
+    const safeTotal = Math.max(0, progressLength);
+    const clampedNow =
+        safeTotal === 0 ? 0 : Math.min(Math.max(0, completedLength), safeTotal);
+
+    const progressPercent =
+        safeTotal === 0 ? 0 : (clampedNow / safeTotal) * 100;
 
     return (
         <div className="relative w-2/3">
@@ -17,7 +19,7 @@ const ProgressBar = ({ completedLength, progressLength }: ProgressBarProps) => {
                 style={{ width: `${progressPercent}%` }}
             >
                 <span className="text-caption">
-                    {completedLength}/{progressLength}
+                    {clampedNow}/{safeTotal}
                 </span>
             </div>
         </div>
