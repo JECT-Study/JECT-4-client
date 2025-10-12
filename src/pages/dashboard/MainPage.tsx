@@ -181,7 +181,7 @@ const MainPage = () => {
                             />
                         </svg>
                     </button>
-                    <div className="flex max-h-[50vh] flex-col gap-3 overflow-y-auto">
+                    <div className="mx-[-20px] flex max-h-[50vh] flex-col gap-3 overflow-y-auto pb-3">
                         {travelList.map((travel, index) => {
                             const isLast = index === travelList.length - 1;
                             return (

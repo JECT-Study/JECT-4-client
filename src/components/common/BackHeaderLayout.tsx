@@ -1,7 +1,9 @@
-import { ToastContainer } from 'react-toastify';
+import { useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import LeftArrow from '../../assets/icons/left_arrow.svg?react';
 import LogIcon from '../../assets/icons/log.svg?react';
-import { useNavigate, useParams } from 'react-router-dom';
+import EditIcon from '../../assets/icons/edit.svg?react';
 
 interface BackHeaderProps {
     title?: string;
@@ -18,6 +20,20 @@ const BackHeader = ({
 }: BackHeaderProps) => {
     const navigate = useNavigate();
     const { tripId: tripIdParam } = useParams<{ tripId: string }>();
+
+    /* 형변환 및 유효성 검증 시 tripId가 변경되지 않을 경우, 재계산을 하지 않기 위해 useMemo 사용 */
+    const tripId = useMemo(() => {
+        const number = Number(tripIdParam);
+
+        return Number.isFinite(number) && number > 0 ? number : null;
+    }, [tripIdParam]);
+
+    useEffect(() => {
+        if (!hideLogButton && tripId === null) {
+            alert('잘못된 여행 id입니다.');
+            navigate(-1);
+        }
+    }, [tripId, navigate, hideLogButton]);
 
     const handleBack = () => {
         if (onBack) {
@@ -46,11 +62,15 @@ const BackHeader = ({
             {hideLogButton ? (
                 <div className="h-4 w-4" /> // 오른쪽 공간 맞추기용
             ) : (
-                <button onClick={handleNavigate}>
-                    <LogIcon className="h-4 w-4 cursor-pointer" />
-                </button>
+                <div className="flex items-center gap-3">
+                    <button onClick={handleNavigate}>
+                        <EditIcon className="fill-text-sub cursor-pointer" />
+                    </button>
+                    <button onClick={() => navigate(`/log/${tripId}`)}>
+                        <LogIcon className="h-4 w-4 cursor-pointer" />
+                    </button>
+                </div>
             )}
-            <ToastContainer />
         </div>
     );
 };

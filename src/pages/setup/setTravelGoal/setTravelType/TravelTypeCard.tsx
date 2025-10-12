@@ -48,11 +48,11 @@ const TravelTypeCard = ({
             onClick={() => handleCardClicked(name)}
         >
             <h3 className={`${titleColor} text-display`}>{title}</h3>
-            <p className="relative flex flex-col gap-3">
-                <span className="text-text-min text-[14px]">{description}</span>
+            <span className="relative flex flex-col gap-3">
+                <p className="text-text-min text-[14px]">{description}</p>
                 <hr className="border-primary absolute top-1/2 right-0 left-0 border-0 border-t-[0.3px] border-solid" />
-                <span className="text-text-min text-[12px]">{recommend}</span>
-            </p>
+                <p className="text-text-min text-[12px]">{recommend}</p>
+            </span>
             <ToastContainer />
         </section>
     );
