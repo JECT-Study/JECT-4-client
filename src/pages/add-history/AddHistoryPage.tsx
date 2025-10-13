@@ -1,17 +1,33 @@
-import GoalCard, { type GoalCardProps } from './_components/GoalCard';
-
-import { history, goalCardContents } from '../../mocks/history.ts';
 import MissionHistory from '@components/history/MissionHistory.tsx';
 import MainButton from '@components/common/button/MainButton.tsx';
+import GoalCard, { type GoalCardProps } from './_components/GoalCard';
+import PhotoIcon from '@assets/icons/logPhoto.svg?react';
+import ImageEditModal from '@components/common/ImageEditModal';
+import { useImageUpload } from '@hooks/image/useImageUpload';
+
+import { history, goalCardContents } from '../../mocks/history.ts';
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
 };
 
 const AddHistoryPage = () => {
+    const {
+        selectedFile,
+        previewUrl,
+        isModalOpen,
+        fileInputRef,
+        handleFileChange,
+        handleAddPhotoClick,
+        handleImageClick,
+        handleEditImage,
+        handleDeleteImage,
+        setIsModalOpen,
+    } = useImageUpload();
+
     return (
         <div>
-            <div className="h-[90vh] overflow-y-auto pb-7">
+            <div className="-mx-5 h-[90vh] overflow-y-auto px-5 pb-7">
                 <section className="pt-16">
                     <h1 className="text-title text-secondary">
                         여행을 멋지게 완주했어요!
@@ -45,10 +61,50 @@ const AddHistoryPage = () => {
                     <div className="text-text-sub text-small">
                         공부 흔적을 사진으로 남겨보세요
                     </div>
-                    <div className="mt-3">사진 업로드 컴포넌트</div>
+                    <div className="mt-3">
+                        {previewUrl ? (
+                            <div
+                                className="mb-2.5 aspect-video w-full overflow-hidden"
+                                onClick={handleImageClick}
+                            >
+                                <img
+                                    src={previewUrl}
+                                    alt="미리보기"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        ) : (
+                            <div className="py-0.5">
+                                <button
+                                    type="button"
+                                    onClick={handleAddPhotoClick}
+                                    className="text-course-basic border-text-sub text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-dashed bg-white py-4"
+                                >
+                                    <PhotoIcon className="inline pb-0.5" />
+                                    사진 추가하기
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <div className="text-small text-primary mt-2">
                         * 선택사항입니다.
                     </div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                    />
+                    {isModalOpen && previewUrl && (
+                        <ImageEditModal
+                            isOpen={isModalOpen}
+                            onClose={() => setIsModalOpen(false)}
+                            onEdit={handleEditImage}
+                            onDelete={handleDeleteImage}
+                            imgSrc={previewUrl}
+                        />
+                    )}
                 </div>
                 <div className="bg-background sticky top-18 z-10 pt-5">
                     <div className="text-text-sub text-small">회고록 작성</div>
