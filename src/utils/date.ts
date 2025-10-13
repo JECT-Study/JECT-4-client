@@ -7,3 +7,9 @@ dayjs.locale('ko');
 export function getTodayDate(): string {
     return dayjs().format('YYYY년 M월 D일');
 }
+
+export function getCalendarDate(date: string) {
+    const [year, month, day] = date.split('-');
+
+    return { year, month, day };
+}
