@@ -79,8 +79,10 @@ const TripCard = ({
                     onClick={handleEditEndDate}
                 >
                     <CalendarIcon />
-                    <p className="text-background text-caption">
-                        {startDate} ~ {editedEndDate}
+                    <p className="text-background text-caption font-light">
+                        {startDate.split('-').join('.')}
+                        {' - '}
+                        {editedEndDate.split('-').join('.')}
                     </p>
                 </div>
                 {showCalendar && (
