@@ -102,20 +102,7 @@ const AddHistoryPage = () => {
                             onClose={() => setIsModalOpen(false)}
                             onEdit={handleEditImage}
                             onDelete={handleDeleteImage}
-                            title={
-                                <div className="text-subtitle text-secondary -pt-4 flex flex-col items-center text-center font-semibold">
-                                    사진을 수정할까요?
-                                </div>
-                            }
-                            children={
-                                <div className="aspect-video w-full overflow-hidden">
-                                    <img
-                                        src={previewUrl}
-                                        alt="미리보기"
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-                            }
+                            imgSrc={previewUrl}
                         />
                     )}
                 </div>
