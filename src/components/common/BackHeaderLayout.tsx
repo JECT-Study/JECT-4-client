@@ -1,9 +1,9 @@
-import { useEffect, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import LeftArrow from '../../assets/icons/left_arrow.svg?react';
 import LogIcon from '../../assets/icons/log.svg?react';
 import EditIcon from '../../assets/icons/edit.svg?react';
+import useValidatedTripId from '../../hooks/common/useValidateTripId';
 
 interface BackHeaderProps {
     title?: string;
@@ -21,21 +21,9 @@ const BackHeader = ({
     hideLogButton = true,
 }: BackHeaderProps) => {
     const navigate = useNavigate();
-    const { tripId: tripIdParam } = useParams<{ tripId: string }>();
+    const tripId = useValidatedTripId();
 
-    /* 형변환 및 유효성 검증 시 tripId가 변경되지 않을 경우, 재계산을 하지 않기 위해 useMemo 사용 */
-    const tripId = useMemo(() => {
-        const number = Number(tripIdParam);
-
-        return Number.isFinite(number) && number > 0 ? number : null;
-    }, [tripIdParam]);
-
-    useEffect(() => {
-        if (!hideLogButton && tripId === null) {
-            alert('잘못된 여행 id입니다.');
-            navigate(-1);
-        }
-    }, [tripId, navigate, hideLogButton]);
+    if (!tripId) return null;
 
     const handleBack = () => {
         if (onBack) onBack();

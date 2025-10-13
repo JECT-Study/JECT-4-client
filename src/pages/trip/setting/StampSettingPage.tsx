@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 
 const StampSettingPage = () => {
     const navigate = useNavigate();
+    const tripId = useValidatedTripId();
+    if (!tripId) return null;
 
     return (
         <div className="flex flex-col gap-3">
@@ -75,7 +77,7 @@ const StampSettingPage = () => {
             <div className="pt-5">
                 <button
                     className="text-secondary flex w-full cursor-pointer items-center justify-center rounded-xl bg-[#EEE7D8] px-4 py-8"
-                    onClick={() => navigate('/trip/5/setting/add')}
+                    onClick={() => navigate(`/trip/${tripId}/setting/add`)}
                 >
                     <PlusIcon />
                 </button>
