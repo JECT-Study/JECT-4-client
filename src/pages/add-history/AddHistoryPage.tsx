@@ -78,7 +78,7 @@ const AddHistoryPage = () => {
                                 <button
                                     type="button"
                                     onClick={handleAddPhotoClick}
-                                    className="text-course-bagic border-text-sub text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-dashed bg-white py-4"
+                                    className="text-course-basic border-text-sub text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-dashed bg-white py-4"
                                 >
                                     <PhotoIcon className="inline pb-0.5" />
                                     사진 추가하기

@@ -303,7 +303,7 @@ const LogPage = () => {
                                     <button
                                         type="button"
                                         onClick={handleAddPhotoClick}
-                                        className="text-course-bagic text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-white py-3.5"
+                                        className="text-course-basic text-body mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-white py-3.5"
                                     >
                                         <PhotoIcon className="inline pb-0.5" />
                                         사진 추가하기
