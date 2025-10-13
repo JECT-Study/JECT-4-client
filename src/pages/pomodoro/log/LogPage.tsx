@@ -9,7 +9,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
 import MainButton from '@components/common/button/MainButton';
-import ImageEditModal from './_components/ImageEditModal';
+import ImageEditModal from '@components/common/ImageEditModal';
 import LogMissionItem from './LogMissionItem';
 
 import { useImageUpload } from '@hooks/image/useImageUpload';
@@ -318,36 +318,6 @@ const LogPage = () => {
                                 />
                             </div>
                         </div>
-                        {/* 모달 */}
-                        {isModalOpen && (
-                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                                <div className="w-64 rounded-xl bg-white p-6 text-center shadow-lg">
-                                    <p className="text-body mb-4 font-medium">
-                                        사진을 어떻게 할까요?
-                                    </p>
-                                    <div className="flex justify-around">
-                                        <button
-                                            onClick={handleEditImage}
-                                            className="rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-                                        >
-                                            수정하기
-                                        </button>
-                                        <button
-                                            onClick={handleDeleteImage}
-                                            className="rounded-md bg-red-500 px-3 py-2 text-white hover:bg-red-600"
-                                        >
-                                            삭제하기
-                                        </button>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsModalOpen(false)}
-                                        className="mt-4 text-sm text-gray-500"
-                                    >
-                                        닫기
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                         {isModalOpen && previewUrl && (
                             <ImageEditModal
                                 isOpen={isModalOpen}
