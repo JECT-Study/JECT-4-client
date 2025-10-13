@@ -35,7 +35,10 @@ const AddStampPage = () => {
                         *여행 기간 내에서만 마감일을 설정할 수 있어요.
                     </p>
                 </div>
-                <Calendar year={2025} month={6} />
+                <Calendar
+                    startDate="2025-10-02"
+                    onSelectDate={() => console.log('임시')}
+                />
             </section>
             <div className="pt-3">
                 <MainButton

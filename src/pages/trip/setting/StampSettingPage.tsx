@@ -1,17 +1,60 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import BackHeader from '../../../components/common/BackHeaderLayout';
 
 import BxCalendarIcon from '../../../assets/icons/bx_calendar.svg?react';
-import CalendarIcon from '../../../assets/icons/calendar.svg?react';
 import EditIcon from '../../../assets/icons/edit.svg?react';
 import PlusIcon from '../../../assets/icons/plus.svg?react';
 import Button from './_components/Button';
 import ProgressBar from './_components/ProgressBar';
-import { useNavigate } from 'react-router-dom';
+import TripCard from './_components/TripCard';
+import useTripDetail from '../../../hooks/trip/useTripDetail';
+import usePatchTrip from '../../../hooks/trip/usePatchTrip';
+import useValidatedTripId from '../../../hooks/common/useValidateTripId';
 
 const StampSettingPage = () => {
     const navigate = useNavigate();
     const tripId = useValidatedTripId();
+    const [isEditingMode, setIsEditingMode] = useState(false);
+
     if (!tripId) return null;
+
+    const {
+        data: tripData,
+        isLoading,
+        isError,
+        refetch,
+    } = useTripDetail(tripId);
+
+    const { mutatePatchTrip } = usePatchTrip({
+        onSuccess: () => {
+            setIsEditingMode(false);
+            refetch();
+        },
+    });
+
+    const handleEditModeToggle = () => {
+        setIsEditingMode((prev) => !prev);
+    };
+
+    const handleTripNameEdited = (newName: string, newEndDate: string) => {
+        if (!tripData) return;
+
+        const requestBody = {
+            name: newName,
+            memo: tripData.memo,
+            category: tripData.category,
+            endDate: newEndDate,
+        };
+
+        mutatePatchTrip({ tripId, data: requestBody });
+    };
+
+    if (isLoading) return <div>로딩 중입니다......</div>;
+
+    if (isError) return null;
+    if (!tripData) return null;
 
     return (
         <div className="flex flex-col gap-3">
@@ -20,22 +63,12 @@ const StampSettingPage = () => {
             </div>
             <section className="flex flex-col gap-1">
                 <p className="text-text-sub text-body">나의 여행</p>
-                <article className="bg-text-sub flex h-[4.875rem] items-center justify-between rounded-xl p-5">
-                    <div className="flex flex-col gap-1">
-                        <h4 className="text-subtitle text-background font-semibold">
-                            토익 뿌시기
-                        </h4>
-                        <div className="flex gap-1">
-                            <CalendarIcon />
-                            <p className="text-background text-caption">
-                                2025.07.05 ~ 07.15
-                            </p>
-                        </div>
-                    </div>
-                    <button className="cursor-pointer">
-                        <EditIcon className="fill-white" />
-                    </button>
-                </article>
+                <TripCard
+                    trip={tripData}
+                    isEditing={isEditingMode}
+                    onSave={handleTripNameEdited}
+                    onEditModeToggle={handleEditModeToggle}
+                />
             </section>
             <section className="flex flex-col gap-2 pt-3">
                 <p className="text-text-sub text-body">나의 스탬프</p>
@@ -69,7 +102,10 @@ const StampSettingPage = () => {
                                 completedLength={1}
                                 progressLength={5}
                             />
-                            <Button isCompleted={true} />
+                            <Button
+                                isCompleted={true}
+                                onClick={() => console.log('임시')}
+                            />
                         </div>
                     </article>
                 </div>
