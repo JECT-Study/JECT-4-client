@@ -23,3 +23,27 @@ export const fetchTripDetail = async (tripId: number): Promise<TripDetail> => {
         );
     }
 };
+
+/**
+ *
+ * @param tripId 여행 id
+ * @returns 여행 수정 요청 응답
+ */
+export const patchTrip = async (
+    tripId: number,
+    tripContent: TripRequestBody
+) => {
+    try {
+        const { data } = await api.patch(`trips/${tripId}`, tripContent);
+
+        return data.data;
+    } catch (error: unknown) {
+        if ((error as any)?.response?.status === 404) {
+            throw new Error('여행 정보를 수정할 수 없습니다.');
+        }
+
+        throw new Error(
+            '여행 정보를 수정하는 데 실패했습니다. 잠시 후 다시 시도해 주세요.'
+        );
+    }
+};
