@@ -16,3 +16,5 @@ export interface StampDetail {
     completed: boolean;
     missions: number[];
 }
+
+export type Stamp = Omit<StampDetail, 'missions'>;
