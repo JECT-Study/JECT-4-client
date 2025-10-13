@@ -1,6 +1,11 @@
 import api from '../../lib/axios';
 import type { TripDetail, TripRequestBody } from '../../types/trip/trip';
 
+/**
+ *
+ * @param tripId 여행 id
+ * @returns 여행 상세 데이터
+ */
 export const fetchTripDetail = async (tripId: number): Promise<TripDetail> => {
     try {
         const { data } = await api.get<{ data: TripDetail }>(

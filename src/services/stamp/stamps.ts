@@ -1,6 +1,12 @@
 import api from '../../lib/axios';
 import type { StampDetail } from '../../types/stamp';
 
+/**
+ *
+ * @param tripId 여행 id
+ * @param stampId 스탬프 id
+ * @returns 요청한 스탬프 상세 데이터
+ */
 export const fetchStampDetail = async (
     tripId: number,
     stampId: number
@@ -20,6 +26,12 @@ export const fetchStampDetail = async (
     }
 };
 
+/**
+ *
+ * @param tripId 여행 id
+ * @param stampId 스탬프 id
+ * @returns 스탬프 완료 응답
+ */
 export const completeStamp = async (tripId: number, stampId: number) => {
     try {
         const { data } = await api.patch(
