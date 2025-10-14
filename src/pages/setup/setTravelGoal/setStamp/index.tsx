@@ -28,6 +28,7 @@ const SetStampLinearPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const setTravelInfo = useSetAtom(travelInfoAtom);
     const prevTravelInfo = useAtomValue(travelInfoAtom);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const today = new Date();
 
@@ -36,6 +37,9 @@ const SetStampLinearPage = () => {
         .map((item) => item.text);
 
     const handleConfirm = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         const stamps: Stamp[] = filteredMissions.map((text, index) => ({
             name: text,
             order: index + 1,
@@ -57,14 +61,16 @@ const SetStampLinearPage = () => {
         } catch (error) {
             console.error('API 호출 실패:', error);
             alert('서버 요청 중 오류가 발생했습니다.');
+        } finally {
+            setIsOpen(false);
+            setIsSubmitting(false);
         }
-
-        setIsOpen(false);
     };
 
     const handleCancel = () => {
         setIsOpen(false);
     };
+
     return (
         <div className="flex min-h-screen flex-col justify-between">
             <BackHeader />
