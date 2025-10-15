@@ -101,6 +101,10 @@ export default function DashboardPage() {
         }
     };
 
+    const handleBack = () => {
+        navigate(`/trip/${id.tripId}`);
+    };
+
     const handleConfirm = () => {
         setOpen(false);
         navigate('/pomodoro', {
@@ -120,6 +124,7 @@ export default function DashboardPage() {
                 <BackHeader
                     title={fetchedStamp?.stampName}
                     hideLogButton={false}
+                    onBack={handleBack}
                 />
             </div>
 

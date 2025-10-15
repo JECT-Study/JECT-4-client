@@ -45,7 +45,8 @@ const LogPage = () => {
     });
     const [dailyMissions, setDailyMissions] = useState<DailyMission[]>([]);
     const [text, setText] = useState('');
-    const [, setUploading] = useState(false);
+    const [isUploading, setUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const dailyMissionsRef = useRef(dailyMissions);
     const textRef = useRef(text);
@@ -100,6 +101,9 @@ const LogPage = () => {
 
     // 학습 로그 생성 + 이미지 업로드 + Confirm 통합 함수
     const handleComplete = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         const checkedIds = dailyMissions
             .filter((m) => m.checked)
             .map((m) => m.dailyMissionId);
@@ -119,7 +123,7 @@ const LogPage = () => {
             const studyLogId = data.data.studyLogId;
 
             // 2️. 파일이 있다면 Presigned URL 요청 + 업로드 + Confirm
-            if (selectedFile) {
+            if (selectedFile && !isUploading) {
                 setUploading(true);
 
                 // Presigned URL 요청
@@ -148,7 +152,6 @@ const LogPage = () => {
                 });
 
                 console.log('이미지 업로드 및 확정 완료');
-                setUploading(false);
             }
 
             if (missionRefetch) await missionRefetch();
@@ -159,8 +162,11 @@ const LogPage = () => {
                 replace: true,
             });
         } catch (error) {
+            alert('로그 생성에 실패했습니다. 다시 시도해주세요.');
             console.error('❌ 로그 생성 또는 업로드 실패', error);
+        } finally {
             setUploading(false);
+            setIsSubmitting(false);
         }
     };
 

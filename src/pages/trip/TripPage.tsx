@@ -1,5 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import api from '@lib/axios';
 
 import BackHeader from '../../components/common/BackHeaderLayout';
 import GoalStep from './_components/GoalStep';
@@ -29,9 +31,35 @@ const TripPage = () => {
     if (tripId === null) return null;
 
     const { data, isLoading, isError } = useTripDetail(tripId);
+    const [isCompletingTrip, setIsCompletingTrip] = useState(false);
+
+    useEffect(() => {
+        if (!data?.stamps || isCompletingTrip) return;
+
+        const allCompleted = data.stamps.every((stamp) => stamp.completed);
+
+        if (allCompleted && !data.completed) {
+            setIsCompletingTrip(true);
+            alert('모든 스탬프가 완료되었습니다. 여행 리포트를 작성해주세요.');
+
+            const completeTrip = async () => {
+                try {
+                    await api.patch(`/trips/${data.tripId}/complete`);
+                    navigate(`/add-history/${tripId}`);
+                } catch (error) {
+                    console.error('여행 완료 API 호출 실패:', error);
+                } finally {
+                    setIsCompletingTrip(false);
+                }
+            };
+
+            completeTrip();
+        }
+    }, [data, tripId, navigate, isCompletingTrip]);
 
     const steps = useMemo(() => {
         if (!data) return [];
+        console.log(data);
 
         // 현재 목표 (완료되지 않은 목표 중 첫 번째 목표 선택)
         const goalStep = data.stamps.findIndex((stamp) => !stamp.completed);
