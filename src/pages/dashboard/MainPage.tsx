@@ -146,7 +146,7 @@ const MainPage = () => {
             <div className="pt-7">
                 <MainTabButton />
             </div>
-            <div className="mt-5">
+            <div>
                 <div className="mb-1 flex cursor-pointer justify-end">
                     <button
                         className="text-caption text-[#585858]"
@@ -181,7 +181,7 @@ const MainPage = () => {
                             />
                         </svg>
                     </button>
-                    <div className="mx-[-20px] flex max-h-[50vh] flex-col gap-3 overflow-y-auto pb-3">
+                    <div className="mx-[-20px] flex max-h-[53vh] flex-col gap-3 overflow-y-auto pb-6">
                         {travelList.map((travel, index) => {
                             const isLast = index === travelList.length - 1;
                             return (
