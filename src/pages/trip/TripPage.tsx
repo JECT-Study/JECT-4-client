@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import api from '@lib/axios';
@@ -31,31 +31,31 @@ const TripPage = () => {
     if (tripId === null) return null;
 
     const { data, isLoading, isError } = useTripDetail(tripId);
+    const [isCompletingTrip, setIsCompletingTrip] = useState(false);
 
     useEffect(() => {
-        if (!data?.stamps) return;
+        if (!data?.stamps || isCompletingTrip) return;
 
         const allCompleted = data.stamps.every((stamp) => stamp.completed);
 
         if (allCompleted && !data.completed) {
+            setIsCompletingTrip(true);
             alert('모든 스탬프가 완료되었습니다. 여행 리포트를 작성해주세요.');
-            console.log('모든 스탬프 완료! 여행 완료 API 호출');
 
             const completeTrip = async () => {
                 try {
-                    const res = await api.patch(
-                        `/trips/${data.tripId}/complete`
-                    );
-                    console.log('서버 응답:', res.data);
+                    await api.patch(`/trips/${data.tripId}/complete`);
                     navigate(`/add-history/${tripId}`);
                 } catch (error) {
                     console.error('여행 완료 API 호출 실패:', error);
+                } finally {
+                    setIsCompletingTrip(false);
                 }
             };
 
             completeTrip();
         }
-    }, [data]);
+    }, [data, tripId, navigate, isCompletingTrip]);
 
     const steps = useMemo(() => {
         if (!data) return [];
