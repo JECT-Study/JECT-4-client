@@ -101,7 +101,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
     return (
         <div
-            className="rounded-2xl bg-white px-4 py-5 shadow"
+            className="w-[21.785rem] rounded-2xl bg-white px-4 py-5 shadow"
             onClick={(e) => e.stopPropagation()}
         >
             <div className="flex items-center justify-between px-4 pb-4">

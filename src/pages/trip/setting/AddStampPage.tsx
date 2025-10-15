@@ -1,6 +1,6 @@
 import MainButton from '../../../components/common/button/MainButton';
 import BackHeader from '../../../components/common/BackHeaderLayout';
-import Calendar from './_components/Calendar';
+// import Calendar from './_components/Calendar';
 
 const AddStampPage = () => {
     return (
@@ -16,7 +16,7 @@ const AddStampPage = () => {
                     placeholder="문제 유형 파악"
                 />
             </section>
-            <section className="flex flex-col gap-2 pt-6">
+            {/* <section className="flex flex-col gap-2 pt-6">
                 <span className="text-body text-text-min">마감일</span>
                 <div className="flex items-center gap-2">
                     <input
@@ -39,7 +39,7 @@ const AddStampPage = () => {
                     startDate="2025-10-02"
                     onSelectDate={() => console.log('임시')}
                 />
-            </section>
+            </section> */}
             <div className="pt-3">
                 <MainButton
                     onClick={() => console.log('버튼 클릭')}

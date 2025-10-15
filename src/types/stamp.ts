@@ -18,3 +18,8 @@ export interface StampDetail {
 }
 
 export type Stamp = Omit<StampDetail, 'missions'>;
+
+export interface StampStatus extends Stamp {
+    totalMissions: number;
+    completedMissions: number;
+}

@@ -1,4 +1,4 @@
-import type { Stamp } from '../stamp';
+import type { StampStatus } from '../stamp';
 
 export interface TripDetail {
     tripId: number;
@@ -12,7 +12,7 @@ export interface TripDetail {
     completedStamps: number;
     progress: number;
     completed: boolean;
-    stamps: Stamp[];
+    stamps: StampStatus[];
 }
 
 export type TripRequestBody = Pick<
