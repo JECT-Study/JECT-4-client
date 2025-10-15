@@ -1,19 +1,33 @@
-import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import BackHeader from '../../components/common/BackHeaderLayout';
 import GoalStep from './_components/GoalStep';
 import useTripDetail from '../../hooks/trip/useTripDetail';
-import useValidatedTripId from '@hooks/common/useValidateTripId';
 
 type Align = 'left' | 'right' | 'center';
 type GoalState = 'complete' | 'goal' | 'enable';
 
 const TripPage = () => {
     const navigate = useNavigate();
-    const tripId = useValidatedTripId();
 
-    if (!tripId) return null;
+    const { tripId: tripIdParam } = useParams<{ tripId: string }>();
+
+    /* 형변환 및 유효성 검증 시 tripId가 변경되지 않을 경우, 재계산을 하지 않기 위해 useMemo 사용 */
+    const tripId = useMemo(() => {
+        const number = Number(tripIdParam);
+
+        return Number.isFinite(number) && number > 0 ? number : null;
+    }, [tripIdParam]);
+
+    useEffect(() => {
+        if (tripId === null) {
+            alert('잘못된 여행 id입니다.');
+            navigate(-1);
+        }
+    }, [tripId, navigate]);
+
+    if (tripId === null) return null;
 
     const { data, isLoading, isError } = useTripDetail(tripId);
 

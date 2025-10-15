@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import api from '@lib/axios';
 
@@ -6,7 +7,6 @@ import BackHeader from '@components/common/BackHeaderLayout';
 import LogCard from './_components/LogCard';
 import SearchIcon from '@assets/icons/search.svg?react';
 import Dropdown from '@components/common/Dropdown';
-import useValidatedTripId from '@hooks/common/useValidateTripId';
 
 interface CompletedMission {
     studyLogDailyMissionId: number;
@@ -30,7 +30,8 @@ interface LogsResponse {
 const PAGE_SIZE = 5;
 
 const LogListPage = () => {
-    const tripId = useValidatedTripId();
+    const { tripId: tripIdParam } = useParams<{ tripId: string }>();
+    const navigate = useNavigate();
 
     const [logs, setLogs] = useState<Log[]>([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -40,11 +41,23 @@ const LogListPage = () => {
     const isFetchingRef = useRef(false);
     const observer = useRef<IntersectionObserver | null>(null);
 
-    if (!tripId) return null;
+    /* 형변환 및 유효성 검증 시 tripId가 변경되지 않을 경우, 재계산을 하지 않기 위해 useMemo 사용 */
+    const tripId = useMemo(() => {
+        const number = Number(tripIdParam);
+
+        return Number.isFinite(number) && number > 0 ? number : null;
+    }, [tripIdParam]);
+
+    useEffect(() => {
+        if (tripId === null) {
+            alert('잘못된 여행 id입니다.');
+            navigate(-1);
+        }
+    }, [tripId, navigate]);
 
     const fetchLogs = useCallback(
         async (reset = false) => {
-            if (isFetchingRef.current) return;
+            if (tripId === null || isFetchingRef.current) return;
 
             isFetchingRef.current = true;
             setIsFetching(true);
