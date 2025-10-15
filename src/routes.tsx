@@ -109,7 +109,10 @@ const Router = () => {
                 <Route path="/history/:historyId" element={<HistoryPage />} />
 
                 {/* 여행 완료 후 여행 기록 입력 페이지 (TR-02) */}
-                <Route path="/add-history" element={<AddHistoryPage />} />
+                <Route
+                    path="/add-history/:tripId"
+                    element={<AddHistoryPage />}
+                />
 
                 {/* 404 처리 : 메인 페이지 리다이렉트 (임시) */}
                 {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
