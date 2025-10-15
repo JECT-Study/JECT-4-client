@@ -72,7 +72,11 @@ const StampSettingPage = () => {
                 <p className="text-text-sub text-body">나의 스탬프</p>
                 <div className="flex h-[calc(100vh-23rem)] flex-col gap-2 overflow-auto pt-3 [&::-webkit-scrollbar]:hidden">
                     {tripData.stamps.map((stamp) => (
-                        <StampCard stamp={stamp} key={stamp.stampId} />
+                        <StampCard
+                            tripId={tripId}
+                            stamp={stamp}
+                            key={stamp.stampId}
+                        />
                     ))}
                 </div>
             </section>

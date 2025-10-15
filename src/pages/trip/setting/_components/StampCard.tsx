@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import type { StampStatus } from '../../../../types/stamp';
 import Button from '../_components/Button';
 import ProgressBar from '../_components/ProgressBar';
@@ -5,28 +7,42 @@ import ProgressBar from '../_components/ProgressBar';
 // import BxCalendarIcon from '@assets/icons/bx_calendar.svg?react';
 import EditIcon from '@assets/icons/edit.svg?react';
 import CheckIcon from '@assets/icons/check.svg?react';
-import { useEffect, useState } from 'react';
+
+import usePatchStamp from '@hooks/stamp/usePatchStamp';
 
 interface StampCardProps {
+    tripId: number;
     stamp: StampStatus;
 }
 
-const StampCard = ({ stamp }: StampCardProps) => {
-    const { stampName, completed, totalMissions, completedMissions } = stamp;
+const StampCard = ({ stamp, tripId }: StampCardProps) => {
+    const { stampId, stampName, completed, totalMissions, completedMissions } =
+        stamp;
 
     const [editedName, setEditedName] = useState(stampName);
     const [isEditingMode, setIsEditingMode] = useState(false);
 
     useEffect(() => {
         setEditedName(stampName);
-    }, [stampName]);
-
-    const handleEditModeToggle = () => {
-        setIsEditingMode((prev) => !prev);
-    };
+    }, [isEditingMode, stampName]);
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedName(e.target.value);
+    };
+
+    const { mutatePatchStamp } = usePatchStamp();
+
+    const handleEditModeToggle = () => {
+        if (isEditingMode) {
+            mutatePatchStamp(
+                { tripId, stampId, name: editedName },
+                {
+                    onSuccess: () => {
+                        setIsEditingMode(false);
+                    },
+                }
+            );
+        } else setIsEditingMode(true);
     };
 
     return (
