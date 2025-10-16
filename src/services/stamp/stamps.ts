@@ -73,10 +73,7 @@ export const patchStamp = async (
     }
 };
 
-export const createStamp = async (
-    tripId: number,
-    body: { name: string; order: number }
-) => {
+export const createStamp = async (tripId: number, body: { name: string }) => {
     try {
         const { data } = await api.post(`trips/${tripId}/stamps`, body);
 

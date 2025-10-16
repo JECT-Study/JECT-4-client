@@ -26,5 +26,4 @@ export interface StampStatus extends Stamp {
 
 export interface CreateStamp {
     name: StampDetail['stampName'];
-    order: StampDetail['stampOrder'];
 }

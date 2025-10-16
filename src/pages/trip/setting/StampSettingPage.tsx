@@ -65,12 +65,9 @@ const StampSettingPage = () => {
         return { ...stamp, isCurrentInProgress: false };
     });
 
-    const nextStampOrder =
-        tripData.stamps[tripData.stamps.length - 1].stampOrder + 1;
-
     const handleAddStamp = () => {
         navigate(`/trip/${tripId}/setting/add`, {
-            state: { tripId: tripId, stmapOrder: nextStampOrder },
+            state: { tripId: tripId },
         });
     };
 

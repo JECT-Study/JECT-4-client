@@ -13,10 +13,6 @@ const AddStampPage = () => {
 
     const [name, setName] = useState('');
     const [currentTripId, setCurrentTripId] = useState<number | null>(null);
-    const [currentStampOrder, setCurrentStampOrder] = useState<number | null>(
-        null
-    );
-    const [showDeleteModal, isShowDeleteModal] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -25,18 +21,10 @@ const AddStampPage = () => {
     const { mutateCreateStamp } = useCreateStamp();
 
     useEffect(() => {
-        const state = location.state as {
-            tripId?: number;
-            stmapOrder?: number;
-        } | null;
+        const state = location.state as { tripId?: number } | null;
 
-        if (
-            state &&
-            typeof state.tripId === 'number' &&
-            typeof state.stmapOrder === 'number'
-        ) {
+        if (state && typeof state.tripId === 'number') {
             setCurrentTripId(state.tripId);
-            setCurrentStampOrder(state.stmapOrder);
         } else {
             alert('스탬프 정보를 불러올 수 없습니다. 다시 시도해주세요.');
             navigate(-1);
@@ -44,7 +32,7 @@ const AddStampPage = () => {
     }, [location.state, navigate]);
 
     const handleSaveStamp = () => {
-        if (currentTripId === null || currentStampOrder === null) {
+        if (currentTripId === null) {
             alert('필요한 스탬프 정보가 입력되지 않았습니다.');
             navigate(-1);
 
@@ -58,16 +46,13 @@ const AddStampPage = () => {
 
         const requestBody = {
             name: name,
-            order: currentStampOrder,
         };
 
         mutateCreateStamp({ tripId: currentTripId, body: requestBody });
-
         navigate(-1);
     };
 
-    const isSaveButtonDisabled =
-        !name.trim() || currentTripId === null || currentStampOrder === null;
+    const isSaveButtonDisabled = !name.trim() || currentTripId === null;
 
     return (
         <div className="flex flex-col gap-3">
