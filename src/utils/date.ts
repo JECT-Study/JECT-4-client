@@ -8,8 +8,20 @@ export function getTodayDate(): string {
     return dayjs().format('YYYY년 M월 D일');
 }
 
-export function getCalendarDate(date: string) {
-    const [year, month, day] = date.split('-');
+export function getCalendarDate(date: string): {
+    year: string;
+    month: string;
+    day: string;
+} {
+    const parsedDate = dayjs(date, 'YYYY-MM-DD', true);
 
-    return { year, month, day };
+    if (!parsedDate.isValid()) {
+        throw new Error('Invalid date format. Expected YYYY-MM-DD');
+    }
+
+    return {
+        year: parsedDate.format('YYYY'),
+        month: parsedDate.format('M'),
+        day: parsedDate.format('D'),
+    };
 }
