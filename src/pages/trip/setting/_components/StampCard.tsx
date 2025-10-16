@@ -134,8 +134,9 @@ const StampCard = ({
                                 onClose={() => setIsCompletedModalOpen(false)}
                                 onConfirm={handleCompletedStamp}
                                 title="스탬프를 완료할까요?"
-                                children="완료 후에는 다시 수정이 어려워요."
-                            />
+                            >
+                                완료 후에는 다시 수정이 어려워요.
+                            </ConfirmModal>
                         </>
                     );
             } else
@@ -149,8 +150,9 @@ const StampCard = ({
                             onClose={() => setIsDeletedModalOpen(false)}
                             onConfirm={handleDeleteStamp}
                             title="스탬프를 삭제할까요?"
-                            children="스탬프에 등록된 모든 일정이 삭제돼요."
-                        />
+                        >
+                            스탬프에 등록된 모든 일정이 삭제돼요.
+                        </ConfirmModal>
                     </>
                 );
         }
