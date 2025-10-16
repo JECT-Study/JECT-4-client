@@ -54,6 +54,26 @@ const StampSettingPage = () => {
     if (isError) return null;
     if (!tripData) return null;
 
+    let firstIncompleteFound = false;
+
+    const stampStatus = tripData.stamps.map((stamp) => {
+        if (!stamp.completed && !firstIncompleteFound) {
+            firstIncompleteFound = true;
+            return { ...stamp, isCurrentInProgress: true };
+        }
+
+        return { ...stamp, isCurrentInProgress: false };
+    });
+
+    const nextStampOrder =
+        tripData.stamps[tripData.stamps.length - 1].stampOrder + 1;
+
+    const handleAddStamp = () => {
+        navigate(`/trip/${tripId}/setting/add`, {
+            state: { tripId: tripId, stmapOrder: nextStampOrder },
+        });
+    };
+
     return (
         <div className="flex flex-col gap-3">
             <header className="h-[4rem]">
@@ -71,11 +91,12 @@ const StampSettingPage = () => {
             <section className="pt-3">
                 <p className="text-text-sub text-body">나의 스탬프</p>
                 <div className="flex h-[calc(100vh-23rem)] flex-col gap-2 overflow-auto pt-3 [&::-webkit-scrollbar]:hidden">
-                    {tripData.stamps.map((stamp) => (
+                    {stampStatus.map((stamp) => (
                         <StampCard
                             tripId={tripId}
                             stamp={stamp}
                             key={stamp.stampId}
+                            isCurrentInProgress={stamp.isCurrentInProgress}
                         />
                     ))}
                 </div>
@@ -83,7 +104,7 @@ const StampSettingPage = () => {
             <div className="pt-5">
                 <button
                     className="text-secondary flex w-full cursor-pointer items-center justify-center rounded-xl bg-[#EEE7D8] px-4 py-8"
-                    onClick={() => navigate(`/trip/${tripId}/setting/add`)}
+                    onClick={handleAddStamp}
                 >
                     <PlusIcon />
                 </button>

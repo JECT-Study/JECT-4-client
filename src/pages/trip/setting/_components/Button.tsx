@@ -2,7 +2,7 @@ import CheckIcon from '../../../../assets/icons/button_check.svg?react';
 
 interface ButtonProps {
     isCompleted: boolean;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 const Button = ({ isCompleted, onClick }: ButtonProps) => {

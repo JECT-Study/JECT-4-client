@@ -4,18 +4,23 @@ import type { StampStatus } from '../../../../types/stamp';
 import Button from '../_components/Button';
 import ProgressBar from '../_components/ProgressBar';
 
-// import BxCalendarIcon from '@assets/icons/bx_calendar.svg?react';
 import EditIcon from '@assets/icons/edit.svg?react';
 import CheckIcon from '@assets/icons/check.svg?react';
+import DeleteIcon from '@assets/icons/x.svg?react';
 
 import usePatchStamp from '@hooks/stamp/usePatchStamp';
 
 interface StampCardProps {
     tripId: number;
     stamp: StampStatus;
+    isCurrentInProgress?: boolean;
 }
 
-const StampCard = ({ stamp, tripId }: StampCardProps) => {
+const StampCard = ({
+    stamp,
+    tripId,
+    isCurrentInProgress = false,
+}: StampCardProps) => {
     const { stampId, stampName, completed, totalMissions, completedMissions } =
         stamp;
 
@@ -25,6 +30,8 @@ const StampCard = ({ stamp, tripId }: StampCardProps) => {
     useEffect(() => {
         setEditedName(stampName);
     }, [isEditingMode, stampName]);
+
+    useEffect(() => {}, [totalMissions, completedMissions]);
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedName(e.target.value);
@@ -45,6 +52,35 @@ const StampCard = ({ stamp, tripId }: StampCardProps) => {
         } else setIsEditingMode(true);
     };
 
+    let buttonToRender = null;
+
+    if (!isEditingMode) {
+        if (completed) {
+            buttonToRender = <Button isCompleted={completed} />;
+        } else {
+            if (isCurrentInProgress) {
+                buttonToRender = (
+                    <Button
+                        isCompleted={completed}
+                        onClick={() => console.log('임시')}
+                    />
+                );
+            }
+        }
+    } else {
+        if (completed) buttonToRender = null;
+        else {
+            if (isCurrentInProgress) {
+                buttonToRender = (
+                    <Button
+                        isCompleted={completed}
+                        onClick={() => console.log('임시')}
+                    />
+                );
+            } else buttonToRender = <DeleteIcon className="h-6 w-6" />;
+        }
+    }
+
     return (
         <article className="flex flex-col gap-1 rounded-xl bg-white px-5 py-[0.6875rem] shadow-[0_6px_18px_0_rgba(0,0,0,0.08)]">
             <div>
@@ -63,7 +99,7 @@ const StampCard = ({ stamp, tripId }: StampCardProps) => {
                                 {stampName}
                             </h5>
                         )}
-                        {completed ? null : (
+                        {completed || !isCurrentInProgress ? null : (
                             <div className="flex w-12 items-center justify-center rounded-b-md bg-[#F8F7F5] py-[0.0625rem]">
                                 <p className="text-text-sub text-caption">
                                     진행 중
@@ -75,27 +111,22 @@ const StampCard = ({ stamp, tripId }: StampCardProps) => {
                         className="cursor-pointer"
                         onClick={handleEditModeToggle}
                     >
-                        {isEditingMode ? (
-                            <CheckIcon className="h-[1.125rem] w-[1.5rem]" />
-                        ) : (
-                            <EditIcon className="fill-[#EEE7D8]" />
-                        )}
+                        {!completed ? (
+                            isEditingMode ? (
+                                <CheckIcon className="h-[1.125rem] w-[1.5rem]" />
+                            ) : (
+                                <EditIcon className="fill-[#EEE7D8]" />
+                            )
+                        ) : null}
                     </button>
                 </div>
-                {/* <div className="flex items-center gap-1">
-                    <BxCalendarIcon className="ml-[-0.05rem]" />
-                    <p className="text-text-sub text-caption">2025. 07. 12</p>
-                </div> */}
             </div>
             <div className="flex items-center justify-between">
                 <ProgressBar
                     completedLength={completedMissions}
                     progressLength={totalMissions}
                 />
-                <Button
-                    isCompleted={completed}
-                    onClick={() => console.log('임시')}
-                />
+                {buttonToRender}
             </div>
         </article>
     );
