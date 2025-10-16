@@ -34,8 +34,9 @@ const usePatchTrip = (options?: UsePatchTripOptions) => {
 
             options?.onSuccess?.(response, variables);
         },
-        onError: () => {
+        onError: (error, variables) => {
             toast.error('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');
+            options?.onError?.(error, variables);
         },
     });
 
