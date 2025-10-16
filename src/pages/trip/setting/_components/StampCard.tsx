@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import type { StampStatus } from '../../../../types/stamp';
 import Button from '../_components/Button';
@@ -40,7 +41,11 @@ const StampCard = ({
     useEffect(() => {}, [totalMissions, completedMissions]);
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEditedName(e.target.value);
+        const value = e.target.value;
+
+        if (value.trim() === '') return;
+
+        setEditedName(value);
     };
 
     const { mutateCompleteStamp } = useCompleteStamp();
@@ -49,6 +54,11 @@ const StampCard = ({
 
     const handleEditModeToggle = () => {
         if (isEditingMode) {
+            if (editedName.trim().length === 0) {
+                toast.error('스탬프 이름은 비워둘 수 없습니다.');
+                return;
+            }
+
             mutatePatchStamp(
                 { tripId, stampId, name: editedName },
                 {
@@ -154,7 +164,7 @@ const StampCard = ({
                         {isEditingMode ? (
                             <input
                                 autoFocus
-                                className="text-text-sub text-body font-medium focus:outline-0"
+                                className="text-text-sub text-body max-w-2/3 font-medium focus:outline-0"
                                 value={editedName}
                                 placeholder={stampName}
                                 onChange={handleNameChange}
