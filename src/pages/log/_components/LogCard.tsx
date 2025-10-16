@@ -69,8 +69,10 @@ const LogCard = ({ log }: LogCardProps) => {
                                 </div>
                             )}
                         </div>
-                        <div className="text-caption text-text-min rounded-b-md bg-white px-4 py-2">
-                            {log.content}
+                        <div className="rounded-b-md bg-white px-4 py-2">
+                            <pre className="font-pre text-caption text-text-min whitespace-pre-wrap">
+                                {log.content}
+                            </pre>
                         </div>
                     </div>
                 )}

@@ -155,6 +155,7 @@ const PomodoroPage = () => {
                             'missionState',
                             JSON.stringify(selectedMissions)
                         );
+                        setIsMissionLoaded(true);
                     } catch (error) {
                         console.error('미션 목록 불러오기 실패:', error);
                     }
@@ -170,6 +171,7 @@ const PomodoroPage = () => {
     const [isRunning, setIsRunning] = useState(false); //타이머가 작동 중인지 여부
     const [isStarted, setIsStarted] = useState(false); //타이머가 시작했는지 여부
     const [isAutoStop, setIsAutoStop] = useState(false); // 한 세션이 끝나서 멈췄을 경우
+    const [isMissionLoaded, setIsMissionLoaded] = useState(false); // 미션 불러오기 완료 여부
     const nowCheckedMissionIdsRef = useRef<number[]>([]); // 완료된 미션 객체 실시간 값
 
     const intervalRef = useRef<number | null>(null);
@@ -420,7 +422,7 @@ const PomodoroPage = () => {
                 <div className="mt-9 w-full">
                     <PomodoroMissionModal
                         stampName={stampName}
-                        isStarted={isStarted}
+                        isMissionLoaded={isMissionLoaded}
                         isAutoStop={isAutoStop}
                         focusDurationInMinute={time.minute}
                         dailyMissions={dailyMissions ?? []}
