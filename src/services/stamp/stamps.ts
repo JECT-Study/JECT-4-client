@@ -72,3 +72,22 @@ export const patchStamp = async (
         );
     }
 };
+
+export const createStamp = async (
+    tripId: number,
+    body: { name: string; order: number }
+) => {
+    try {
+        const { data } = await api.post(`trips/${tripId}/stamps`, body);
+
+        return data.data;
+    } catch (error: unknown) {
+        if ((error as any).response?.status === 404) {
+            throw new Error('스탬프를 추가할 수 없습니다.');
+        }
+
+        throw new Error(
+            '스탬프를 추가하지 못했습니다. 잠시 후에 다시 시도해 주세요.'
+        );
+    }
+};
