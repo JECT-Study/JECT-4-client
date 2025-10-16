@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchTripDetail, type TripDetail } from '../../services/trip/trip';
+import { fetchTripDetail } from '../../services/trip/trip';
+import type { TripDetail } from '../../types/trip/trip';
+
 
 const useTripDetail = (tripId: number | null) => {
     return useQuery<TripDetail>({
