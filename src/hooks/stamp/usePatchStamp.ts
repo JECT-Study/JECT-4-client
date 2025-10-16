@@ -28,9 +28,20 @@ const usePatchStamp = (options?: UsePatchStampOptions) => {
         mutationFn: async ({ tripId, stampId, name }) =>
             patchStamp(tripId, stampId, { name }),
         onSuccess: (response, variables) => {
-            queryClient.invalidateQueries({
-                queryKey: ['stamp', variables.tripId, variables.stampId],
-            });
+            queryClient.setQueryData(
+                ['tripDetail', variables.tripId],
+                (oldData: any) => {
+                    if (!oldData) return oldData;
+                    return {
+                        ...oldData,
+                        stamps: oldData.stamps.map((s: any) =>
+                            s.stampId === variables.stampId
+                                ? { ...s, stampName: variables.name }
+                                : s
+                        ),
+                    };
+                }
+            );
 
             options?.onSuccess?.(response, variables);
         },
