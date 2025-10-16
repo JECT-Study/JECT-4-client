@@ -75,7 +75,7 @@ export const patchStamp = async (
 
 export const createStamp = async (tripId: number, body: { name: string }) => {
     try {
-        const { data } = await api.post(`trips/${tripId}/stamps`, body);
+        const { data } = await api.post(`/trips/${tripId}/stamps`, body);
 
         return data.data;
     } catch (error: unknown) {
@@ -95,7 +95,7 @@ export const deleteStamp = async (tripId: number, stampId: number) => {
 
         return data.data;
     } catch (error: unknown) {
-        if ((error as any).repsponse?.status === 404) {
+        if ((error as any).response?.status === 404) {
             throw new Error('스탬프를 삭제할 수 없습니다.');
         }
 
