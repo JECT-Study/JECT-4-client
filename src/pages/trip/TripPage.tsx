@@ -111,6 +111,10 @@ const TripPage = () => {
         });
     }, [data]);
 
+    const handleBack = () => {
+        navigate(`/main`);
+    };
+
     if (isLoading) {
         return <div>여행 정보를 로드 중이에요....</div>;
     }
@@ -126,6 +130,7 @@ const TripPage = () => {
                     title={data?.name}
                     hideLogButton={false}
                     hideEditButton={false}
+                    onBack={handleBack}
                 />
             </div>
             <div className="h-[calc(100vh-10rem)] overflow-y-auto pt-[8rem] [&::-webkit-scrollbar]:hidden">
