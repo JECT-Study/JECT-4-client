@@ -16,6 +16,7 @@ const AddStampPage = () => {
     const [currentStampOrder, setCurrentStampOrder] = useState<number | null>(
         null
     );
+    const [showDeleteModal, isShowDeleteModal] = useState(false);
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);

@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import type { StampStatus } from '../../../../types/stamp';
 import Button from '../_components/Button';
 import ProgressBar from '../_components/ProgressBar';
+import ConfirmModal from '@components/common/ConfirmModal';
 
 import EditIcon from '@assets/icons/edit.svg?react';
 import CheckIcon from '@assets/icons/check.svg?react';
 import DeleteIcon from '@assets/icons/x.svg?react';
 
 import usePatchStamp from '@hooks/stamp/usePatchStamp';
+import useCompleteStamp from '@hooks/stamp/useCompleteStamp';
 
 interface StampCardProps {
     tripId: number;
@@ -27,6 +29,8 @@ const StampCard = ({
     const [editedName, setEditedName] = useState(stampName);
     const [isEditingMode, setIsEditingMode] = useState(false);
 
+    const [isCompleteModalOpen, setIsCompletedModalOpen] = useState(false);
+
     useEffect(() => {
         setEditedName(stampName);
     }, [isEditingMode, stampName]);
@@ -37,6 +41,7 @@ const StampCard = ({
         setEditedName(e.target.value);
     };
 
+    const { mutateCompleteStamp } = useCompleteStamp();
     const { mutatePatchStamp } = usePatchStamp();
 
     const handleEditModeToggle = () => {
@@ -52,18 +57,40 @@ const StampCard = ({
         } else setIsEditingMode(true);
     };
 
+    const handleCompletedModalOpen = () => {
+        setIsCompletedModalOpen(true);
+    };
+
+    const handleCompletedStamp = () => {
+        setIsCompletedModalOpen(false);
+        mutateCompleteStamp({ tripId: tripId, stampId: stampId });
+    };
+
     let buttonToRender = null;
 
     if (!isEditingMode) {
         if (completed) {
-            buttonToRender = <Button isCompleted={completed} />;
+            buttonToRender = <Button isCompleted={completed} disabled />;
         } else {
-            if (isCurrentInProgress) {
+            if (
+                isCurrentInProgress &&
+                totalMissions === completedMissions &&
+                totalMissions
+            ) {
                 buttonToRender = (
-                    <Button
-                        isCompleted={completed}
-                        onClick={() => console.log('임시')}
-                    />
+                    <>
+                        <Button
+                            isCompleted={completed}
+                            onClick={handleCompletedModalOpen}
+                        />
+                        <ConfirmModal
+                            isOpen={isCompleteModalOpen}
+                            onClose={() => setIsCompletedModalOpen(false)}
+                            onConfirm={handleCompletedStamp}
+                            title="스탬프를 완료 처리 할까요?"
+                            children="완료 후에는 다시 수정이 어려워요."
+                        />
+                    </>
                 );
             }
         }
@@ -71,12 +98,15 @@ const StampCard = ({
         if (completed) buttonToRender = null;
         else {
             if (isCurrentInProgress) {
-                buttonToRender = (
-                    <Button
-                        isCompleted={completed}
-                        onClick={() => console.log('임시')}
-                    />
-                );
+                if (totalMissions !== completedMissions || !totalMissions)
+                    buttonToRender = null;
+                else
+                    buttonToRender = (
+                        <Button
+                            isCompleted={completed}
+                            onClick={() => console.log('임시')}
+                        />
+                    );
             } else buttonToRender = <DeleteIcon className="h-6 w-6" />;
         }
     }
