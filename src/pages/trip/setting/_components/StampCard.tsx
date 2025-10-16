@@ -11,6 +11,7 @@ import DeleteIcon from '@assets/icons/x.svg?react';
 
 import usePatchStamp from '@hooks/stamp/usePatchStamp';
 import useCompleteStamp from '@hooks/stamp/useCompleteStamp';
+import useDeleteStamp from '@hooks/stamp/useDeleteStamp';
 
 interface StampCardProps {
     tripId: number;
@@ -30,6 +31,7 @@ const StampCard = ({
     const [isEditingMode, setIsEditingMode] = useState(false);
 
     const [isCompleteModalOpen, setIsCompletedModalOpen] = useState(false);
+    const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false);
 
     useEffect(() => {
         setEditedName(stampName);
@@ -43,6 +45,7 @@ const StampCard = ({
 
     const { mutateCompleteStamp } = useCompleteStamp();
     const { mutatePatchStamp } = usePatchStamp();
+    const { mutateDeleteStamp } = useDeleteStamp();
 
     const handleEditModeToggle = () => {
         if (isEditingMode) {
@@ -66,6 +69,15 @@ const StampCard = ({
         mutateCompleteStamp({ tripId: tripId, stampId: stampId });
     };
 
+    const handleDeletedModalOpen = () => {
+        setIsDeletedModalOpen(true);
+    };
+
+    const handleDeleteStamp = () => {
+        setIsDeletedModalOpen(false);
+        mutateDeleteStamp({ tripId: tripId, stampId: stampId });
+    };
+
     let buttonToRender = null;
 
     if (!isEditingMode) {
@@ -87,7 +99,7 @@ const StampCard = ({
                             isOpen={isCompleteModalOpen}
                             onClose={() => setIsCompletedModalOpen(false)}
                             onConfirm={handleCompletedStamp}
-                            title="스탬프를 완료 처리 할까요?"
+                            title="스탬프를 완료할까요?"
                             children="완료 후에는 다시 수정이 어려워요."
                         />
                     </>
@@ -102,12 +114,35 @@ const StampCard = ({
                     buttonToRender = null;
                 else
                     buttonToRender = (
-                        <Button
-                            isCompleted={completed}
-                            onClick={() => console.log('임시')}
-                        />
+                        <>
+                            <Button
+                                isCompleted={completed}
+                                onClick={handleCompletedModalOpen}
+                            />
+                            <ConfirmModal
+                                isOpen={isCompleteModalOpen}
+                                onClose={() => setIsCompletedModalOpen(false)}
+                                onConfirm={handleCompletedStamp}
+                                title="스탬프를 완료할까요?"
+                                children="완료 후에는 다시 수정이 어려워요."
+                            />
+                        </>
                     );
-            } else buttonToRender = <DeleteIcon className="h-6 w-6" />;
+            } else
+                buttonToRender = (
+                    <>
+                        <button onClick={handleDeletedModalOpen}>
+                            <DeleteIcon className="h-6 w-6" />
+                        </button>
+                        <ConfirmModal
+                            isOpen={isDeletedModalOpen}
+                            onClose={() => setIsDeletedModalOpen(false)}
+                            onConfirm={handleDeleteStamp}
+                            title="스탬프를 삭제할까요?"
+                            children="스탬프에 등록된 모든 일정이 삭제돼요."
+                        />
+                    </>
+                );
         }
     }
 
