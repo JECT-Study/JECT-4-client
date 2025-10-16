@@ -91,3 +91,19 @@ export const createStamp = async (
         );
     }
 };
+
+export const deleteStamp = async (tripId: number, stampId: number) => {
+    try {
+        const { data } = await api.delete(`/trips/${tripId}/stamps/${stampId}`);
+
+        return data.data;
+    } catch (error: unknown) {
+        if ((error as any).repsponse?.status === 404) {
+            throw new Error('스탬프를 삭제할 수 없습니다.');
+        }
+
+        throw new Error(
+            '스탬프를 삭제할 수 없습니다. 잠시 후에 다시 시도해 주세요.'
+        );
+    }
+};
