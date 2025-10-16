@@ -16,14 +16,14 @@ const StampSettingPage = () => {
     const tripId = useValidatedTripId();
     const [isEditingMode, setIsEditingMode] = useState(false);
 
-    if (!tripId) return null;
-
     const {
         data: tripData,
         isLoading,
         isError,
         refetch,
     } = useTripDetail(tripId);
+
+    if (!tripId) return null;
 
     const { mutatePatchTrip } = usePatchTrip({
         onSuccess: () => {
