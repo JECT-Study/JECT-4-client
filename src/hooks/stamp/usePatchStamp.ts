@@ -1,7 +1,8 @@
-import { patchStamp } from '@services/stamp/stamps';
-import type { ResponseDTO } from '../../types/stamp';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import type { TripDetail } from '../../types/trip/trip';
+import { patchStamp } from '@services/stamp/stamps';
 
 interface MutationPatchStampPayload {
     tripId: number;
@@ -11,7 +12,7 @@ interface MutationPatchStampPayload {
 
 interface UsePatchStampOptions {
     onSuccess?: (
-        response: ResponseDTO,
+        response: unknown,
         variables: MutationPatchStampPayload
     ) => void;
     onError?: (error: Error, variables: MutationPatchStampPayload) => void;
@@ -21,16 +22,16 @@ const usePatchStamp = (options?: UsePatchStampOptions) => {
     const queryClient = useQueryClient();
 
     const { mutate, ...rest } = useMutation<
-        ResponseDTO,
+        unknown,
         Error,
         MutationPatchStampPayload
     >({
         mutationFn: async ({ tripId, stampId, name }) =>
             patchStamp(tripId, stampId, { name }),
         onSuccess: (response, variables) => {
-            queryClient.setQueryData(
+            queryClient.setQueryData<TripDetail>(
                 ['tripDetail', variables.tripId],
-                (oldData: any) => {
+                (oldData) => {
                     if (!oldData) return oldData;
                     return {
                         ...oldData,
@@ -46,7 +47,7 @@ const usePatchStamp = (options?: UsePatchStampOptions) => {
             options?.onSuccess?.(response, variables);
         },
         onError: () => {
-            toast.error('여행 정보 수정에 실패했습니다. 다시 시도해 주세요.');
+            toast.error('스탬프 수정에 실패했습니다. 다시 시도해 주세요.');
         },
     });
 
