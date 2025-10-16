@@ -23,3 +23,8 @@ export interface StampStatus extends Stamp {
     totalMissions: number;
     completedMissions: number;
 }
+
+export interface CreateStamp {
+    name: StampDetail['stampName'];
+    order: StampDetail['stampOrder'];
+}
