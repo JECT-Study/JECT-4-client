@@ -94,7 +94,9 @@ const TripCard = ({
                 )}
             </div>
             {isEditing ? (
-                <Button isCompleted onClick={handleSaveButtonClick} />
+                <div className="w-16">
+                    <Button isCompleted onClick={handleSaveButtonClick} />
+                </div>
             ) : (
                 <button
                     className="cursor-pointer"
