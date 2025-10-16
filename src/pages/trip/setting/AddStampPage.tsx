@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import MainButton from '@components/common/button/MainButton';
 import BackHeader from '@components/common/BackHeaderLayout';
@@ -48,8 +49,17 @@ const AddStampPage = () => {
             name: name,
         };
 
-        mutateCreateStamp({ tripId: currentTripId, body: requestBody });
-        navigate(-1);
+        mutateCreateStamp(
+            { tripId: currentTripId, body: requestBody },
+            {
+                onSuccess: () => navigate(-1),
+                onError: () => {
+                    toast.error(
+                        '스탬프 추가에 실패했습니다. 다시 시도해 주세요.'
+                    );
+                },
+            }
+        );
     };
 
     const isSaveButtonDisabled = !name.trim() || currentTripId === null;
