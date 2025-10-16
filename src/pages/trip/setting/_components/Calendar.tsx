@@ -92,8 +92,10 @@ const Calendar: React.FC<CalendarProps> = ({
         const newlySelectedDate = new Date(
             yearForDate,
             monthForDate,
-            dayInfo.date + 1
+            dayInfo.date
         );
+
+        newlySelectedDate.setHours(12, 0, 0, 0);
 
         setSelectedDate(newlySelectedDate);
         onSelectDate(newlySelectedDate);
