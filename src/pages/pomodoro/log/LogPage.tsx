@@ -108,6 +108,12 @@ const LogPage = () => {
             .filter((m) => m.checked)
             .map((m) => m.dailyMissionId);
 
+        if (checkedIds.length === 0) {
+            alert('하나 이상의 미션을 완료해주세요.');
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
             // 1️. 학습 로그 생성
             const { data } = await api.post(
