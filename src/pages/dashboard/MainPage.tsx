@@ -203,6 +203,9 @@ const MainPage = () => {
                                 </div>
                             );
                         })}
+                        {isFetching && (
+                            <div className="py-4 text-center">로딩중...</div>
+                        )}
                     </div>
                 </div>
             </div>

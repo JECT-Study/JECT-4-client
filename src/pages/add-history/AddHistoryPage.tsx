@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 import api from '@lib/axios';
+import axios from 'axios'; // S3 PUT 요청용
 
 import MissionHistory from '@components/history/MissionHistory.tsx';
 import MainButton from '@components/common/button/MainButton.tsx';
@@ -12,34 +13,25 @@ import GoalCard, { type GoalCardProps } from './_components/GoalCard';
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
 import ImageEditModal from '@components/common/ImageEditModal';
 import { useImageUpload } from '@hooks/image/useImageUpload';
-import useTripDetail from '@hooks/trip/useTripDetail';
+import useTripRetrospect from '@hooks/trip/useTripRetrospect';
 
-import { goalCardContents } from '../../mocks/history.ts';
+interface TripReport {
+    title: string;
+    content: string;
+    startDate: string;
+    endDate: string;
+    studyLogCount: number;
+    totalFocusHours: number;
+    studyDays: number;
+    imageTitle: string;
+    studyLogIds: number[];
+}
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
 };
 
-interface CompletedMission {
-    studyLogDailyMissionId: number;
-    missionName: string;
-}
-
-interface Log {
-    studyLogId: number;
-    title: string;
-    content: string;
-    createdAt: string;
-    imageUrl: string | null;
-    dailyMissions: CompletedMission[];
-}
-
-interface LogsResponse {
-    studyLogs: Log[];
-    hasNext: boolean;
-}
-
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 const AddHistoryPage = () => {
     const navigate = useNavigate();
@@ -47,13 +39,10 @@ const AddHistoryPage = () => {
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
 
-    const [logs, setLogs] = useState<Log[]>([]);
-    const [isFetching, setIsFetching] = useState(false);
-    const [hasNext, setHasNext] = useState(true);
+    const [content, setContent] = useState('');
 
-    const pageRef = useRef(0);
-    const isFetchingRef = useRef(false);
-    const observer = useRef<IntersectionObserver | null>(null);
+    const [isUploading, setUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         fetchMemberName();
@@ -90,18 +79,72 @@ const AddHistoryPage = () => {
 
     if (tripId === null) return null;
 
-    const { data } = useTripDetail(tripId);
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useTripRetrospect(tripId, PAGE_SIZE);
 
-    const transformStudyLogs = (logs: Log[]) => {
-        const result = logs.map((log) => {
-            return {
-                date: log.createdAt.split(' ')[0].replace(/-/g, '.'), // "YYYY.MM.DD"
-                contents: log.dailyMissions.map((m) => m.missionName), // missionName 배열
-            };
+    const observerElem = useRef<HTMLDivElement>(null);
+
+    const handleObserver = useCallback(
+        (entries: IntersectionObserverEntry[]) => {
+            const target = entries[0];
+            if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+            }
+        },
+        [fetchNextPage, hasNextPage, isFetchingNextPage]
+    );
+
+    const initialReport = useMemo(() => {
+        return data?.pages?.[0];
+    }, [data]);
+
+    const initialMission = useMemo(() => {
+        return (
+            data?.pages?.flatMap((page) =>
+                page.history.studyLogs.map((log) => ({
+                    date: log.createdAt.split(' ')[0].replace(/-/g, '.'),
+                    contents: log.dailyMissions.map((m) => m.missionName),
+                }))
+            ) || []
+        );
+    }, [data]);
+
+    const goalCardContents = useMemo(() => {
+        if (!initialReport) {
+            return { learning: 0, session: 0, studyDays: 0 };
+        }
+
+        return {
+            learning: initialReport.totalFocusHours,
+            session: initialReport.studyLogCount,
+            studyDays: initialReport.studyDays,
+        };
+    }, [initialReport]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleObserver, {
+            root: null,
+            rootMargin: '200px',
+            threshold: 1.0,
         });
-        console.log(result);
-        return result;
-    };
+
+        const currentElem = observerElem.current;
+        if (currentElem) observer.observe(currentElem);
+
+        return () => {
+            if (currentElem) observer.unobserve(currentElem);
+        };
+    }, [handleObserver]);
+
+    if (isLoading) return <div>여행 기록을 불러오는 중입니다...</div>;
+    if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
+    if (!initialReport) return <p>여행 기록이 없습니다.</p>;
 
     const formatDateRange = (startDate: string, endDate: string) => {
         const format = (dateStr: string) => {
@@ -112,62 +155,75 @@ const AddHistoryPage = () => {
         return `${format(startDate)} ~ ${format(endDate)}`;
     };
 
-    const fetchLogs = useCallback(
-        async (reset = false) => {
-            if (tripId === null || isFetchingRef.current) return;
+    //여행 리포트 생성 + 이미지 업로드 + Confirm 통합 함수
+    const handleComplete = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
 
-            isFetchingRef.current = true;
-            setIsFetching(true);
+        const reportData: TripReport = {
+            title: initialReport?.name || '',
+            content: content,
+            startDate: initialReport?.startDate || '',
+            endDate: initialReport?.endDate || '',
+            studyLogCount: initialReport?.studyLogCount || 0,
+            totalFocusHours: initialReport?.totalFocusHours || 0,
+            studyDays: initialReport?.studyDays || 0,
+            imageTitle: selectedFile ? selectedFile.name : '',
+            studyLogIds: initialReport?.studyLogIds || [],
+        };
 
-            try {
-                const currentPage = reset ? 0 : pageRef.current;
-                const response = await api.get(`/trips/${tripId}/study-logs`, {
-                    params: { page: currentPage, size: PAGE_SIZE },
+        try {
+            // 1️. 여행 리포트 생성
+            const response = await api.post(`/trip-reports`, reportData);
+            console.log('리포트 생성 완료');
+
+            const tripReportId = response.data.data.tripReportId;
+
+            // 2️. 파일이 있다면 Presigned URL 요청 + 업로드 + Confirm
+            if (selectedFile && !isUploading) {
+                setUploading(true);
+
+                // Presigned URL 요청
+                const { data: presigned } = await api.post(
+                    `/trip-reports/${tripReportId}/images/presigned`,
+                    {
+                        originFilename: selectedFile.name,
+                    }
+                );
+
+                console.log('Presigned URL 응답 완료');
+
+                const { presignedUrl, tmpKey } = presigned.data;
+
+                // S3 PUT 업로드
+                await axios.put(presignedUrl, selectedFile, {
+                    headers: {
+                        'Content-Type': selectedFile.type,
+                    },
+                });
+                console.log('S3 업로드 완료');
+
+                // Confirm API 호출
+                await api.post(`/trip-reports/${tripReportId}/images/confirm`, {
+                    tmpKey,
                 });
 
-                const logsResponse: LogsResponse = response.data.data;
-                console.log(logsResponse);
-
-                setLogs((prev) =>
-                    reset
-                        ? logsResponse.studyLogs
-                        : [...prev, ...logsResponse.studyLogs]
-                );
-                setHasNext(logsResponse.hasNext);
-
-                pageRef.current = reset ? 1 : pageRef.current + 1;
-            } catch (error) {
-                console.warn('데이터 불러오기 실패', error);
-            } finally {
-                isFetchingRef.current = false;
-                setIsFetching(false);
+                console.log('이미지 업로드 및 확정 완료');
             }
-        },
-        [tripId]
-    );
 
-    useEffect(() => {
-        fetchLogs(true); // 첫 렌더 시
-    }, [fetchLogs]);
+            alert('여행 리포트가 생성되었습니다.');
 
-    // const lastLogRef = useCallback(
-    //     (node: HTMLDivElement | null) => {
-    //         if (observer.current) observer.current.disconnect();
-
-    //         observer.current = new IntersectionObserver((entries) => {
-    //             if (
-    //                 entries[0].isIntersecting &&
-    //                 hasNext &&
-    //                 !isFetchingRef.current
-    //             ) {
-    //                 fetchLogs(false);
-    //             }
-    //         });
-
-    //         if (node) observer.current.observe(node);
-    //     },
-    //     [hasNext, fetchLogs]
-    // );
+            navigate(`/history/${tripReportId}`, {
+                replace: true,
+            });
+        } catch (error) {
+            alert('리포트 생성에 실패했습니다. 다시 시도해주세요.');
+            console.error('❌ 리포트 생성 또는 업로드 실패', error);
+        } finally {
+            setUploading(false);
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div>
@@ -182,12 +238,12 @@ const AddHistoryPage = () => {
                 </section>
                 <div className="bg-background sticky top-0 z-10 flex items-center justify-between pt-10">
                     <div className="bg-primary text-background text-small rounded-md p-1.5">
-                        {data?.name} 여정
+                        {initialReport?.name} 여정
                     </div>
                     <div className="text-caption text-text-min">
                         {formatDateRange(
-                            data?.startDate || '',
-                            data?.endDate || ''
+                            initialReport?.startDate || '',
+                            initialReport?.endDate || ''
                         )}
                     </div>
                 </div>
@@ -257,24 +313,23 @@ const AddHistoryPage = () => {
                     <div className="text-text-sub text-small">회고록 작성</div>
                     <textarea
                         id="history-note"
-                        className="border-input-sub mt-2 max-h-80 w-full rounded-md border bg-white px-4 py-3"
+                        className="text-custom-gray text-body border-input-sub mt-2 max-h-80 w-full rounded-md border bg-white px-4 py-3"
                         placeholder="이번 여정에서 내가 가장 기억하는 순간은…"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                     />
                 </div>
                 <div>
-                    <MissionHistory
-                        type="write"
-                        historyList={transformStudyLogs(logs)}
-                    />
+                    <MissionHistory type="write" historyList={initialMission} />
+                    <div
+                        ref={observerElem}
+                        className="my-[0.625rem] h-[0.063rem]"
+                    ></div>
                 </div>
             </div>
 
             <div className="absolute bottom-12 w-[calc(100%-40px)]">
-                <MainButton
-                    onClick={() => {
-                        console.log('완료');
-                    }}
-                >
+                <MainButton disabled={!content.trim()} onClick={handleComplete}>
                     완료
                 </MainButton>
             </div>
