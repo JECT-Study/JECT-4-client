@@ -150,7 +150,11 @@ export default function DashboardPage() {
             <div className="pb-6">
                 <MainButton
                     onClick={handleButtonClick}
-                    colorClass="bg-text-sub"
+                    colorClass={
+                        !missions.length && allCompletedMission
+                            ? 'bg-[#E2E2E2]'
+                            : 'bg-text-sub'
+                    }
                 >
                     {buttonText}
                 </MainButton>
