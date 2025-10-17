@@ -87,7 +87,7 @@ const HistoryPage = () => {
     useEffect(() => {
         const observer = new IntersectionObserver(handleObserver, {
             root: null,
-            rootMargin: '10rem',
+            rootMargin: '200px',
             threshold: 1.0,
         });
 
