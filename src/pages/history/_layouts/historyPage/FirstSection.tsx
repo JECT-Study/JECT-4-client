@@ -1,19 +1,30 @@
+import type { DetailTripReport } from '@/types/report';
 import GoalCard, { type GoalCardProps } from '../../_componenets/GoalCard';
+import { formatDate } from '@utils/date';
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
 };
 
 interface FirstSectionProps {
+    detailReport: DetailTripReport;
     goalCardContents: GoalCardContentsType;
 }
 
-const FirstSection = ({ goalCardContents }: FirstSectionProps) => {
+const FirstSection = ({
+    goalCardContents,
+    detailReport,
+}: FirstSectionProps) => {
+    const { startDate, endDate } = detailReport;
+
+    const formatStartDate = formatDate(startDate);
+    const formatEndDate = formatDate(endDate);
+
     return (
         <section className="flex flex-col gap-2">
             <div className="flex justify-end">
                 <p className="text-text-min text-caption">
-                    2025년 6월 4일 ~ 2025년 6월 10일
+                    {formatStartDate} ~ {formatEndDate}
                 </p>
             </div>
             <div className="flex w-full gap-1.5">

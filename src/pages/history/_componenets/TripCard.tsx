@@ -6,7 +6,7 @@ interface TripCardProps {
     time: number;
     startDate: string;
     endDate: string;
-    imageUrl: string;
+    imageUrl: string | null;
 }
 
 const TripCard = ({
