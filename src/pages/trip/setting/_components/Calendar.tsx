@@ -184,7 +184,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 </div>
             </div>
 
-            {isModal && (
+            {/* {isModal && (
                 <div className="flex items-center gap-2 pt-4 pl-3">
                     <input
                         type="checkbox"
@@ -192,7 +192,7 @@ const Calendar: React.FC<CalendarProps> = ({
                     />
                     <p className="text-text-min text-body">마감일 없음</p>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };
