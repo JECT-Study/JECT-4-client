@@ -7,11 +7,15 @@ import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 import api from '@lib/axios';
 import axios from 'axios'; // S3 PUT 요청용
 
-import MissionHistory from '@components/history/MissionHistory.tsx';
-import MainButton from '@components/common/button/MainButton.tsx';
-import GoalCard, { type GoalCardProps } from './_components/GoalCard';
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
+
+import GoalCard, { type GoalCardProps } from './_components/GoalCard';
+import MainButton from '@components/common/button/MainButton.tsx';
+import MissionHistory from '@components/history/MissionHistory.tsx';
+
+import Loading from '@components/common/Loading';
 import ImageEditModal from '@components/common/ImageEditModal';
+
 import { useImageUpload } from '@hooks/image/useImageUpload';
 import useTripRetrospect from '@hooks/trip/useTripRetrospect';
 
@@ -142,7 +146,8 @@ const AddHistoryPage = () => {
         };
     }, [handleObserver]);
 
-    if (isLoading) return <div>여행 기록을 불러오는 중입니다...</div>;
+    if (isLoading) return <Loading />;
+
     if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
     if (!initialReport) return <p>여행 기록이 없습니다.</p>;
 

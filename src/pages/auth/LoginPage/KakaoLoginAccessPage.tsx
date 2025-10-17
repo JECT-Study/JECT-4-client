@@ -1,9 +1,12 @@
-import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect, useRef } from 'react';
-import { AxiosError } from 'axios';
+import { useAtom } from 'jotai';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import api from '@lib/axios';
-import { useAtom } from 'jotai';
+import { AxiosError } from 'axios';
+
+import Loading from '@components/common/Loading';
+
 import { accessTokenAtom } from '@store/auth';
 import { signupUserInfoAtom } from '@store/signupUserInfoAtom';
 
@@ -49,7 +52,7 @@ function KakaoLoginAccessPage() {
         login();
     }, [code, navigate, setUserInfo]);
 
-    return <div>로그인 중입니다..</div>;
+    return <Loading />;
 }
 
 export default KakaoLoginAccessPage;

@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import api from '@lib/axios';
 
-import BackHeader from '../../components/common/BackHeaderLayout';
 import GoalStep from './_components/GoalStep';
-import useTripDetail from '../../hooks/trip/useTripDetail';
+import BackHeader from '@components/common/BackHeaderLayout';
+import Loading from '@components/common/Loading';
+
+import useTripDetail from '@hooks/trip/useTripDetail';
 
 type Align = 'left' | 'right' | 'center';
 type GoalState = 'complete' | 'goal' | 'enable';
@@ -115,9 +117,7 @@ const TripPage = () => {
         navigate(`/main`);
     };
 
-    if (isLoading) {
-        return <div>여행 정보를 로드 중이에요....</div>;
-    }
+    if (isLoading) return <Loading />;
 
     /* alert 사이드 이펙트 방지를 위해 추후 오류 UI 반환 필요 */
     if (isError) alert('여행 정보를 불러오지 못했어요.');

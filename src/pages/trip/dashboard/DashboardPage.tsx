@@ -12,13 +12,15 @@ import PomodoroTimer, {
 import { useDashboardMissions } from './_hooks/useDashboardMissions';
 import useVaildateId from './_hooks/useVaildateId';
 
-import BackHeader from '../../../components/common/BackHeaderLayout';
-import MainButton from '../../../components/common/button/MainButton';
-import useMissionQuery from '../../../hooks/mission/useMissionQuery';
+import Loading from '@components/common/Loading';
+import BackHeader from '@components/common/BackHeaderLayout';
+import MainButton from '@components/common/button/MainButton';
 
-import useDetailStampQuery from '../../../hooks/stamp/useDetailStampQuery';
-import useCompleteStamp from '../../../hooks/stamp/useCompleteStamp';
-import { missionRefetchAtom } from '../../../store/mission';
+import useMissionQuery from '@hooks/mission/useMissionQuery';
+import useDetailStampQuery from '@hooks/stamp/useDetailStampQuery';
+import useCompleteStamp from '@hooks/stamp/useCompleteStamp';
+
+import { missionRefetchAtom } from '@store/mission';
 
 import { clearAllStorage } from '@constants/pomodoroLocalStorageKey';
 
@@ -75,10 +77,10 @@ export default function DashboardPage() {
         handleToggleEdit,
     } = useDashboardMissions(id.tripId!, id.stampId!, fetchedMissions);
 
-    if (isMissionLoading) return <div>미션 목록 로드 중...</div>;
+    if (isMissionLoading) return <Loading />;
     if (isMissionError) alert('미션 목록을 불러올 수 없습니다.');
 
-    if (isStampLoading) return <div>스탬프 로드 중...</div>;
+    if (isStampLoading) return <Loading />;
     if (isStampError) alert('스탬프를 로드할 수 없습니다.');
 
     const handleOpen = () => setOpen(true);

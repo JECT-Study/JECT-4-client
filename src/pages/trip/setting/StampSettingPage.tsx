@@ -10,6 +10,7 @@ import usePatchTrip from '@hooks/trip/usePatchTrip';
 import useValidatedTripId from '@hooks/common/useValidateTripId';
 
 import PlusIcon from '@assets/icons/plus.svg?react';
+import Loading from '@components/common/Loading';
 
 const StampSettingPage = () => {
     const navigate = useNavigate();
@@ -49,7 +50,7 @@ const StampSettingPage = () => {
         mutatePatchTrip({ tripId, data: requestBody });
     };
 
-    if (isLoading) return <div>로딩 중입니다......</div>;
+    if (isLoading) return <Loading />;
 
     if (isError) return null;
     if (!tripData) return null;

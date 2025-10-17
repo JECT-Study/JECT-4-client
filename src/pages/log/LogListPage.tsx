@@ -6,6 +6,7 @@ import api from '@lib/axios';
 import BackHeader from '@components/common/BackHeaderLayout';
 import LogCard from './_components/LogCard';
 import Dropdown from '@components/common/Dropdown';
+import Loading from '@components/common/Loading';
 
 interface CompletedMission {
     studyLogDailyMissionId: number;
@@ -151,9 +152,7 @@ const LogListPage = () => {
                             </div>
                         );
                     })}
-                    {isFetching && (
-                        <div className="py-4 text-center">로딩중...</div>
-                    )}
+                    {isFetching && <Loading />}
                 </div>
             </div>
         </div>

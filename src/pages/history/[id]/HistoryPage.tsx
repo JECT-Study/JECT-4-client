@@ -4,9 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../_componenets/Header';
 import { FirstSection, SecondSection, ThirdSection } from '../_layouts/';
 import MissionHistory from '@components/history/MissionHistory';
+import Loading from '@components/common/Loading';
 
-import useDetailTripReport from '@hooks/report/useDetailTripReport';
 import { formatDate } from '@utils/date';
+import useDetailTripReport from '@hooks/report/useDetailTripReport';
 
 const HistoryPage = () => {
     const navigate = useNavigate();
@@ -102,7 +103,8 @@ const HistoryPage = () => {
         };
     }, [handleObserver]);
 
-    if (isLoading) return <div>여행 기록을 불러오는 중입니다...</div>;
+    if (isLoading) return <Loading />;
+
     if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
     if (!initialReport) return <p>여행 기록이 없습니다.</p>;
 
