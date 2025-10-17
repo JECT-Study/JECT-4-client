@@ -5,7 +5,7 @@ const Header = ({ text }: { text: string }) => {
     const navigate = useNavigate();
 
     const handleCloseClick = () => {
-        navigate(-1);
+        navigate('/history');
     };
 
     return (
