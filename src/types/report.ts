@@ -6,6 +6,7 @@ interface ReportSummary {
 
 interface TripReport {
     tripReportId: number;
+    title: string;
     startDate: string;
     endDate: string;
     totalFocusHours: number;
