@@ -33,7 +33,7 @@ const UserPage = () => {
             return;
         }
         try {
-            const response = await api.patch('/members/me', {
+            await api.patch('/members/me', {
                 nickname,
             });
 
