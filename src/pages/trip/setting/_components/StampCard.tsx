@@ -168,7 +168,7 @@ const StampCard = ({
                                 onChange={handleNameChange}
                             />
                         ) : (
-                            <h5 className="text-text-sub text-body truncate font-medium">
+                            <h5 className="text-text-sub text-body max-w-[8rem] truncate font-medium">
                                 {stampName}
                             </h5>
                         )}
