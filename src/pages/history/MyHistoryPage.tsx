@@ -1,8 +1,15 @@
-import { tripCardContents } from '../../mocks/history';
+import useTripReport from '@hooks/report/useTripReport';
+
 import LogCard from './_componenets/LogCard';
 import TripCard from './_componenets/TripCard';
 
 const MyHistoryPage = () => {
+    const { data: reports, isLoading, isError } = useTripReport();
+
+    if (isLoading) return <div>여행 기록 로딩 중...</div>;
+    if (isError) return null;
+    if (!reports) return null;
+
     return (
         <div className="flex flex-col gap-10">
             <section className="pt-16">
@@ -14,20 +21,31 @@ const MyHistoryPage = () => {
             <section className="flex flex-col gap-2">
                 <p className="text-text-min text-caption">지나온 여정들</p>
                 <div className="flex gap-3">
-                    <LogCard type="trip" count={2} />
-                    <LogCard type="study" count={92} />
-                    <LogCard type="longTrip" count={56} />
+                    <LogCard
+                        type="trip"
+                        count={reports.summary.completedTripCount}
+                    />
+                    <LogCard
+                        type="study"
+                        count={reports.summary.totalFocusHours}
+                    />
+                    <LogCard
+                        type="longTrip"
+                        count={reports.summary.longestFocusHours}
+                    />
                 </div>
             </section>
             <section className="flex flex-col gap-2">
                 <p className="text-text-min text-caption">완료한 여행</p>
                 <div className="flex h-[calc(100vh-28rem)] flex-col gap-2 overflow-auto [&::-webkit-scrollbar]:hidden">
-                    {tripCardContents.map((trip, index) => (
+                    {reports.tripReports.map((trip) => (
                         <TripCard
-                            key={`${trip.title}-${index}`}
+                            key={trip.tripReportId}
+                            reportId={trip.tripReportId}
                             title={trip.title}
-                            time={trip.time}
-                            date={trip.date}
+                            time={trip.totalFocusHours}
+                            startDate={trip.startDate}
+                            endDate={trip.endDate}
                             imageUrl={trip.imageUrl}
                         />
                     ))}

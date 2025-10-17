@@ -1,28 +1,39 @@
 import { useNavigate } from 'react-router-dom';
 
 interface TripCardProps {
+    reportId: number;
     title: string;
     time: number;
-    date: string;
+    startDate: string;
+    endDate: string;
     imageUrl: string;
 }
 
-const TripCard = ({ title, time, date, imageUrl }: TripCardProps) => {
+const TripCard = ({
+    reportId,
+    title,
+    time,
+    startDate,
+    endDate,
+    imageUrl,
+}: TripCardProps) => {
     const navigate = useNavigate();
 
     const handleClickButton = () => {
-        navigate('/history/1');
+        navigate(`/history/${reportId}`);
     };
 
     return (
         <article className="bg-point2 rounded-md">
             <div className="flex w-full gap-3 p-4">
-                <img
-                    src={imageUrl}
-                    className="h-[4.375rem] w-[5.25rem] rounded-md object-fill"
-                />
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        className="h-[4.375rem] w-[5.25rem] rounded-md object-fill"
+                    />
+                ) : null}
                 <div className="flex flex-grow items-center justify-between">
-                    <div className="flex h-full flex-col justify-between">
+                    <div className="flex h-full w-2/3 flex-col justify-between">
                         <div>
                             <h4 className="text-text-sub text-small font-semibold">
                                 {title}
@@ -32,7 +43,9 @@ const TripCard = ({ title, time, date, imageUrl }: TripCardProps) => {
                             </p>
                         </div>
                         <p className="text-text-sub text-caption whitespace-break-spaces">
-                            {date}
+                            {startDate.split('-').join('.')}
+                            {' ~ '}
+                            {endDate.split('-').join('.')}
                         </p>
                     </div>
                     <button
