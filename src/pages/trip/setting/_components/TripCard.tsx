@@ -60,7 +60,7 @@ const TripCard = ({
 
     return (
         <article className="bg-text-sub flex h-[4.875rem] w-full items-center justify-between rounded-xl p-5">
-            <div className="flex w-full items-center justify-end gap-2">
+            <div className="flex w-full items-center justify-between gap-2">
                 <div className="flex w-1/2 flex-col">
                     {isEditing ? (
                         <input
