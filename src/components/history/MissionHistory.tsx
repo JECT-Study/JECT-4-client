@@ -65,7 +65,12 @@ const MissionHistory = ({
                                     <ul className="text-secondary marker:text-secondary flex list-disc flex-col pl-10 text-sm font-normal">
                                         {history.contents.map(
                                             (content, index) => (
-                                                <li key={index}>{content}</li>
+                                                <li
+                                                    key={index}
+                                                    className="pr-5"
+                                                >
+                                                    {content}
+                                                </li>
                                             )
                                         )}
                                     </ul>
