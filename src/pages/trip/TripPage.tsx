@@ -133,7 +133,7 @@ const TripPage = () => {
                     onBack={handleBack}
                 />
             </div>
-            <div className="m-auto h-[calc(100vh-10rem)] max-w-[22rem] overflow-y-auto pt-[8rem] [&::-webkit-scrollbar]:hidden">
+            <div className="m-auto h-[calc(100vh-10rem)] max-w-[22rem] min-w-[15rem] overflow-y-auto pt-[8rem] [&::-webkit-scrollbar]:hidden">
                 {steps.map((step) => (
                     <GoalStep
                         key={`${data?.tripId}-${step.sequence}`}
