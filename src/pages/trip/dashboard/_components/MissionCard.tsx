@@ -73,7 +73,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
                     checked={mission.completed || isChecked}
                     onChange={() => onToggleCheck(mission.missionId)}
                     type="checkbox"
-                    className="accent-text-sub ml-4 h-5 w-5"
+                    className={`ml-4 h-5 w-5 ${mission.completed ? 'accent-[#F8F7F5]' : 'accent-text-sub'}`}
                 />
             )}
         </article>
