@@ -18,10 +18,8 @@ const useTripRetrospect = (tripId: number, initialPageSize: number = 5) => {
             return fetchTripRetrospect(tripId, pageParam, initialPageSize);
         },
         initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.history.hasNext) return allPages.length + 1;
-            return undefined;
-        },
+        getNextPageParam: (lastPage, allPages) =>
+            lastPage.history.hasNext ? allPages.length : undefined,
         enabled: !!tripId,
     });
 };
