@@ -124,7 +124,6 @@ const LogPage = () => {
                     content: text,
                 }
             );
-            console.log('로그 생성 완료');
 
             const studyLogId = data.data.studyLogId;
 
@@ -140,8 +139,6 @@ const LogPage = () => {
                     }
                 );
 
-                console.log('Presigned URL 응답 완료');
-
                 const { presignedUrl, tmpKey } = presigned.data;
 
                 // S3 PUT 업로드
@@ -150,14 +147,11 @@ const LogPage = () => {
                         'Content-Type': selectedFile.type,
                     },
                 });
-                console.log('S3 업로드 완료');
 
                 // Confirm API 호출
                 await api.post(`/study-logs/${studyLogId}/images/confirm`, {
                     tmpKey,
                 });
-
-                console.log('이미지 업로드 및 확정 완료');
             }
 
             if (missionRefetch) await missionRefetch();

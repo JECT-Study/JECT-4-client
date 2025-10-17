@@ -63,7 +63,6 @@ const SettingsPage = () => {
             });
 
             setAccessToken(null);
-            console.log('로그아웃 성공');
             navigate('/', { replace: true });
         } catch (error) {
             console.warn('로그아웃 실패', error);

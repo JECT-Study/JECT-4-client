@@ -149,8 +149,13 @@ export default function DashboardPage() {
 
             <div className="pb-6">
                 <MainButton
+                    disabled={!missions.length || !checkedCount}
                     onClick={handleButtonClick}
-                    colorClass="bg-text-sub"
+                    colorClass={
+                        !missions.length || !checkedCount
+                            ? 'bg-[#E2E2E2]'
+                            : 'bg-text-sub'
+                    }
                 >
                     {buttonText}
                 </MainButton>

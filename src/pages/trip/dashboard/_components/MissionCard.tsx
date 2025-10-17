@@ -28,7 +28,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
 }) => {
     return (
         <article
-            className="mb-2 flex h-[4.4375rem] items-center justify-between rounded-xl bg-white py-[1.4375rem] pr-6 pl-[1.125rem] shadow-[3px_4px_8px_0_rgba(0,0,0,0.08)]" // margin-bottom 추가 (미션 카드 간 간격)
+            className={`flex h-[4.4375rem] items-center justify-between rounded-xl ${mission.completed ? 'bg-[#F8F7F5]' : 'bg-white'} py-[1.4375rem] pr-6 pl-[1.125rem] shadow-[3px_4px_8px_0_rgba(0,0,0,0.08)]`}
         >
             {isEditing ? (
                 <input
@@ -70,10 +70,11 @@ const MissionCard: React.FC<MissionCardProps> = ({
                 </button>
             ) : (
                 <input
+                    disabled={mission.completed}
                     checked={mission.completed || isChecked}
                     onChange={() => onToggleCheck(mission.missionId)}
                     type="checkbox"
-                    className="accent-text-sub ml-4 h-5 w-5"
+                    className={`ml-4 h-5 w-5 ${mission.completed ? 'accent-[#c2c2c2]' : 'accent-text-sub'}`}
                 />
             )}
         </article>

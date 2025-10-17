@@ -61,10 +61,13 @@ const HistoryPage = () => {
             const formattedDate = formatDate(date);
 
             const contents: string[] = [];
+
             if (log.title) contents.push(log.title);
+
             log.dailyMissions.forEach((mission) => {
                 contents.push(mission.missionName);
             });
+
             return {
                 date: formattedDate,
                 contents: contents,

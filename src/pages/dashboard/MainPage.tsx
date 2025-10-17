@@ -45,12 +45,6 @@ const MainPage = () => {
 
         try {
             const currentPage = reset ? 0 : pageRef.current;
-            console.log(
-                'fetchTravels 호출, page:',
-                currentPage,
-                'reset:',
-                reset
-            );
 
             const response = await api.get('/trips', {
                 params: { page: currentPage, size: PAGE_SIZE },
@@ -73,10 +67,9 @@ const MainPage = () => {
             );
             setHasNext(nextExists);
 
-            if (!reset)
-                pageRef.current += 1; // 다음 페이지 준비
+            // 다음 페이지 준비
+            if (!reset) pageRef.current += 1;
             else pageRef.current = 1; // reset이면 1부터 시작
-            console.log('페이지 증가 후 pageRef.current:', pageRef.current);
         } catch (error) {
             console.error('여행 목록 불러오기 실패:', error);
         } finally {
@@ -123,7 +116,6 @@ const MainPage = () => {
 
     const handleDelete = async () => {
         if (!targetTravelId) return;
-        console.log(`여행 ${targetTravelId} 삭제`);
         // 모달 닫기 먼저
         setIsModalOpen(false);
         try {

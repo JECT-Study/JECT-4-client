@@ -57,9 +57,7 @@ const useCreateMission = () => {
 
             return { previousMissions, tempMissionId };
         },
-        onSuccess: (data, variables) => {
-            console.log('미션 추가 성공:', data.data);
-
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
                 queryKey: ['missions', variables.tripId, variables.stampId],
             });
