@@ -70,6 +70,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
                 </button>
             ) : (
                 <input
+                    disabled={mission.completed}
                     checked={mission.completed || isChecked}
                     onChange={() => onToggleCheck(mission.missionId)}
                     type="checkbox"
