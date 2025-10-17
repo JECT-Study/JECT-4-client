@@ -59,52 +59,54 @@ const TripCard = ({
     };
 
     return (
-        <article className="bg-text-sub flex h-[4.875rem] items-center justify-between rounded-xl p-5">
-            <div className="flex flex-col gap-1">
-                {isEditing ? (
-                    <input
-                        autoFocus
-                        className="text-subtitle text-background font-semibold focus:outline-0"
-                        placeholder={name}
-                        value={editedName}
-                        onChange={handleNameChange}
-                    />
-                ) : (
-                    <h4 className="text-subtitle text-background font-semibold">
-                        {name}
-                    </h4>
-                )}
-                <div
-                    className={`relative flex gap-1 ${isEditing && `cursor-pointer`}`}
-                    onClick={handleEditEndDate}
-                >
-                    <CalendarIcon />
-                    <p className="text-background text-caption font-light">
-                        {startDate.split('-').join('.')}
-                        {' - '}
-                        {editedEndDate.split('-').join('.')}
-                    </p>
+        <article className="bg-text-sub flex h-[4.875rem] w-full items-center justify-between rounded-xl p-5">
+            <div className="flex w-full items-center justify-end gap-2">
+                <div className="flex w-1/2 flex-col">
+                    {isEditing ? (
+                        <input
+                            autoFocus
+                            className="text-subtitle text-background font-semibold focus:outline-0"
+                            placeholder={name}
+                            value={editedName}
+                            onChange={handleNameChange}
+                        />
+                    ) : (
+                        <h4 className="text-subtitle text-background font-semibold">
+                            {name}
+                        </h4>
+                    )}
+                    <div
+                        className={`relative flex gap-1 ${isEditing && `cursor-pointer`}`}
+                        onClick={handleEditEndDate}
+                    >
+                        <CalendarIcon />
+                        <p className="text-background text-caption font-light">
+                            {startDate.split('-').join('.')}
+                            {' - '}
+                            {editedEndDate.split('-').join('.')}
+                        </p>
+                    </div>
+                    {showCalendar && (
+                        <CalendarModal
+                            startDate={startDate}
+                            onClose={() => setShowCalendar(false)}
+                            onSelectDate={handleCalendarDateSelect}
+                        />
+                    )}
                 </div>
-                {showCalendar && (
-                    <CalendarModal
-                        startDate={startDate}
-                        onClose={() => setShowCalendar(false)}
-                        onSelectDate={handleCalendarDateSelect}
-                    />
+                {isEditing ? (
+                    <div className="flex w-1/2 justify-end">
+                        <Button isCompleted onClick={handleSaveButtonClick} />
+                    </div>
+                ) : (
+                    <button
+                        className="cursor-pointer"
+                        onClick={handleEditButtonClick}
+                    >
+                        <EditIcon className="fill-white" />
+                    </button>
                 )}
             </div>
-            {isEditing ? (
-                <div className="w-16">
-                    <Button isCompleted onClick={handleSaveButtonClick} />
-                </div>
-            ) : (
-                <button
-                    className="cursor-pointer"
-                    onClick={handleEditButtonClick}
-                >
-                    <EditIcon className="fill-white" />
-                </button>
-            )}
         </article>
     );
 };
