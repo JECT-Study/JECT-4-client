@@ -8,14 +8,12 @@ import api from '@lib/axios';
 import axios from 'axios'; // S3 PUT 요청용
 
 import MissionHistory from '@components/history/MissionHistory.tsx';
-import { type History } from '@components/history/MissionHistory.tsx';
 import MainButton from '@components/common/button/MainButton.tsx';
 import GoalCard, { type GoalCardProps } from './_components/GoalCard';
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
 import ImageEditModal from '@components/common/ImageEditModal';
 import { useImageUpload } from '@hooks/image/useImageUpload';
 import useTripRetrospect from '@hooks/trip/useTripRetrospect';
-import { type studyLog } from '@services/trip/tripRetrospect';
 
 interface TripReport {
     title: string;
@@ -43,18 +41,8 @@ const AddHistoryPage = () => {
 
     const [content, setContent] = useState('');
 
-    const [isFetching, setIsFetching] = useState(false);
-    const [hasNext, setHasNext] = useState(true);
-
-    const pageRef = useRef(0);
-    const isFetchingRef = useRef(false);
-    const observer = useRef<IntersectionObserver | null>(null);
-
-    const [tripInfo, setTripInfo] = useState<GoalCardContentsType>({
-        learning: 0,
-        session: 0,
-        studyDays: 0,
-    });
+    const [isUploading, setUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         fetchMemberName();
@@ -91,27 +79,72 @@ const AddHistoryPage = () => {
 
     if (tripId === null) return null;
 
-    const { data } = useTripRetrospect(tripId);
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useTripRetrospect(tripId, PAGE_SIZE);
 
-    useEffect(() => {
-        console.log(data);
-        setTripInfo({
-            learning: data?.totalFocusHours || 0,
-            session: data?.studyLogCount || 0,
-            studyDays: data?.studyDays || 0,
-        });
+    const observerElem = useRef<HTMLDivElement>(null);
+
+    const handleObserver = useCallback(
+        (entries: IntersectionObserverEntry[]) => {
+            const target = entries[0];
+            if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+            }
+        },
+        [fetchNextPage, hasNextPage, isFetchingNextPage]
+    );
+
+    const initialReport = useMemo(() => {
+        return data?.pages?.[0];
     }, [data]);
 
-    const transformStudyLogs = (logs: studyLog[]): History[] => {
-        const result = logs.map((log) => {
-            return {
-                date: log.createdAt.split(' ')[0].replace(/-/g, '.'), // "YYYY.MM.DD"
-                contents: log.dailyMissions.map((m) => m.missionName), // missionName 배열
-            };
+    const initialMission = useMemo(() => {
+        return (
+            data?.pages?.flatMap((page) =>
+                page.history.studyLogs.map((log) => ({
+                    date: log.createdAt.split(' ')[0].replace(/-/g, '.'),
+                    contents: log.dailyMissions.map((m) => m.missionName),
+                }))
+            ) || []
+        );
+    }, [data]);
+
+    const goalCardContents = useMemo(() => {
+        if (!initialReport) {
+            return { learning: 0, session: 0, studyDays: 0 };
+        }
+
+        return {
+            learning: initialReport.totalFocusHours,
+            session: initialReport.studyLogCount,
+            studyDays: initialReport.studyDays,
+        };
+    }, [initialReport]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(handleObserver, {
+            root: null,
+            rootMargin: '200px',
+            threshold: 1.0,
         });
-        console.log(result);
-        return result;
-    };
+
+        const currentElem = observerElem.current;
+        if (currentElem) observer.observe(currentElem);
+
+        return () => {
+            if (currentElem) observer.unobserve(currentElem);
+        };
+    }, [handleObserver]);
+
+    if (isLoading) return <div>여행 기록을 불러오는 중입니다...</div>;
+    if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
+    if (!initialReport) return <p>여행 기록이 없습니다.</p>;
 
     const formatDateRange = (startDate: string, endDate: string) => {
         const format = (dateStr: string) => {
@@ -122,43 +155,21 @@ const AddHistoryPage = () => {
         return `${format(startDate)} ~ ${format(endDate)}`;
     };
 
-    // const lastLogRef = useCallback(
-    //     (node: HTMLDivElement | null) => {
-    //         if (observer.current) observer.current.disconnect();
-
-    //         observer.current = new IntersectionObserver((entries) => {
-    //             if (
-    //                 entries[0].isIntersecting &&
-    //                 hasNext &&
-    //                 !isFetchingRef.current
-    //             ) {
-    //                 fetchLogs(false);
-    //             }
-    //         });
-
-    //         if (node) observer.current.observe(node);
-    //     },
-    //     [hasNext, fetchLogs]
-    // );
-
-    const [isUploading, setUploading] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
     //여행 리포트 생성 + 이미지 업로드 + Confirm 통합 함수
     const handleComplete = async () => {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
         const reportData: TripReport = {
-            title: data?.name || '',
+            title: initialReport?.name || '',
             content: content,
-            startDate: data?.startDate || '',
-            endDate: data?.endDate || '',
-            studyLogCount: data?.studyLogCount || 0,
-            totalFocusHours: data?.totalFocusHours || 0,
-            studyDays: data?.studyDays || 0,
+            startDate: initialReport?.startDate || '',
+            endDate: initialReport?.endDate || '',
+            studyLogCount: initialReport?.studyLogCount || 0,
+            totalFocusHours: initialReport?.totalFocusHours || 0,
+            studyDays: initialReport?.studyDays || 0,
             imageTitle: selectedFile ? selectedFile.name : '',
-            studyLogIds: data?.studyLogIds || [],
+            studyLogIds: initialReport?.studyLogIds || [],
         };
 
         try {
@@ -209,7 +220,6 @@ const AddHistoryPage = () => {
             alert('리포트 생성에 실패했습니다. 다시 시도해주세요.');
             console.error('❌ 리포트 생성 또는 업로드 실패', error);
         } finally {
-            console.log(reportData);
             setUploading(false);
             setIsSubmitting(false);
         }
@@ -228,24 +238,24 @@ const AddHistoryPage = () => {
                 </section>
                 <div className="bg-background sticky top-0 z-10 flex items-center justify-between pt-10">
                     <div className="bg-primary text-background text-small rounded-md p-1.5">
-                        {data?.name} 여정
+                        {initialReport?.name} 여정
                     </div>
                     <div className="text-caption text-text-min">
                         {formatDateRange(
-                            data?.startDate || '',
-                            data?.endDate || ''
+                            initialReport?.startDate || '',
+                            initialReport?.endDate || ''
                         )}
                     </div>
                 </div>
                 <div className="mt-3 flex w-full gap-2.5">
-                    {Object.keys(tripInfo).map((keyAsString) => {
+                    {Object.keys(goalCardContents).map((keyAsString) => {
                         const type = keyAsString as keyof GoalCardContentsType;
 
                         return (
                             <GoalCard
                                 type={type}
                                 key={type}
-                                goal={tripInfo[type]}
+                                goal={goalCardContents[type]}
                             />
                         );
                     })}
@@ -310,12 +320,11 @@ const AddHistoryPage = () => {
                     />
                 </div>
                 <div>
-                    <MissionHistory
-                        type="write"
-                        historyList={transformStudyLogs(
-                            data?.history.studyLogs || []
-                        )}
-                    />
+                    <MissionHistory type="write" historyList={initialMission} />
+                    <div
+                        ref={observerElem}
+                        className="my-[0.625rem] h-[0.063rem]"
+                    ></div>
                 </div>
             </div>
 

@@ -31,14 +31,14 @@ export interface TripRetrospect {
 }
 
 export const fetchTripRetrospect = async (
-    tripId: number
+    tripId: number,
+    page: number,
+    size: number
 ): Promise<TripRetrospect> => {
     try {
         const { data } = await api.get<{ data: TripRetrospect }>(
-            `/trips/${tripId}/retrospect`
+            `/trips/${tripId}/retrospect?page=${page}&size=${size}`
         );
-
-        console.log(data.data);
         return data.data;
     } catch (error: unknown) {
         if ((error as any)?.response?.status === 404) {

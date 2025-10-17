@@ -5,7 +5,6 @@ import api from '@lib/axios';
 
 import BackHeader from '@components/common/BackHeaderLayout';
 import LogCard from './_components/LogCard';
-import SearchIcon from '@assets/icons/search.svg?react';
 import Dropdown from '@components/common/Dropdown';
 
 interface CompletedMission {
