@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 
 import type { StampStatus } from '../../../../types/stamp';
 import Button from '../_components/Button';
@@ -42,9 +41,6 @@ const StampCard = ({
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-
-        if (value.trim() === '') return;
-
         setEditedName(value);
     };
 
@@ -55,7 +51,7 @@ const StampCard = ({
     const handleEditModeToggle = () => {
         if (isEditingMode) {
             if (editedName.trim().length === 0) {
-                toast.error('스탬프 이름은 비워둘 수 없습니다.');
+                alert('스탬프 이름은 비워둘 수 없습니다.');
                 return;
             }
 
@@ -172,7 +168,7 @@ const StampCard = ({
                                 onChange={handleNameChange}
                             />
                         ) : (
-                            <h5 className="text-text-sub text-body truncate font-medium">
+                            <h5 className="text-text-sub text-body max-w-[8rem] truncate font-medium">
                                 {stampName}
                             </h5>
                         )}

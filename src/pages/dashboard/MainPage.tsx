@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '@lib/axios'; // axios 인스턴스
 
 import ConfirmModal from '../../components/common/ConfirmModal';
+import Loading from '@components/common/Loading';
 
 interface Travel {
     id: number;
@@ -195,9 +196,7 @@ const MainPage = () => {
                                 </div>
                             );
                         })}
-                        {isFetching && (
-                            <div className="py-4 text-center">로딩중...</div>
-                        )}
+                        {isFetching && <Loading />}
                     </div>
                 </div>
             </div>

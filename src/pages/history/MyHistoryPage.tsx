@@ -2,11 +2,13 @@ import useTripReport from '@hooks/report/useTripReport';
 
 import LogCard from './_componenets/LogCard';
 import TripCard from './_componenets/TripCard';
+import Loading from '@components/common/Loading';
 
 const MyHistoryPage = () => {
     const { data: reports, isLoading, isError } = useTripReport();
 
-    if (isLoading) return <div>여행 기록 로딩 중...</div>;
+    if (isLoading) return <Loading />;
+
     if (isError) return null;
     if (!reports) return null;
 

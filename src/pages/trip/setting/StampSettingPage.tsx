@@ -10,6 +10,7 @@ import usePatchTrip from '@hooks/trip/usePatchTrip';
 import useValidatedTripId from '@hooks/common/useValidateTripId';
 
 import PlusIcon from '@assets/icons/plus.svg?react';
+import Loading from '@components/common/Loading';
 
 const StampSettingPage = () => {
     const navigate = useNavigate();
@@ -49,7 +50,7 @@ const StampSettingPage = () => {
         mutatePatchTrip({ tripId, data: requestBody });
     };
 
-    if (isLoading) return <div>로딩 중입니다......</div>;
+    if (isLoading) return <Loading />;
 
     if (isError) return null;
     if (!tripData) return null;
@@ -74,7 +75,10 @@ const StampSettingPage = () => {
     return (
         <div className="flex flex-col gap-3">
             <header className="h-[4rem]">
-                <BackHeader title="여행 / 스탬프 설정" />
+                <BackHeader
+                    title="여행 / 스탬프 설정"
+                    onBack={() => navigate(`/trip/${tripId}`)}
+                />
             </header>
             <section className="flex flex-col gap-1">
                 <p className="text-text-sub text-body">나의 여행</p>

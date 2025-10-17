@@ -17,7 +17,7 @@ const BackHeader = ({
     title,
     onBack,
     hideBackButton = false,
-    hideEditButton = false,
+    hideEditButton = true,
     hideLogButton = true,
 }: BackHeaderProps) => {
     const navigate = useNavigate();

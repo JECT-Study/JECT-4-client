@@ -102,7 +102,7 @@ const Calendar: React.FC<CalendarProps> = ({
     };
 
     return (
-        <div className="w-[21.785rem] rounded-2xl bg-white px-4 py-5 shadow">
+        <div className="rounded-2xl bg-white px-4 py-5 shadow">
             <div className="flex items-center justify-between px-4 pb-4">
                 {currentYear > Number(initialYearStr) ||
                 (currentYear === Number(initialYearStr) &&
@@ -184,7 +184,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 </div>
             </div>
 
-            {isModal && (
+            {/* {isModal && (
                 <div className="flex items-center gap-2 pt-4 pl-3">
                     <input
                         type="checkbox"
@@ -192,7 +192,7 @@ const Calendar: React.FC<CalendarProps> = ({
                     />
                     <p className="text-text-min text-body">마감일 없음</p>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };

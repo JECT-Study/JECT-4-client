@@ -29,7 +29,7 @@ const TripCard = ({
                 {imageUrl ? (
                     <img
                         src={imageUrl}
-                        className="h-[4.375rem] w-[5.25rem] rounded-md object-fill"
+                        className="h-[4.375rem] w-[5.25rem] rounded-md object-cover"
                     />
                 ) : null}
                 <div className="flex flex-grow items-center justify-between">
