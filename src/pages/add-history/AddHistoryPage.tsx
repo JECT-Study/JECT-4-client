@@ -175,7 +175,6 @@ const AddHistoryPage = () => {
         try {
             // 1️. 여행 리포트 생성
             const response = await api.post(`/trip-reports`, reportData);
-            console.log('리포트 생성 완료');
 
             const tripReportId = response.data.data.tripReportId;
 
@@ -191,8 +190,6 @@ const AddHistoryPage = () => {
                     }
                 );
 
-                console.log('Presigned URL 응답 완료');
-
                 const { presignedUrl, tmpKey } = presigned.data;
 
                 // S3 PUT 업로드
@@ -201,14 +198,11 @@ const AddHistoryPage = () => {
                         'Content-Type': selectedFile.type,
                     },
                 });
-                console.log('S3 업로드 완료');
 
                 // Confirm API 호출
                 await api.post(`/trip-reports/${tripReportId}/images/confirm`, {
                     tmpKey,
                 });
-
-                console.log('이미지 업로드 및 확정 완료');
             }
 
             alert('여행 리포트가 생성되었습니다.');

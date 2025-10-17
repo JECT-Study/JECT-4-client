@@ -60,7 +60,6 @@ const TripPage = () => {
 
     const steps = useMemo(() => {
         if (!data) return [];
-        console.log(data);
 
         // 현재 목표 (완료되지 않은 목표 중 첫 번째 목표 선택)
         const goalStep = data.stamps.findIndex((stamp) => !stamp.completed);

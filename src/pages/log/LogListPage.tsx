@@ -74,7 +74,6 @@ const LogListPage = () => {
                 });
 
                 const logsResponse: LogsResponse = response.data.data;
-                console.log(logsResponse);
 
                 setLogs((prev) =>
                     reset

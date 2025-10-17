@@ -140,7 +140,6 @@ const PomodoroPage = () => {
                             `/trips/${tripId}/stamps/${stampId}/missions`
                         );
 
-                        console.log('미션 목록 불러오기 성공');
                         const missions = response.data.data; // 서버에서 받아온 전체 미션 목록
                         const selectedMissions: DailyMission[] = missions
                             .filter((mission: any) =>
@@ -203,7 +202,6 @@ const PomodoroPage = () => {
         const finalElapsedTime = elapsedTimeRef.current;
 
         // 완료 미션 담아서 넘기기
-        console.log(dailyGoalIdRef);
         const updatedDailyGoal = {
             dailyGoalId: dailyGoalIdRef.current,
             title: stampName,
@@ -274,8 +272,6 @@ const PomodoroPage = () => {
                         missionIds: checkedMissionIds,
                     }
                 );
-
-                console.log('데일리 목표 생성');
 
                 const nowDailyGoalId = response.data.data.dailyGoalId;
                 setDailyGoalId(nowDailyGoalId);

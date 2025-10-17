@@ -55,8 +55,6 @@ const SetStampLinearPage = () => {
         try {
             await api.post('/trips', travelInfo);
 
-            console.log('여행 생성 성공');
-
             navigate('/main', { replace: true });
         } catch (error) {
             console.error('API 호출 실패:', error);

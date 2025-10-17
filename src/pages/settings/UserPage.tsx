@@ -36,8 +36,8 @@ const UserPage = () => {
             const response = await api.patch('/members/me', {
                 nickname,
             });
+
             fetchMemberName(nickname);
-            console.log('프로필 저장 성공', response.data);
             alert('프로필이 저장되었습니다.');
             navigate('/settings', { replace: true });
         } catch (error) {

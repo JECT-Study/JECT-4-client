@@ -61,7 +61,6 @@ api.interceptors.response.use(
 
         // accessToken 만료 (401) + 한 번만 재시도
         if (error.response?.status === 401 && !originalRequest._retry) {
-            console.log('401 에러 감지, 토큰 갱신 시도');
             if (isRefreshing) {
                 return new Promise<string>((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
@@ -82,7 +81,6 @@ api.interceptors.response.use(
 
                 const newAccessToken = res.data.data.accessToken;
                 store.set(accessTokenAtom, newAccessToken);
-                console.log('토큰 갱신 성공', newAccessToken);
 
                 processQueue(null, newAccessToken);
 
