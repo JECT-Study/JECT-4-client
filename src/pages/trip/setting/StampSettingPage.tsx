@@ -74,7 +74,10 @@ const StampSettingPage = () => {
     return (
         <div className="flex flex-col gap-3">
             <header className="h-[4rem]">
-                <BackHeader title="여행 / 스탬프 설정" />
+                <BackHeader
+                    title="여행 / 스탬프 설정"
+                    onBack={() => navigate(`/trip/${tripId}`)}
+                />
             </header>
             <section className="flex flex-col gap-1">
                 <p className="text-text-sub text-body">나의 여행</p>
