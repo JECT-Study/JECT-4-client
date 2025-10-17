@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -183,6 +184,10 @@ const SetStampCard = ({ items, setItems }: SetStampCardProps) => {
         // 드래그 시 inputRefs도 같이 순서 재배열
         inputRefs.current = arrayMove(inputRefs.current, oldIndex, newIndex);
     };
+
+    useEffect(() => {
+        handleAddItem();
+    }, []);
 
     return (
         <div>

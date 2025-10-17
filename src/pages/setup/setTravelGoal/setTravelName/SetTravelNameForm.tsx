@@ -93,7 +93,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                     readOnly
                     type="text"
                     value={endDate ? format(endDate, 'yyyy년 M월 d일') : ''}
-                    className="text-subtitle text-text-sub bg-input-focus transitionfocus:outline-none border-input-sub w-full rounded-md border px-4 py-2 pr-10"
+                    className="text-subtitle text-text-sub transitionfocus:outline-none border-input-sub w-full rounded-md border bg-white px-4 py-2 pr-10"
                 />
                 <button
                     type="button"
@@ -159,7 +159,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                     id="travel-name"
                     value={travelName}
                     onChange={(e) => setTravelName(e.target.value)}
-                    className="text-subtitle text-text-sub text-placeholder:text-subtitle placeholder:text-text-min border-input-sub bg-input-focus h-[50px] rounded-md border py-2.5 pl-[15px] placeholder:opacity-40 focus:bg-white"
+                    className="text-subtitle text-text-sub text-placeholder:text-subtitle placeholder:text-text-min border-input-sub h-[50px] rounded-md border bg-white py-2.5 pl-[15px] placeholder:opacity-40"
                 />
             </div>
 
@@ -176,7 +176,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                     value={memo}
                     onChange={(e) => setMemo(e.target.value)}
                     placeholder="꼭 지켜야 할 내용을 작성해 주세요. "
-                    className="text-text-sub text-body placeholder:text-body placeholder:text-text-min border-input-sub bg-input-focus h-25 rounded-md border pt-[11px] pl-[15px] placeholder:opacity-40 focus:bg-white"
+                    className="text-text-sub text-body placeholder:text-body placeholder:text-text-min border-input-sub h-25 rounded-md border bg-white pt-[11px] pl-[15px] placeholder:opacity-40"
                 />
             </div>
 
