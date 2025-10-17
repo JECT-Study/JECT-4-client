@@ -27,6 +27,7 @@ export interface TripRetrospect {
     studyLogCount: number;
     studyDays: number;
     history: History;
+    studyLogIds: number[];
 }
 
 export const fetchTripRetrospect = async (

@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 
 import api from '@lib/axios';
+import axios from 'axios'; // S3 PUT 요청용
 
 import MissionHistory from '@components/history/MissionHistory.tsx';
 import { type History } from '@components/history/MissionHistory.tsx';
@@ -15,6 +16,18 @@ import ImageEditModal from '@components/common/ImageEditModal';
 import { useImageUpload } from '@hooks/image/useImageUpload';
 import useTripRetrospect from '@hooks/trip/useTripRetrospect';
 import { type studyLog } from '@services/trip/tripRetrospect';
+
+interface TripReport {
+    title: string;
+    content: string;
+    startDate: string;
+    endDate: string;
+    studyLogCount: number;
+    totalFocusHours: number;
+    studyDays: number;
+    imageTitle: string;
+    studyLogIds: number[];
+}
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
@@ -27,6 +40,8 @@ const AddHistoryPage = () => {
 
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
+
+    const [content, setContent] = useState('');
 
     const [isFetching, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
@@ -126,6 +141,80 @@ const AddHistoryPage = () => {
     //     [hasNext, fetchLogs]
     // );
 
+    const [isUploading, setUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    //여행 리포트 생성 + 이미지 업로드 + Confirm 통합 함수
+    const handleComplete = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        const reportData: TripReport = {
+            title: data?.name || '',
+            content: content,
+            startDate: data?.startDate || '',
+            endDate: data?.endDate || '',
+            studyLogCount: data?.studyLogCount || 0,
+            totalFocusHours: data?.totalFocusHours || 0,
+            studyDays: data?.studyDays || 0,
+            imageTitle: selectedFile ? selectedFile.name : '',
+            studyLogIds: data?.studyLogIds || [],
+        };
+
+        try {
+            // 1️. 여행 리포트 생성
+            const response = await api.post(`/trip-reports`, reportData);
+            console.log('리포트 생성 완료');
+
+            const tripReportId = response.data.data.tripReportId;
+
+            // 2️. 파일이 있다면 Presigned URL 요청 + 업로드 + Confirm
+            if (selectedFile && !isUploading) {
+                setUploading(true);
+
+                // Presigned URL 요청
+                const { data: presigned } = await api.post(
+                    `/trip-reports/${tripReportId}/images/presigned`,
+                    {
+                        originFilename: selectedFile.name,
+                    }
+                );
+
+                console.log('Presigned URL 응답 완료');
+
+                const { presignedUrl, tmpKey } = presigned.data;
+
+                // S3 PUT 업로드
+                await axios.put(presignedUrl, selectedFile, {
+                    headers: {
+                        'Content-Type': selectedFile.type,
+                    },
+                });
+                console.log('S3 업로드 완료');
+
+                // Confirm API 호출
+                await api.post(`/trip-reports/${tripReportId}/images/confirm`, {
+                    tmpKey,
+                });
+
+                console.log('이미지 업로드 및 확정 완료');
+            }
+
+            alert('여행 리포트가 생성되었습니다.');
+
+            navigate(`/history/${tripReportId}`, {
+                replace: true,
+            });
+        } catch (error) {
+            alert('리포트 생성에 실패했습니다. 다시 시도해주세요.');
+            console.error('❌ 리포트 생성 또는 업로드 실패', error);
+        } finally {
+            console.log(reportData);
+            setUploading(false);
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div>
             <div className="-mx-5 h-[90vh] overflow-y-auto px-5 pb-7">
@@ -216,6 +305,8 @@ const AddHistoryPage = () => {
                         id="history-note"
                         className="text-custom-gray text-body border-input-sub mt-2 max-h-80 w-full rounded-md border bg-white px-4 py-3"
                         placeholder="이번 여정에서 내가 가장 기억하는 순간은…"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                     />
                 </div>
                 <div>
@@ -229,11 +320,7 @@ const AddHistoryPage = () => {
             </div>
 
             <div className="absolute bottom-12 w-[calc(100%-40px)]">
-                <MainButton
-                    onClick={() => {
-                        console.log('완료');
-                    }}
-                >
+                <MainButton disabled={!content.trim()} onClick={handleComplete}>
                     완료
                 </MainButton>
             </div>
