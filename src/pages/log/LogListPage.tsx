@@ -27,7 +27,7 @@ interface LogsResponse {
     hasNext: boolean;
 }
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 const LogListPage = () => {
     const { tripId: tripIdParam } = useParams<{ tripId: string }>();
@@ -132,15 +132,7 @@ const LogListPage = () => {
     return (
         <div>
             <BackHeader title="미션 히스토리" hideLogButton />
-            <div className="mb-6 flex flex-col items-center pt-20">
-                <div className="text-text-sub bg-text-sub/20 flex w-full items-center gap-4 rounded-md px-4 py-2">
-                    <SearchIcon />
-                    <input
-                        className="text-small w-full"
-                        placeholder="어떤 기록을 찾을까요?"
-                    />
-                </div>
-            </div>
+            <div className="mb-6 flex flex-col items-center pt-20"></div>
             <div className="flex flex-col items-end">
                 <div className="mb-1.5">
                     <Dropdown
