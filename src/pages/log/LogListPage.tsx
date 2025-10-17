@@ -37,6 +37,8 @@ const LogListPage = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
 
+    const [order, setOrder] = useState<'LATEST' | 'OLDEST'>('LATEST');
+
     const pageRef = useRef(0);
     const isFetchingRef = useRef(false);
     const observer = useRef<IntersectionObserver | null>(null);
@@ -65,7 +67,11 @@ const LogListPage = () => {
             try {
                 const currentPage = reset ? 0 : pageRef.current;
                 const response = await api.get(`/trips/${tripId}/study-logs`, {
-                    params: { page: currentPage, size: PAGE_SIZE },
+                    params: {
+                        page: currentPage,
+                        size: PAGE_SIZE,
+                        order: order,
+                    },
                 });
 
                 const logsResponse: LogsResponse = response.data.data;
@@ -86,7 +92,7 @@ const LogListPage = () => {
                 setIsFetching(false);
             }
         },
-        [tripId]
+        [tripId, order]
     );
 
     useEffect(() => {
@@ -113,9 +119,15 @@ const LogListPage = () => {
     );
 
     const handleSelect = (value: string) => {
-        //TODO: 정렬 추가
-        console.log('선택된 값:', value);
+        setOrder(value === '과거순' ? 'OLDEST' : 'LATEST');
     };
+
+    useEffect(() => {
+        pageRef.current = 0;
+        setHasNext(true);
+        setLogs([]);
+        fetchLogs(true);
+    }, [order, fetchLogs]);
 
     return (
         <div>
