@@ -25,3 +25,10 @@ export function getCalendarDate(date: string): {
         day: parsedDate.format('D'),
     };
 }
+
+export function formatDate(date: string) {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const formattedDate = date.replace(regex, '$1년 $2월 $3일');
+
+    return formattedDate;
+}

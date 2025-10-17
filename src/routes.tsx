@@ -106,7 +106,10 @@ const Router = () => {
                 />
 
                 {/* 여행 기록 페이지 (TR-01.1) */}
-                <Route path="/history/:historyId" element={<HistoryPage />} />
+                <Route
+                    path="/history/:tripReportId"
+                    element={<HistoryPage />}
+                />
 
                 {/* 여행 완료 후 여행 기록 입력 페이지 (TR-02) */}
                 <Route
