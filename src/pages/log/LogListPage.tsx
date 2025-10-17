@@ -5,7 +5,6 @@ import api from '@lib/axios';
 
 import BackHeader from '@components/common/BackHeaderLayout';
 import LogCard from './_components/LogCard';
-import SearchIcon from '@assets/icons/search.svg?react';
 import Dropdown from '@components/common/Dropdown';
 
 interface CompletedMission {
@@ -27,7 +26,7 @@ interface LogsResponse {
     hasNext: boolean;
 }
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 const LogListPage = () => {
     const { tripId: tripIdParam } = useParams<{ tripId: string }>();
@@ -36,6 +35,8 @@ const LogListPage = () => {
     const [logs, setLogs] = useState<Log[]>([]);
     const [isFetching, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
+
+    const [order, setOrder] = useState<'LATEST' | 'OLDEST'>('LATEST');
 
     const pageRef = useRef(0);
     const isFetchingRef = useRef(false);
@@ -65,7 +66,11 @@ const LogListPage = () => {
             try {
                 const currentPage = reset ? 0 : pageRef.current;
                 const response = await api.get(`/trips/${tripId}/study-logs`, {
-                    params: { page: currentPage, size: PAGE_SIZE },
+                    params: {
+                        page: currentPage,
+                        size: PAGE_SIZE,
+                        order: order,
+                    },
                 });
 
                 const logsResponse: LogsResponse = response.data.data;
@@ -87,7 +92,7 @@ const LogListPage = () => {
                 setIsFetching(false);
             }
         },
-        [tripId]
+        [tripId, order]
     );
 
     useEffect(() => {
@@ -114,22 +119,20 @@ const LogListPage = () => {
     );
 
     const handleSelect = (value: string) => {
-        //TODO: 정렬 추가
-        console.log('선택된 값:', value);
+        setOrder(value === '과거순' ? 'OLDEST' : 'LATEST');
     };
+
+    useEffect(() => {
+        pageRef.current = 0;
+        setHasNext(true);
+        setLogs([]);
+        fetchLogs(true);
+    }, [order, fetchLogs]);
 
     return (
         <div>
             <BackHeader title="미션 히스토리" hideLogButton />
-            <div className="mb-6 flex flex-col items-center pt-20">
-                <div className="text-text-sub bg-text-sub/20 flex w-full items-center gap-4 rounded-md px-4 py-2">
-                    <SearchIcon />
-                    <input
-                        className="text-small w-full"
-                        placeholder="어떤 기록을 찾을까요?"
-                    />
-                </div>
-            </div>
+            <div className="mb-6 flex flex-col items-center pt-20"></div>
             <div className="flex flex-col items-end">
                 <div className="mb-1.5">
                     <Dropdown
