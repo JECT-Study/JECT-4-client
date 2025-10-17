@@ -28,7 +28,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
 }) => {
     return (
         <article
-            className="mb-2 flex h-[4.4375rem] items-center justify-between rounded-xl bg-white py-[1.4375rem] pr-6 pl-[1.125rem] shadow-[3px_4px_8px_0_rgba(0,0,0,0.08)]" // margin-bottom 추가 (미션 카드 간 간격)
+            className={`flex h-[4.4375rem] items-center justify-between rounded-xl ${mission.completed ? 'bg-[#F8F7F5]' : 'bg-white'} py-[1.4375rem] pr-6 pl-[1.125rem] shadow-[3px_4px_8px_0_rgba(0,0,0,0.08)]`}
         >
             {isEditing ? (
                 <input
