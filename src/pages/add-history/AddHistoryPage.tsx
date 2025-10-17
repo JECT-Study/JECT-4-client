@@ -7,39 +7,20 @@ import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
 import api from '@lib/axios';
 
 import MissionHistory from '@components/history/MissionHistory.tsx';
+import { type History } from '@components/history/MissionHistory.tsx';
 import MainButton from '@components/common/button/MainButton.tsx';
 import GoalCard, { type GoalCardProps } from './_components/GoalCard';
 import PhotoIcon from '@assets/icons/logPhoto.svg?react';
 import ImageEditModal from '@components/common/ImageEditModal';
 import { useImageUpload } from '@hooks/image/useImageUpload';
-import useTripDetail from '@hooks/trip/useTripDetail';
-
-import { goalCardContents } from '../../mocks/history.ts';
+import useTripRetrospect from '@hooks/trip/useTripRetrospect';
+import { type studyLog } from '@services/trip/tripRetrospect';
 
 type GoalCardContentsType = {
     [K in GoalCardProps['type']]: number;
 };
 
-interface CompletedMission {
-    studyLogDailyMissionId: number;
-    missionName: string;
-}
-
-interface Log {
-    studyLogId: number;
-    title: string;
-    content: string;
-    createdAt: string;
-    imageUrl: string | null;
-    dailyMissions: CompletedMission[];
-}
-
-interface LogsResponse {
-    studyLogs: Log[];
-    hasNext: boolean;
-}
-
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 const AddHistoryPage = () => {
     const navigate = useNavigate();
@@ -47,13 +28,18 @@ const AddHistoryPage = () => {
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);
 
-    const [logs, setLogs] = useState<Log[]>([]);
     const [isFetching, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
 
     const pageRef = useRef(0);
     const isFetchingRef = useRef(false);
     const observer = useRef<IntersectionObserver | null>(null);
+
+    const [tripInfo, setTripInfo] = useState<GoalCardContentsType>({
+        learning: 0,
+        session: 0,
+        studyDays: 0,
+    });
 
     useEffect(() => {
         fetchMemberName();
@@ -90,9 +76,18 @@ const AddHistoryPage = () => {
 
     if (tripId === null) return null;
 
-    const { data } = useTripDetail(tripId);
+    const { data } = useTripRetrospect(tripId);
 
-    const transformStudyLogs = (logs: Log[]) => {
+    useEffect(() => {
+        console.log(data);
+        setTripInfo({
+            learning: data?.totalFocusHours || 0,
+            session: data?.studyLogCount || 0,
+            studyDays: data?.studyDays || 0,
+        });
+    }, [data]);
+
+    const transformStudyLogs = (logs: studyLog[]): History[] => {
         const result = logs.map((log) => {
             return {
                 date: log.createdAt.split(' ')[0].replace(/-/g, '.'), // "YYYY.MM.DD"
@@ -111,44 +106,6 @@ const AddHistoryPage = () => {
 
         return `${format(startDate)} ~ ${format(endDate)}`;
     };
-
-    const fetchLogs = useCallback(
-        async (reset = false) => {
-            if (tripId === null || isFetchingRef.current) return;
-
-            isFetchingRef.current = true;
-            setIsFetching(true);
-
-            try {
-                const currentPage = reset ? 0 : pageRef.current;
-                const response = await api.get(`/trips/${tripId}/study-logs`, {
-                    params: { page: currentPage, size: PAGE_SIZE },
-                });
-
-                const logsResponse: LogsResponse = response.data.data;
-                console.log(logsResponse);
-
-                setLogs((prev) =>
-                    reset
-                        ? logsResponse.studyLogs
-                        : [...prev, ...logsResponse.studyLogs]
-                );
-                setHasNext(logsResponse.hasNext);
-
-                pageRef.current = reset ? 1 : pageRef.current + 1;
-            } catch (error) {
-                console.warn('데이터 불러오기 실패', error);
-            } finally {
-                isFetchingRef.current = false;
-                setIsFetching(false);
-            }
-        },
-        [tripId]
-    );
-
-    useEffect(() => {
-        fetchLogs(true); // 첫 렌더 시
-    }, [fetchLogs]);
 
     // const lastLogRef = useCallback(
     //     (node: HTMLDivElement | null) => {
@@ -192,14 +149,14 @@ const AddHistoryPage = () => {
                     </div>
                 </div>
                 <div className="mt-3 flex w-full gap-2.5">
-                    {Object.keys(goalCardContents).map((keyAsString) => {
+                    {Object.keys(tripInfo).map((keyAsString) => {
                         const type = keyAsString as keyof GoalCardContentsType;
 
                         return (
                             <GoalCard
                                 type={type}
                                 key={type}
-                                goal={goalCardContents[type]}
+                                goal={tripInfo[type]}
                             />
                         );
                     })}
@@ -257,14 +214,16 @@ const AddHistoryPage = () => {
                     <div className="text-text-sub text-small">회고록 작성</div>
                     <textarea
                         id="history-note"
-                        className="border-input-sub mt-2 max-h-80 w-full rounded-md border bg-white px-4 py-3"
+                        className="text-custom-gray text-body border-input-sub mt-2 max-h-80 w-full rounded-md border bg-white px-4 py-3"
                         placeholder="이번 여정에서 내가 가장 기억하는 순간은…"
                     />
                 </div>
                 <div>
                     <MissionHistory
                         type="write"
-                        historyList={transformStudyLogs(logs)}
+                        historyList={transformStudyLogs(
+                            data?.history.studyLogs || []
+                        )}
                     />
                 </div>
             </div>
