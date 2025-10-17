@@ -22,11 +22,11 @@ const ProgressBar = ({ completedLength, progressLength }: ProgressBarProps) => {
         >
             <div className="h-4 w-full rounded-[1.25rem] bg-[#F8F7F5]" />
             <div
-                className="bg-point2 text-caption absolute top-0 left-0 flex h-4 items-center justify-center rounded-[1.25rem] text-white transition-all duration-300"
-                style={{ width: `${progressPercent}%` }}
+                className="bg-point2 text-caption absolute top-0 left-0 flex h-4 items-center justify-center rounded-full text-white transition-all duration-300"
+                style={{ width: `${progressPercent || '1'}%` }}
             >
                 <span className="text-caption">
-                    {clampedNow}/{safeTotal}
+                    {progressPercent ? `${clampedNow}/${safeTotal}` : null}
                 </span>
             </div>
         </div>

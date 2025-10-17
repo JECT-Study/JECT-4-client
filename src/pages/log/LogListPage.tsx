@@ -82,6 +82,7 @@ const LogListPage = () => {
                         ? logsResponse.studyLogs
                         : [...prev, ...logsResponse.studyLogs]
                 );
+
                 setHasNext(logsResponse.hasNext);
 
                 pageRef.current = reset ? 1 : pageRef.current + 1;

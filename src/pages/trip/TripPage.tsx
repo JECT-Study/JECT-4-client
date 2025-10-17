@@ -12,6 +12,7 @@ type GoalState = 'complete' | 'goal' | 'enable';
 
 const TripPage = () => {
     const navigate = useNavigate();
+
     const { tripId: tripIdParam } = useParams<{ tripId: string }>();
 
     /* 형변환 및 유효성 검증 시 tripId가 변경되지 않을 경우, 재계산을 하지 않기 위해 useMemo 사용 */
