@@ -73,7 +73,7 @@ function SortableItem({
 
             {/* isEditing 상태에 따라 input 또는 div 렌더링 */}
             {item.isEditing ? (
-                <div>
+                <div className="text-subtitle flex-1 focus:outline-none">
                     <input
                         ref={(el) => (inputRefs.current[index] = el)}
                         autoFocus
@@ -85,8 +85,6 @@ function SortableItem({
                         }}
                         onBlur={() => onEnter(item.id, index)}
                         maxLength={30}
-                        // input 스타일 - 경계, 패딩, 둥근 모서리, 포커스 아웃라인 제거
-                        className="text-subtitle flex-1 focus:outline-none"
                     />
                 </div>
             ) : (
