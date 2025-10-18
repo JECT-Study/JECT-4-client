@@ -154,7 +154,7 @@ const SetStampCard = ({ items, setItems }: SetStampCardProps) => {
     };
 
     // 엔터 입력 혹은 div 클릭 시 편집 모드 토글
-    const handleToggleEdit = (id: string, index: number) => {
+    const handleToggleEdit = (id: string) => {
         setItems((prev) => {
             const updated = prev.map((item) =>
                 item.id === id ? { ...item, isEditing: !item.isEditing } : item

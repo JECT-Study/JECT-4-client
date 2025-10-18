@@ -14,11 +14,7 @@ interface DateInfo {
     monthOffset: -1 | 0 | 1;
 }
 
-const Calendar: React.FC<CalendarProps> = ({
-    startDate,
-    isModal = false,
-    onSelectDate,
-}) => {
+const Calendar: React.FC<CalendarProps> = ({ startDate, onSelectDate }) => {
     const {
         year: initialYearStr,
         month: initialMonthStr,
