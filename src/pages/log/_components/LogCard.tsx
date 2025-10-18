@@ -47,7 +47,7 @@ const LogCard = ({ log }: LogCardProps) => {
                 </div>
                 {isExpaneded && (
                     <div>
-                        <div className="bg-background px-4 pt-4">
+                        <div className="bg-background p-4">
                             <div>
                                 <ul className="text-text-sub list-inside list-disc space-y-2">
                                     {log.dailyMissions.map((m) => (
