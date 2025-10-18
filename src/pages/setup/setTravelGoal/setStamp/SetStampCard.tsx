@@ -86,6 +86,7 @@ function SortableItem({
                         onBlur={() => onEnter(item.id, index)}
                         maxLength={30}
                         placeholder="필수 이론 정리"
+                        className="w-full"
                     />
                 </div>
             ) : (
