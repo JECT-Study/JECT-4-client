@@ -193,10 +193,6 @@ const SetStampCard = ({ items, setItems }: SetStampCardProps) => {
         if (items.length === 0) handleAddItem();
     }, []);
 
-    useEffect(() => {
-        console.log(items);
-    }, [items]);
-
     return (
         <div>
             <div className="max-h-96 overflow-x-hidden overflow-y-auto">
