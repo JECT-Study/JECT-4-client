@@ -85,6 +85,7 @@ function SortableItem({
                         }}
                         onBlur={() => onEnter(item.id, index)}
                         maxLength={30}
+                        placeholder="필수 이론 정리"
                     />
                 </div>
             ) : (
@@ -154,16 +155,20 @@ const SetStampCard = ({ items, setItems }: SetStampCardProps) => {
 
     // 엔터 입력 혹은 div 클릭 시 편집 모드 토글
     const handleToggleEdit = (id: string, index: number) => {
-        setItems((prev) =>
-            prev.map((item) =>
+        setItems((prev) => {
+            const updated = prev.map((item) =>
                 item.id === id ? { ...item, isEditing: !item.isEditing } : item
-            )
-        );
-        // 다음 줄 포커싱
-        setTimeout(() => {
-            const nextInput = inputRefs.current[index + 1];
-            if (nextInput) nextInput.focus();
-        }, 0);
+            );
+
+            // 방금 편집이 끝난 아이템 확인
+            const target = prev.find((item) => item.id === id);
+            if (target && target.isEditing && target.text.trim() === '') {
+                // 편집 중이던 항목이 비어 있으면 삭제
+                return prev.filter((item) => item.id !== id);
+            }
+
+            return updated;
+        });
     };
     // 삭제
     const handleDelete = (id: string) => {
@@ -184,8 +189,12 @@ const SetStampCard = ({ items, setItems }: SetStampCardProps) => {
     };
 
     useEffect(() => {
-        handleAddItem();
+        if (items.length === 0) handleAddItem();
     }, []);
+
+    useEffect(() => {
+        console.log(items);
+    }, [items]);
 
     return (
         <div>

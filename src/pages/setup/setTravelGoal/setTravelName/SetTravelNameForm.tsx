@@ -159,7 +159,7 @@ const SetTravelNameForm = ({ travelType }: SetTravelNameFormProps) => {
                     id="travel-name"
                     value={travelName}
                     onChange={(e) => setTravelName(e.target.value)}
-                    className="text-subtitle text-text-sub placeholder:text-text-min border-input-sub h-[50px] rounded-md border bg-white py-2.5 pl-[15px] placeholder:opacity-40"
+                    className="text-subtitle text-text-sub border-input-sub h-[50px] rounded-md border bg-white py-2.5 pl-[15px] placeholder:opacity-40"
                 />
             </div>
 

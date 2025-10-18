@@ -85,6 +85,8 @@ export const useDashboardMissions = (
 
             if (!editMission) return;
 
+            const isCurrentlyEditing = editMission.isEditing;
+
             setMissions((prev) =>
                 prev.map((mission) =>
                     mission.missionId === id
@@ -93,16 +95,22 @@ export const useDashboardMissions = (
                 )
             );
 
-            if (editMission.isEditing) {
+            if (isCurrentlyEditing) {
+                const trimmedName = editMission.missionName.trim();
                 const isNewMission = typeof id === 'string';
+
+                if (!trimmedName) {
+                    setMissions((prev) =>
+                        prev.filter((mission) => mission.missionId !== id)
+                    );
+                    return;
+                }
 
                 if (isNewMission) {
                     mutateCreateMission({
                         tripId,
                         stampId,
-                        missionContent: {
-                            missionName: editMission.missionName,
-                        },
+                        missionContent: { missionName: trimmedName },
                     });
                 }
             }
