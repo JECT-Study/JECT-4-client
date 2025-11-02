@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
-import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 // https://vite.dev/config/
@@ -34,6 +35,12 @@ export default defineConfig({
         react(),
         svgr(), // SVG 파일을 React 컴포넌트로 변환
         tailwindcss(),
+        visualizer({
+            open: true, // 빌드 후 자동으로 브라우저 열기
+            filename: 'stats.html', // 출력 파일명
+            gzipSize: true, // gzip 압축 크기 표시
+            brotliSize: true, // brotli 압축 크기 표시
+        }),
         VitePWA({
             registerType: 'autoUpdate', // 서비스 워커 자동 업데이트
             // localhost 에서 Service Worker + Manifest 등록
@@ -65,4 +72,21 @@ export default defineConfig({
             },
         }),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+                    'axios-vendor': ['axios'],
+                    'ui-vendor': [
+                        '@dnd-kit/core',
+                        '@dnd-kit/sortable',
+                        'lottie-react',
+                        'swiper',
+                        'react-datepicker',
+                    ],
+                },
+            },
+        },
+    },
 });
