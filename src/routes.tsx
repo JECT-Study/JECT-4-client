@@ -9,7 +9,6 @@ import SetJobPage from './pages/setup/setProfile/SetJobPage';
 
 import MainLayout from './components/MainLayout';
 import MainPage from './pages/dashboard/MainPage';
-import StyleGuide from './pages/style-guide/StyleGuide';
 
 import SetTravelTypePage from './pages/setup/setTravelGoal/setTravelType/index';
 import SetTravelNamePage from './pages/setup/setTravelGoal/setTravelName';
@@ -58,8 +57,6 @@ const Router = () => {
                     element={<SetStampLinearPage />}
                 />
 
-                {/* 스타일 가이드 페이지 */}
-                <Route path="/style-guide" element={<StyleGuide />} />
 
                 {/* 메인 서비스 : 푸터 있는 페이지들 */}
                 <Route element={<MainLayout />}>
