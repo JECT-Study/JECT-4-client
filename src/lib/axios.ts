@@ -45,6 +45,7 @@ const processQueue = (error: any, token: string | null = null) => {
         if (error) reject(error);
         else resolve(token as string);
     });
+    
     failedQueue = [];
 };
 
