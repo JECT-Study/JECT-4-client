@@ -33,7 +33,7 @@ const LogListPage = () => {
     const navigate = useNavigate();
 
     const [logs, setLogs] = useState<Log[]>([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const [_, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
 
     const [order, setOrder] = useState<'LATEST' | 'OLDEST'>('LATEST');

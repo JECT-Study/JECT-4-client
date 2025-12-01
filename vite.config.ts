@@ -81,7 +81,6 @@ export default defineConfig({
                     'ui-vendor': [
                         '@dnd-kit/core',
                         '@dnd-kit/sortable',
-                        'lottie-react',
                         'swiper',
                         'react-datepicker',
                     ],
