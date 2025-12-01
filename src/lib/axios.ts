@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getDefaultStore } from 'jotai';
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 
 const store = getDefaultStore();
 
@@ -17,7 +17,7 @@ const authExcludedPaths = [
 
 api.interceptors.request.use(
     (config) => {
-        const token = store.get(accessTokenAtom);
+        const token = store.get(sessionStorageAtom);
 
         if (!authExcludedPaths.includes(config.url || '')) {
             if (token && config.headers) {
@@ -45,7 +45,7 @@ const processQueue = (error: any, token: string | null = null) => {
         if (error) reject(error);
         else resolve(token as string);
     });
-    
+
     failedQueue = [];
 };
 
@@ -81,7 +81,7 @@ api.interceptors.response.use(
                 const res = await api.post('/auth/token/reissue');
 
                 const newAccessToken = res.data.data.accessToken;
-                store.set(accessTokenAtom, newAccessToken);
+                store.set(sessionStorageAtom, newAccessToken);
 
                 processQueue(null, newAccessToken);
 
@@ -93,7 +93,7 @@ api.interceptors.response.use(
                 alert(refreshError);
                 processQueue(refreshError, null);
 
-                store.set(accessTokenAtom, null);
+                store.set(sessionStorageAtom, null);
                 window.location.href = '/';
                 return Promise.reject(refreshError);
             } finally {

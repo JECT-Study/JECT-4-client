@@ -1,7 +1,7 @@
 import { getDefaultStore } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import { getTokenExpirationTime, refreshAccessToken } from '@utils/token';
 
 /**
@@ -46,7 +46,7 @@ const useTokenAutoRefresh = () => {
     }, []);
 
     useEffect(() => {
-        const token = store.get(accessTokenAtom);
+        const token = store.get(sessionStorageAtom);
 
         if (token) scheduleTokenRefresh(token);
 

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getDefaultStore } from 'jotai';
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import { fetchMissions } from '@services/mission/missions';
 import { type ServerMissionItem } from '../../types/mission/Mission';
 
 const useMissionQuery = (tripId: number, stampId: number) => {
     const store = getDefaultStore();
-    const token = store.get(accessTokenAtom);
+    const token = store.get(sessionStorageAtom);
 
     return useQuery<ServerMissionItem[], Error>({
         queryKey: ['missions', tripId, stampId],

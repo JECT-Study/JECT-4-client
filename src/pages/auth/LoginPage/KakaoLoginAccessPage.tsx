@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 
 import Loading from '@components/common/Loading';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import { signupUserInfoAtom } from '@store/signupUserInfoAtom';
 
 function KakaoLoginAccessPage() {
@@ -16,7 +16,7 @@ function KakaoLoginAccessPage() {
     const [searchParams] = useSearchParams();
     const code = searchParams.get('code');
     const [, setUserInfo] = useAtom(signupUserInfoAtom);
-    const [, setAccessToken] = useAtom(accessTokenAtom);
+    const [, setAccessToken] = useAtom(sessionStorageAtom);
 
     // code가 있을 경우 1. 로그인 시도 2. 로그인 실패할 시 userInfoAtom에 저장하고 이름 설정 페이지로 이동
     useEffect(() => {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { getDefaultStore } from 'jotai';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import Router from './routes';
 import Loading from './components/common/Loading';
 import useTokenAutoRefresh from './hooks/token/useTokenAutoRefresh';
@@ -18,8 +18,8 @@ function App() {
     const { scheduleTokenRefresh } = useTokenAutoRefresh();
 
     useEffect(() => {
-        const unsubscribe = store.sub(accessTokenAtom, () => {
-            const newToken = store.get(accessTokenAtom);
+        const unsubscribe = store.sub(sessionStorageAtom, () => {
+            const newToken = store.get(sessionStorageAtom);
 
             if (newToken) scheduleTokenRefresh(newToken);
         });

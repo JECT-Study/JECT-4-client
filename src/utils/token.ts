@@ -1,7 +1,7 @@
 import { getDefaultStore } from 'jotai';
 
 import api from '@lib/axios';
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 
 /**
  * JWT 토큰 파싱 및 만료 시간 확인
@@ -44,11 +44,11 @@ export const refreshAccessToken = async (): Promise<string | null> => {
         const { data } = await api.post('/auth/token/reissue');
         const newToken = data.accessToken;
 
-        store.set(accessTokenAtom, newToken);
+        store.set(sessionStorageAtom, newToken);
 
         return newToken;
     } catch (error) {
-        store.set(accessTokenAtom, null);
+        store.set(sessionStorageAtom, null);
         return null;
     }
 };

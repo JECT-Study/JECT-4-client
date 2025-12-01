@@ -1,7 +1,7 @@
 import { getDefaultStore } from 'jotai';
 import { useEffect, useState } from 'react';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import { isTokenExpiringSoon, refreshAccessToken } from '@utils/token';
 
 /**
@@ -16,7 +16,7 @@ const useAuthInitialization = () => {
     useEffect(() => {
         const initializeAuth = async () => {
             try {
-                const token = store.get(accessTokenAtom);
+                const token = store.get(sessionStorageAtom);
 
                 // 토큰이 없으면 바로 초기화 진행 (비로그인 상태)
                 if (!token) {

@@ -1,13 +1,13 @@
 import { getDefaultStore } from 'jotai';
 import { useQuery } from '@tanstack/react-query';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import { fetchTripDetail } from '../../services/trip/trip';
 import type { TripDetail } from '../../types/trip/trip';
 
 const useTripDetail = (tripId: number | null) => {
     const store = getDefaultStore();
-    const token = store.get(accessTokenAtom);
+    const token = store.get(sessionStorageAtom);
 
     return useQuery<TripDetail>({
         queryKey: ['tripDetail', tripId],

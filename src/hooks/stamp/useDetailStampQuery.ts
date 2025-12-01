@@ -1,13 +1,13 @@
 import { getDefaultStore } from 'jotai';
 import { useQuery } from '@tanstack/react-query';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 import type { StampDetail } from '../../types/stamp';
 import { fetchStampDetail } from '../../services/stamp/stamps';
 
 const useDetailStampQuery = (tripId: number, stampId: number) => {
     const store = getDefaultStore();
-    const token = store.get(accessTokenAtom);
+    const token = store.get(sessionStorageAtom);
 
     return useQuery<StampDetail, Error>({
         queryKey: ['stamp', tripId, stampId],
