@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { lazy, useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import api from '@lib/axios';
-
-import GoalStep from './_components/GoalStep';
 import BackHeader from '@components/common/BackHeaderLayout';
-import Loading from '@components/common/Loading';
-
 import useTripDetail from '@hooks/trip/useTripDetail';
+
+const GoalStep = lazy(() => import('./_components/GoalStep'));
 
 type Align = 'left' | 'right' | 'center';
 type GoalState = 'complete' | 'goal' | 'enable';
@@ -33,7 +31,7 @@ const TripPage = () => {
 
     if (tripId === null) return null;
 
-    const { data, isLoading, isError } = useTripDetail(tripId);
+    const { data, isError } = useTripDetail(tripId);
     const [isCompletingTrip, setIsCompletingTrip] = useState(false);
     const hasAlertshown = useRef(false);
 
@@ -119,8 +117,6 @@ const TripPage = () => {
     const handleBack = () => {
         navigate(`/main`);
     };
-
-    if (isLoading) return <Loading />;
 
     /* alert 사이드 이펙트 방지를 위해 추후 오류 UI 반환 필요 */
     if (isError) alert('여행 정보를 불러오지 못했어요.');

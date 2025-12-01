@@ -4,10 +4,9 @@ import MainCardButton from './MainCardButton';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import api from '@lib/axios'; // axios 인스턴스
+import api from '@lib/axios';
 
 import ConfirmModal from '../../components/common/ConfirmModal';
-import Loading from '@components/common/Loading';
 
 interface Travel {
     id: number;
@@ -30,7 +29,7 @@ const MainPage = () => {
 
     const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
     const [travelList, setTravelList] = useState<Travel[]>([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const [_, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -196,7 +195,6 @@ const MainPage = () => {
                                 </div>
                             );
                         })}
-                        {isFetching && <Loading />}
                     </div>
                 </div>
             </div>

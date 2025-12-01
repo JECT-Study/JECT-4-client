@@ -1,14 +1,14 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { clsx } from 'clsx';
+import { useSetAtom, useAtomValue } from 'jotai';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
 import { format, parseISO } from 'date-fns';
-import { useNavigate } from 'react-router';
-import { getTodayDate } from '../../../../utils/date';
-import CalendarIcon from '../../../../assets/icons/calendar_icon.svg';
 
-import { useSetAtom, useAtomValue } from 'jotai';
+import { getTodayDate } from '@utils/date';
+import CalendarIcon from '@assets/icons/calendar_icon.svg';
 import { travelInfoAtom } from '@store/travelInfoAtom';
 import type { TravelInfo } from '@store/travelInfoAtom';
 

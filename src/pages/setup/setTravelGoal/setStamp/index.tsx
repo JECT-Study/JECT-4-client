@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useSetAtom, useAtomValue } from 'jotai';
 import { format, parse } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 import Modal from './StampModal';
-import BackHeader from '../../../../components/common/BackHeaderLayout';
-import MainButton from '../../../../components/common/button/MainButton';
-import SetStampCard from './SetStampCard';
+import BackHeader from '@components/common/BackHeaderLayout';
+import MainButton from '@components/common/button/MainButton';
 import MissionList from './MissionList';
+
+const SetStampCard = lazy(() => import('./SetStampCard'));
 
 import api from '@lib/axios';
 
-import { useSetAtom, useAtomValue } from 'jotai';
 import { travelInfoAtom } from '@store/travelInfoAtom';
 import type { Stamp } from '@store/travelInfoAtom';
 
@@ -93,7 +94,9 @@ const SetStampLinearPage = () => {
             </section>
             <Modal
                 stampName={prevTravelInfo.name}
-                startDate={today ? format(today, 'yyyy. MM. dd') : ''}
+                startDate={
+                    today ? format(today, 'yyyy. MM. dd', { locale: ko }) : ''
+                }
                 endDate={
                     prevTravelInfo.endDate
                         ? format(
@@ -102,7 +105,8 @@ const SetStampLinearPage = () => {
                                   'yyyy-MM-dd',
                                   new Date()
                               ),
-                              'yyyy. MM. dd'
+                              'yyyy. MM. dd',
+                              { locale: ko }
                           )
                         : ''
                 }

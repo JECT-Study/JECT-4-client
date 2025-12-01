@@ -1,10 +1,15 @@
+import { lazy } from 'react';
 import { useAtomValue } from 'jotai';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import useAuthInitialization from '@hooks/token/useAuthInitialization';
 import { sessionStorageAtom } from '@store/auth';
-import Loading from '@components/common/Loading';
+
 import useTokenAutoRefresh from '@hooks/token/useTokenAutoRefresh';
+
+const FallbackLoading = lazy(
+    () => import('@components/common/FallbackLoading')
+);
 
 export default function PrivateRoute() {
     const { authReady } = useAuthInitialization();
@@ -12,7 +17,7 @@ export default function PrivateRoute() {
 
     useTokenAutoRefresh(token);
 
-    if (!authReady) return <Loading />;
+    if (!authReady) return <FallbackLoading />;
     if (!token) return <Navigate to="/" replace />;
 
     return <Outlet />;

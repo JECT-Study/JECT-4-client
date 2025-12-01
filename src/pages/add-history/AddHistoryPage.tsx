@@ -13,7 +13,6 @@ import GoalCard, { type GoalCardProps } from './_components/GoalCard';
 import MainButton from '@components/common/button/MainButton.tsx';
 import MissionHistory from '@components/history/MissionHistory.tsx';
 
-import Loading from '@components/common/Loading';
 import ImageEditModal from '@components/common/ImageEditModal';
 
 import { useImageUpload } from '@hooks/image/useImageUpload';
@@ -88,7 +87,6 @@ const AddHistoryPage = () => {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-        isLoading,
         isError,
     } = useTripRetrospect(tripId, PAGE_SIZE);
 
@@ -145,8 +143,6 @@ const AddHistoryPage = () => {
             if (currentElem) observer.unobserve(currentElem);
         };
     }, [handleObserver]);
-
-    if (isLoading) return <Loading />;
 
     if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
     if (!initialReport) return <p>여행 기록이 없습니다.</p>;

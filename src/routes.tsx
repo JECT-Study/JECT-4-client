@@ -3,8 +3,11 @@ import { Routes, Route } from 'react-router';
 
 import BasicLayout from './components/BasicLayout';
 import MainLayout from './components/MainLayout';
-import Loading from './components/common/Loading';
 import PrivateRoute from './routes/PrivateRoutes';
+
+const FallbackLoading = lazy(
+    () => import('./components/common/FallbackLoading')
+);
 
 // 로그인/회원 가입 페이지
 const LoginPage = lazy(() => import('./pages/auth/LoginPage/KakaoLoginPage'));
@@ -55,7 +58,7 @@ const HistoryPage = lazy(() => import('./pages/history/[id]/HistoryPage'));
 
 const Router = () => {
     return (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<FallbackLoading />}>
             <Routes>
                 <Route element={<BasicLayout />}>
                     {/* 모든 사용자 접근 가능 */}

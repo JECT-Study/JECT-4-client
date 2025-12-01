@@ -5,8 +5,6 @@ import { useNavigate, useSearchParams } from 'react-router';
 import api from '@lib/axios';
 import { AxiosError } from 'axios';
 
-import Loading from '@components/common/Loading';
-
 import { sessionStorageAtom } from '@store/auth';
 import { signupUserInfoAtom } from '@store/signupUserInfoAtom';
 
@@ -52,7 +50,7 @@ function KakaoLoginAccessPage() {
         login();
     }, [code, navigate, setUserInfo]);
 
-    return <Loading />;
+    return null;
 }
 
 export default KakaoLoginAccessPage;
