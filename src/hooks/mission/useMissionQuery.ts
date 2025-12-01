@@ -1,9 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchMissions } from '../../services/mission/missions';
+import { getDefaultStore } from 'jotai';
+import { accessTokenAtom } from '@store/auth';
+import { fetchMissions } from '@services/mission/missions';
 import { type ServerMissionItem } from '../../types/mission/Mission';
 
 const useMissionQuery = (tripId: number, stampId: number) => {
+    const store = getDefaultStore();
+    const token = store.get(accessTokenAtom);
+
     return useQuery<ServerMissionItem[], Error>({
         queryKey: ['missions', tripId, stampId],
         queryFn: () => {
@@ -13,7 +18,7 @@ const useMissionQuery = (tripId: number, stampId: number) => {
 
             return fetchMissions(tripId, stampId);
         },
-        enabled: !!tripId && !!stampId,
+        enabled: !!token && !!tripId && !!stampId,
         staleTime: 60_000,
     });
 };
