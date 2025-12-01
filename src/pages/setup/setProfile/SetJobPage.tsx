@@ -6,7 +6,7 @@ import MainButton from '../../../components/common/button/MainButton';
 import { useAtom } from 'jotai';
 import { signupUserInfoAtom } from '../../../store/signupUserInfoAtom';
 
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 
 import api from '@lib/axios';
 
@@ -16,7 +16,7 @@ function SetJobPage() {
     const isNextDisabled = !selected;
 
     const [userInfo, setUserInfo] = useAtom(signupUserInfoAtom);
-    const [, setAccessToken] = useAtom(accessTokenAtom);
+    const [, setAccessToken] = useAtom(sessionStorageAtom);
 
     const handleSelect = (value: string) => {
         setSelected(value);
