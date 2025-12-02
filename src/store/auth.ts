@@ -1,3 +1,7 @@
-import { atom } from 'jotai';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
-export const accessTokenAtom = atom<string | null>(null);
+export const sessionStorageAtom = atomWithStorage(
+    'access-token',
+    null as string | null,
+    createJSONStorage(() => sessionStorage)
+);

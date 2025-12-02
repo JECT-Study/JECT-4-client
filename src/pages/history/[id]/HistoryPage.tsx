@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../_componenets/Header';
 import { FirstSection, SecondSection, ThirdSection } from '../_layouts/';
 import MissionHistory from '@components/history/MissionHistory';
-import Loading from '@components/common/Loading';
 
 import { formatDate } from '@utils/date';
 import useDetailTripReport from '@hooks/report/useDetailTripReport';
@@ -28,14 +27,8 @@ const HistoryPage = () => {
         return null;
     }
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        isError,
-    } = useDetailTripReport(tripReportId, 5);
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError } =
+        useDetailTripReport(tripReportId, 5);
 
     const observerElem = useRef<HTMLDivElement>(null);
 
@@ -102,8 +95,6 @@ const HistoryPage = () => {
             if (currentElem) observer.unobserve(currentElem);
         };
     }, [handleObserver]);
-
-    if (isLoading) return <Loading />;
 
     if (isError) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
     if (!initialReport) return <p>여행 기록이 없습니다.</p>;

@@ -6,7 +6,6 @@ import api from '@lib/axios';
 import BackHeader from '@components/common/BackHeaderLayout';
 import LogCard from './_components/LogCard';
 import Dropdown from '@components/common/Dropdown';
-import Loading from '@components/common/Loading';
 
 interface CompletedMission {
     studyLogDailyMissionId: number;
@@ -34,7 +33,7 @@ const LogListPage = () => {
     const navigate = useNavigate();
 
     const [logs, setLogs] = useState<Log[]>([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const [_, setIsFetching] = useState(false);
     const [hasNext, setHasNext] = useState(true);
 
     const [order, setOrder] = useState<'LATEST' | 'OLDEST'>('LATEST');
@@ -152,7 +151,6 @@ const LogListPage = () => {
                             </div>
                         );
                     })}
-                    {isFetching && <Loading />}
                 </div>
             </div>
         </div>

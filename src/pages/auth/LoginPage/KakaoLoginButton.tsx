@@ -29,6 +29,7 @@ const KakaoLoginButton = () => {
                 src={kakaoLoginImage}
                 alt="카카오 로그인"
                 className="block h-auto w-full"
+                loading="lazy"
             />
         </button>
     );

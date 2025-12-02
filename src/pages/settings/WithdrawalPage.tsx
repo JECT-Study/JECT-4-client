@@ -7,10 +7,10 @@ import api from '@lib/axios';
 
 import { useAtom, useSetAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
-import { accessTokenAtom } from '@store/auth';
+import { sessionStorageAtom } from '@store/auth';
 
 const WithdrawalPage = () => {
-    const resetToken = useSetAtom(accessTokenAtom);
+    const resetToken = useSetAtom(sessionStorageAtom);
     // 유저이름 불러오기
     const [userName] = useAtom(memberNameAtom);
     const [, fetchMemberName] = useAtom(fetchMemberNameAtom);

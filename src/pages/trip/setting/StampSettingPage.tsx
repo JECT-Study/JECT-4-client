@@ -10,19 +10,13 @@ import usePatchTrip from '@hooks/trip/usePatchTrip';
 import useValidatedTripId from '@hooks/common/useValidateTripId';
 
 import PlusIcon from '@assets/icons/plus.svg?react';
-import Loading from '@components/common/Loading';
 
 const StampSettingPage = () => {
     const navigate = useNavigate();
     const tripId = useValidatedTripId();
     const [isEditingMode, setIsEditingMode] = useState(false);
 
-    const {
-        data: tripData,
-        isLoading,
-        isError,
-        refetch,
-    } = useTripDetail(tripId);
+    const { data: tripData, isError, refetch } = useTripDetail(tripId);
 
     if (!tripId) return null;
 
@@ -49,8 +43,6 @@ const StampSettingPage = () => {
 
         mutatePatchTrip({ tripId, data: requestBody });
     };
-
-    if (isLoading) return <Loading />;
 
     if (isError) return null;
     if (!tripData) return null;

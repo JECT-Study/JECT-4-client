@@ -1,13 +1,10 @@
-import { BrowserRouter } from 'react-router';
-import Router from './routes.tsx';
-import './index.css';
+import { BrowserRouter } from 'react-router-dom';
+import Router from './routes';
 
 function App() {
     return (
         <BrowserRouter>
-            <div>
-                <Router />
-            </div>
+            <Router />
         </BrowserRouter>
     );
 }

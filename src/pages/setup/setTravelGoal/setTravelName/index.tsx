@@ -1,11 +1,11 @@
+import { lazy, useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import { useEffect } from 'react';
+import { useAtom } from 'jotai';
 
 import SetTravelHeader from '../_components/SetTravelHeader';
-import SetTravelNameForm from './SetTravelNameForm';
-
-import { useAtom } from 'jotai';
 import { memberNameAtom, fetchMemberNameAtom } from '@store/userInfoAtom';
+
+const SetTravelNameForm = lazy(() => import('./SetTravelNameForm'));
 
 type travelType = 'course' | 'explore';
 

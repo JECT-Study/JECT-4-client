@@ -12,7 +12,6 @@ import PomodoroTimer, {
 import { useDashboardMissions } from './_hooks/useDashboardMissions';
 import useVaildateId from './_hooks/useVaildateId';
 
-import Loading from '@components/common/Loading';
 import BackHeader from '@components/common/BackHeaderLayout';
 import MainButton from '@components/common/button/MainButton';
 
@@ -40,7 +39,6 @@ export default function DashboardPage() {
 
     const {
         data: fetchedMissions,
-        isLoading: isMissionLoading,
         isError: isMissionError,
         refetch,
     } = useMissionQuery(id.tripId!, id.stampId!);
@@ -53,11 +51,10 @@ export default function DashboardPage() {
         setMissionRefetch(() => refetch);
     }, [refetch, setMissionRefetch]);
 
-    const {
-        data: fetchedStamp,
-        isLoading: isStampLoading,
-        isError: isStampError,
-    } = useDetailStampQuery(id.tripId!, id.stampId!);
+    const { data: fetchedStamp, isError: isStampError } = useDetailStampQuery(
+        id.tripId!,
+        id.stampId!
+    );
 
     const { mutateCompleteStamp } = useCompleteStamp();
 
@@ -77,10 +74,7 @@ export default function DashboardPage() {
         handleToggleEdit,
     } = useDashboardMissions(id.tripId!, id.stampId!, fetchedMissions);
 
-    if (isMissionLoading) return <Loading />;
     if (isMissionError) alert('미션 목록을 불러올 수 없습니다.');
-
-    if (isStampLoading) return <Loading />;
     if (isStampError) alert('스탬프를 로드할 수 없습니다.');
 
     const handleOpen = () => setOpen(true);

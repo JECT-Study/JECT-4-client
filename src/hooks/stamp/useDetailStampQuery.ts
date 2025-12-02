@@ -1,8 +1,14 @@
+import { getDefaultStore } from 'jotai';
 import { useQuery } from '@tanstack/react-query';
+
+import { sessionStorageAtom } from '@store/auth';
 import type { StampDetail } from '../../types/stamp';
 import { fetchStampDetail } from '../../services/stamp/stamps';
 
 const useDetailStampQuery = (tripId: number, stampId: number) => {
+    const store = getDefaultStore();
+    const token = store.get(sessionStorageAtom);
+
     return useQuery<StampDetail, Error>({
         queryKey: ['stamp', tripId, stampId],
         queryFn: () => {
@@ -12,7 +18,7 @@ const useDetailStampQuery = (tripId: number, stampId: number) => {
 
             return fetchStampDetail(tripId, stampId);
         },
-        enabled: !!tripId && !!stampId,
+        enabled: !!token && !!tripId && !!stampId,
         staleTime: 60_000,
     });
 };

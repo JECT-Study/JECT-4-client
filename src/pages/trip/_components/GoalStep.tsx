@@ -1,13 +1,15 @@
-import GoalIcon from '../../../assets/icons/goal.svg?react';
-import EnableIcon from '../../../assets/icons/enabled_goal.svg?react';
-import CompleteIcon from '../../../assets/icons/complete.svg?react';
-import BubbleIcon from '../../../assets/icons/bubble.svg?react';
+import { lazy } from 'react';
 
 import {
     alignStyleClass,
     goalStateNumberStyleClass,
     goalStateTitleStyleClass,
 } from '../_styles/styleClasses';
+
+const GoalIcon = lazy(() => import('@assets/icons/goal.svg?react'));
+const EnableIcon = lazy(() => import('@assets/icons/enabled_goal.svg?react'));
+const CompleteIcon = lazy(() => import('@assets/icons/complete.svg?react'));
+const BubbleIcon = lazy(() => import('@assets/icons/bubble.svg?react'));
 
 interface GoalStepProps {
     sequence: string;
