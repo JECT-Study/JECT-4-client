@@ -1,0 +1,25 @@
+name: Sync Fork Automatically
+
+on:
+  push:
+    branches:
+      - main   # PR이 main에 merge될 때 실행됨
+
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout upstream repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up fork repository as remote
+        run: |
+          git remote add fork https://x-access-token:${{ secrets.FORK_TOKEN }}@github.com/pjyoung0511/JECT-4-client.git
+          git fetch fork
+
+      - name: Force push upstream main to fork main
+        run: |
+          git push fork main --force
